@@ -1,8 +1,10 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://zenvyx-store.onrender.com/api",
 });
+
+console.log("API BASE URL:", API.defaults.baseURL);
 
 // Auto-attach token to every request
 API.interceptors.request.use((config) => {

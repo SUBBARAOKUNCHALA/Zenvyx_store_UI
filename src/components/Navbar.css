@@ -1,0 +1,171 @@
+/* NAVBAR */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  border-bottom: 1px solid #efe5f4;
+  /* box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); */
+  z-index: 1000;
+}
+
+/* LOGO */
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 26px;
+  font-weight: bold;
+  color: #222;
+  letter-spacing: 1px;
+}
+
+.subtext {
+  font-size: 11px;
+  color: #999;
+}
+
+/* SEARCH - CENTER */
+.searchContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 340px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #6a5acd;
+  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.12);
+}
+
+/* DESKTOP BUTTON */
+.actionsDesktop {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.navBtn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1.5px solid #6a5acd;
+  background: transparent;
+  color: #6a5acd;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navBtn:hover {
+  background: #6a5acd;
+  color: #fff;
+}
+
+/* HAMBURGER - hidden on desktop */
+.hamburger {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #444;
+  padding: 4px;
+  line-height: 1;
+  user-select: none;
+}
+
+/* MOBILE DROPDOWN */
+.mobileMenu {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 14px 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.mobileSearch {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 16px; /* prevents iOS zoom */
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mobileSearch:focus {
+  border-color: #6a5acd;
+}
+
+.mobileBtn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  background: #6a5acd;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mobileBtn:hover {
+  opacity: 0.9;
+}
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .searchInput {
+    max-width: 240px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .searchContainer {
+    display: none;
+  }
+
+  .actionsDesktop {
+    display: none;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .logoText {
+    font-size: 22px;
+  }
+}

@@ -1,0 +1,261 @@
+/* RESET */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* FULL SCREEN NO SCROLL */
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  /* overflow: hidden; */
+}
+
+body {
+  background: linear-gradient(135deg, rgb(253, 233, 242) 0%, rgb(253, 240, 232) 100%);
+  font-family: Arial, sans-serif;
+}
+
+/* PAGE */
+.page {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* CARD CONTAINER */
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  height: clamp(420px, 65vh, 540px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+  background: white;
+}
+
+/* LEFT */
+.left {
+  flex: 1;
+  padding: clamp(20px, 4vw, 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+
+.title {
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: clamp(11px, 1.4vw, 13px);
+  color: #777;
+  margin-bottom: 14px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: clamp(13px, 1.5vw, 14px);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: #6a5acd;
+  box-shadow: 0 0 0 2px rgba(106, 90, 205, 0.15);
+}
+
+.button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #6a5acd;
+  color: #fff;
+  font-weight: bold;
+  font-size: clamp(13px, 1.5vw, 14px);
+  cursor: pointer;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.divider {
+  text-align: center;
+  margin: 10px 0;
+  color: #aaa;
+  font-size: 12px;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 38%;
+  height: 1px;
+  background: #eee;
+}
+
+.divider::before { left: 0; }
+.divider::after  { right: 0; }
+
+.googleBtn {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: clamp(12px, 1.4vw, 14px);
+  width: 100%;
+}
+.googleIcon{
+
+     width: 18px;
+     height: 18px;
+    }
+
+/* RIGHT */
+.right {
+  flex: 1;
+  background: linear-gradient(135deg, #6a5acd, #7f9cff);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(20px, 3vw, 35px);
+}
+
+.rightTitle {
+  font-size: clamp(18px, 2.5vw, 22px);
+  margin-bottom: 10px;
+}
+
+.rightText {
+  font-size: clamp(11px, 1.4vw, 14px);
+  margin-bottom: 20px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.loginBtn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  border: none;
+  background: #fff;
+  color: #6a5acd;
+  font-weight: bold;
+  font-size: clamp(12px, 1.4vw, 14px);
+  cursor: pointer;
+}
+
+
+/* existing styles remain — add these below */
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inputError {
+  border-color: #e53e3e !important;
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.1) !important;
+}
+
+.errorMsg {
+  font-size: 11px;
+  color: #e53e3e;
+  padding-left: 4px;
+}
+
+.apiError {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.googleIcon{
+    width: 18px;
+    height: 18px;
+}
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.googleWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 95%;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+    align-items: center;
+  }
+
+  .container {
+    flex-direction: column;
+    height: auto;
+    max-width: 100%;
+    width: 100%;
+    border-radius: 16px;
+  }
+
+  .right {
+    display: none;
+  }
+
+  .left {
+    width: 100%;
+    padding: 24px 20px;
+  }
+
+  .input {
+    font-size: 16px; /* prevents iOS zoom */
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+}

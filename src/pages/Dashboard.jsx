@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Allproducts } from "../services/authService";
 import "./Dashboard.css";
 
@@ -49,6 +50,8 @@ const navItems = [
 const allSizes = ["", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredNav, setHoveredNav] = useState(null);
@@ -73,44 +76,47 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
-  const categoryCards = useMemo(() => {
-    const shirt = products.find((p) => p.category === "Shirt");
-    const tshirt = products.find((p) => p.category === "T-Shirt");
-    const pant = products.find((p) => p.category === "Pant");
+const categoryCards = useMemo(() => {
+  const shirt = products.find((p) => p.category === "Shirt");
+  const tshirt = products.find((p) => p.category === "T-Shirt");
+  const pant = products.find((p) => p.category === "Pant");
 
-    return [
-      {
-        label: "Shirts",
-        value: "Shirt",
-        image: shirt?.image || "https://via.placeholder.com/300x300?text=Shirts",
-      },
-      {
-        label: "T-Shirts",
-        value: "T-Shirt",
-        image: tshirt?.image || "https://via.placeholder.com/300x300?text=T-Shirts",
-      },
-      {
-        label: "Pants",
-        value: "Pant",
-        image: pant?.image || "https://via.placeholder.com/300x300?text=Pants",
-      },
-      {
-        label: "Trending",
-        value: "All",
-        image: products[0]?.image || "https://via.placeholder.com/300x300?text=Trending",
-      },
-      {
-        label: "New",
-        value: "All",
-        image: products[1]?.image || products[0]?.image || "https://via.placeholder.com/300x300?text=New",
-      },
-      {
-        label: "Best",
-        value: "All",
-        image: products[2]?.image || products[0]?.image || "https://via.placeholder.com/300x300?text=Best",
-      },
-    ];
-  }, [products]);
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80";
+
+  return [
+    {
+      label: "Shirts",
+      value: "Shirt",
+      image: shirt?.image || fallbackImage,
+    },
+    {
+      label: "T-Shirts",
+      value: "T-Shirt",
+      image: tshirt?.image || fallbackImage,
+    },
+    {
+      label: "Pants",
+      value: "Pant",
+      image: pant?.image || fallbackImage,
+    },
+    {
+      label: "Trending",
+      value: "All",
+      image: products[0]?.image || fallbackImage,
+    },
+    {
+      label: "New",
+      value: "All",
+      image: products[1]?.image || products[0]?.image || fallbackImage,
+    },
+    {
+      label: "Best",
+      value: "All",
+      image: products[2]?.image || products[0]?.image || fallbackImage,
+    },
+  ];
+}, [products]);
 
   const filteredProducts = useMemo(() => {
     let data = [...products];
@@ -166,13 +172,15 @@ const Dashboard = () => {
     setSortBy("newest");
   };
 
+  const handleProductClick = (product) => {
+    navigate(`/product/${product._id}`, {
+      state: { product },
+    });
+  };
+
   return (
     <div className="dashboardPage">
-      {/* SUB NAVBAR - DESKTOP/TABLET */}
-      <div
-        className="subNavWrapper"
-        onMouseLeave={() => setHoveredNav(null)}
-      >
+      <div className="subNavWrapper" onMouseLeave={() => setHoveredNav(null)}>
         <motion.div
           className="subNavScroll"
           initial={{ opacity: 0, y: -18, scale: 0.98 }}
@@ -228,7 +236,6 @@ const Dashboard = () => {
         </AnimatePresence>
       </div>
 
-      {/* HERO - HIDDEN ON MOBILE */}
       <section className="heroSection">
         <div className="heroLeft">
           <div className="heroBadge">NEW SEASON DROP</div>
@@ -267,20 +274,26 @@ const Dashboard = () => {
         <div className="heroRight">
           <div className="heroCard heroCardOne">
             <img
-              src={products[0]?.image || "https://via.placeholder.com/700x900?text=Fashion"}
+              src={
+                products[0]?.image ||
+                "https://via.placeholder.com/700x900?text=Fashion"
+              }
               alt="fashion"
             />
           </div>
           <div className="heroCard heroCardTwo">
             <img
-              src={products[1]?.image || products[0]?.image || "https://via.placeholder.com/700x900?text=Style"}
+              src={
+                products[1]?.image ||
+                products[0]?.image ||
+                "https://via.placeholder.com/700x900?text=Style"
+              }
               alt="style"
             />
           </div>
         </div>
       </section>
 
-      {/* CATEGORY STRIP */}
       <section className="categorySection">
         {categoryCards.map((item, index) => (
           <motion.div
@@ -299,7 +312,6 @@ const Dashboard = () => {
         ))}
       </section>
 
-      {/* PRODUCTS SECTION */}
       <section className="productsSection" id="productsSection">
         <div className="productsTopBar">
           <div>
@@ -319,16 +331,7 @@ const Dashboard = () => {
           </select>
         </div>
 
-        {/* MOBILE FILTER BAR */}
         <div className="mobileFilterBar">
-          {/* <input
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="mobileFilterInput"
-          /> */}
-
           <select
             className="mobileFilterSelect"
             value={selectedCategory}
@@ -470,6 +473,7 @@ const Dashboard = () => {
                     initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.04 }}
+                    onClick={() => handleProductClick(product)}
                   >
                     <div className="productImageBox">
                       <img src={product.image} alt={product.name} />

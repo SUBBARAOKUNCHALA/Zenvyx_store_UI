@@ -9,3 +9,5 @@ export const resetPasswordWithOtp = (data) =>
   API.post("/auth/reset-password", data);
 
 export const Allproducts=()=>API.get("/products")
+export const getProductById = (id) => API.get(`/products/${id}`);
+export const getSimilarProducts = (id) => API.get(`/products/${id}/similar`);

@@ -102,7 +102,7 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify({ _id, name, email }));
 
             toast.success("Login successful");
-            navigate("/dashboard");
+            navigate("/");
         } catch (err) {
             const msg =
                 err?.response?.data?.message ||

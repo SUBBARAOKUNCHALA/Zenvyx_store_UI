@@ -294,6 +294,7 @@ const Login = () => {
                                     <input
                                         type="password"
                                         name="password"
+                                        autoComplete="off"
                                         placeholder="Password"
                                         value={form.password}
                                         onChange={handleChange}

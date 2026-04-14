@@ -91,6 +91,7 @@ const Register = () => {
         const googleToken = credentialResponse.credential;
 
         const res = await googleAuthUser({ token: googleToken });
+        //console.log("Google data",res.data.data)
 
         const { token, _id, name, email } = res.data.data;
 
@@ -98,7 +99,7 @@ const Register = () => {
         localStorage.setItem("user", JSON.stringify({ _id, name, email }));
 
         // toast.success("Google signup successful");
-        navigate("/login");
+        navigate("/");
     } catch (err) {
         const msg =
             err?.response?.data?.message || "Google signup failed";

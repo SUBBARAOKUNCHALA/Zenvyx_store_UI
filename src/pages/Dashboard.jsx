@@ -46,7 +46,7 @@ const navItems = [
   },
 ];
 
-const allSizes = ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
+const allSizes = ["", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
 
 const Dashboard = () => {
   const [products, setProducts] = useState([]);
@@ -100,12 +100,12 @@ const Dashboard = () => {
         image: products[0]?.image || "https://via.placeholder.com/300x300?text=Trending",
       },
       {
-        label: "New Arrivals",
+        label: "New",
         value: "All",
         image: products[1]?.image || products[0]?.image || "https://via.placeholder.com/300x300?text=New",
       },
       {
-        label: "Best Sellers",
+        label: "Best",
         value: "All",
         image: products[2]?.image || products[0]?.image || "https://via.placeholder.com/300x300?text=Best",
       },
@@ -159,9 +159,16 @@ const Dashboard = () => {
     setHoveredNav(null);
   };
 
+  const clearAllFilters = () => {
+    setSelectedCategory("All");
+    setSelectedSizes([]);
+    setSearch("");
+    setSortBy("newest");
+  };
+
   return (
     <div className="dashboardPage">
-      {/* SUB NAVBAR */}
+      {/* SUB NAVBAR - DESKTOP/TABLET */}
       <div
         className="subNavWrapper"
         onMouseLeave={() => setHoveredNav(null)}
@@ -175,11 +182,12 @@ const Dashboard = () => {
           {navItems.map((item, index) => (
             <motion.button
               key={item.label}
-              className={`subNavItem ${selectedCategory === item.key ||
-                  (item.key === "All" && selectedCategory === "All")
+              className={`subNavItem ${
+                selectedCategory === item.key ||
+                (item.key === "All" && selectedCategory === "All")
                   ? "activeSubNav"
                   : ""
-                }`}
+              }`}
               onMouseEnter={() => setHoveredNav(item)}
               onClick={() => chooseCategory(item.key)}
               initial={{ opacity: 0, y: -10 }}
@@ -220,7 +228,7 @@ const Dashboard = () => {
         </AnimatePresence>
       </div>
 
-      {/* HERO */}
+      {/* HERO - HIDDEN ON MOBILE */}
       <section className="heroSection">
         <div className="heroLeft">
           <div className="heroBadge">NEW SEASON DROP</div>
@@ -241,7 +249,10 @@ const Dashboard = () => {
             >
               Shop Now
             </button>
-            <button className="secondaryBtn" onClick={() => setSelectedCategory("All")}>
+            <button
+              className="secondaryBtn"
+              onClick={() => setSelectedCategory("All")}
+            >
               Explore Collection
             </button>
           </div>
@@ -297,7 +308,7 @@ const Dashboard = () => {
           </div>
 
           <select
-            className="sortSelect"
+            className="sortSelect desktopSort"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
@@ -306,6 +317,60 @@ const Dashboard = () => {
             <option value="priceHighToLow">Price: High to Low</option>
             <option value="nameAZ">Name: A to Z</option>
           </select>
+        </div>
+
+        {/* MOBILE FILTER BAR */}
+        <div className="mobileFilterBar">
+          {/* <input
+            type="text"
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mobileFilterInput"
+          /> */}
+
+          <select
+            className="mobileFilterSelect"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="All">All</option>
+            <option value="Shirt">Shirts</option>
+            <option value="T-Shirt">T-Shirts</option>
+            <option value="Pant">Pants</option>
+          </select>
+
+          <select
+            className="mobileFilterSelect"
+            value={selectedSizes[0] || ""}
+            onChange={(e) =>
+              setSelectedSizes(e.target.value ? [e.target.value] : [])
+            }
+          >
+            <option value="">All Sizes</option>
+            {allSizes
+              .filter((size) => size !== "")
+              .map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+          </select>
+
+          <select
+            className="mobileFilterSelect"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="newest">Newest</option>
+            <option value="priceLowToHigh">Low to High</option>
+            <option value="priceHighToLow">High to Low</option>
+            <option value="nameAZ">A to Z</option>
+          </select>
+
+          <button className="mobileClearBtn" onClick={clearAllFilters}>
+            Clear
+          </button>
         </div>
 
         <div className="productLayout">
@@ -369,28 +434,24 @@ const Dashboard = () => {
             <div className="filterBlock">
               <h4>Sizes</h4>
               <div className="sizeWrap">
-                {allSizes.map((size) => (
-                  <button
-                    key={size}
-                    type="button"
-                    className={`sizeChip ${selectedSizes.includes(size) ? "activeSize" : ""}`}
-                    onClick={() => toggleSize(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {allSizes
+                  .filter((size) => size !== "")
+                  .map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      className={`sizeChip ${
+                        selectedSizes.includes(size) ? "activeSize" : ""
+                      }`}
+                      onClick={() => toggleSize(size)}
+                    >
+                      {size}
+                    </button>
+                  ))}
               </div>
             </div>
 
-            <button
-              className="clearBtn"
-              onClick={() => {
-                setSelectedCategory("All");
-                setSelectedSizes([]);
-                setSearch("");
-                setSortBy("newest");
-              }}
-            >
+            <button className="clearBtn" onClick={clearAllFilters}>
               Clear Filters
             </button>
           </aside>
@@ -422,7 +483,9 @@ const Dashboard = () => {
                       <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>
                         <span className="stockText">
-                          {product.stock > 0 ? `${product.stock} left` : "Out of stock"}
+                          {product.stock > 0
+                            ? `${product.stock} left`
+                            : "Out of stock"}
                         </span>
                       </div>
 
@@ -433,8 +496,6 @@ const Dashboard = () => {
                           </span>
                         ))}
                       </div>
-
-                      {/* <button className="viewBtn">View Details</button> */}
                     </div>
                   </motion.div>
                 ))}

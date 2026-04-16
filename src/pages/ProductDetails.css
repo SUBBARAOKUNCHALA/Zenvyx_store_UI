@@ -148,7 +148,7 @@
   margin: 0;
   font-size: 28px;
   font-weight: 900;
-  background: linear-gradient(135deg, #7c3aed, #db2777);
+  background: linear-gradient(135deg, #000000, #000000);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -456,4 +456,91 @@
   .similarPrice {
     font-size: 14px;
   }
+}
+
+.quantitySection {
+  margin: 24px 0 12px;
+}
+
+.quantityTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #2f1b43;
+  font-weight: 700;
+}
+
+.quantitySelector {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #eadcf3;
+  border-radius: 16px;
+  padding: 8px 10px;
+  box-shadow: 0 8px 20px rgba(91, 33, 182, 0.05);
+}
+
+.qtyBtn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.qtyBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.2);
+}
+
+.qtyBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.qtyValue {
+  min-width: 36px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: #2b2430;
+}
+
+.cartSuccessMessage,
+.cartErrorMessage {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cartSuccessMessage {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #bbf7d0;
+}
+
+.cartErrorMessage {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.addCartBtn,
+.buyNowBtn {
+  min-width: 180px;
+}
+
+.addCartBtn:disabled,
+.buyNowBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

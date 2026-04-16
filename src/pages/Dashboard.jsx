@@ -482,7 +482,7 @@ const categoryCards = useMemo(() => {
 
                     <div className="productContent">
                       <h3>{product.name}</h3>
-                      <p>{product.description}</p>
+                      {/* <p>{product.description}</p> */}
 
                       <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>

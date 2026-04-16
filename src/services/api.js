@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "https://zenvyx-store.onrender.com/api",
+  //baseURL:"http://localhost:5000/api"
 });
 
 console.log("API BASE URL:", API.defaults.baseURL);

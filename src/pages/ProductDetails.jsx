@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getProductById, getSimilarProducts } from "../services/authService";
+import {
+  addToCartApi,
+  getProductById,
+  getSimilarProducts,
+} from "../services/authService";
 import "./ProductDetails.css";
 
 const ProductDetails = () => {
@@ -14,6 +18,11 @@ const ProductDetails = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedImage, setSelectedImage] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartMessage, setCartMessage] = useState("");
+  const [cartError, setCartError] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const productImages = useMemo(() => {
     if (product?.images?.length > 0) {
@@ -57,6 +66,10 @@ const ProductDetails = () => {
           setSelectedImage("");
           setCurrentImageIndex(0);
         }
+
+        setQuantity(1);
+        setCartMessage("");
+        setCartError("");
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -81,18 +94,78 @@ const ProductDetails = () => {
 
   const handlePrevImage = () => {
     if (productImages.length === 0) return;
+
     const newIndex =
       currentImageIndex === 0 ? productImages.length - 1 : currentImageIndex - 1;
+
     setCurrentImageIndex(newIndex);
     setSelectedImage(productImages[newIndex]);
   };
 
   const handleNextImage = () => {
     if (productImages.length === 0) return;
+
     const newIndex =
       currentImageIndex === productImages.length - 1 ? 0 : currentImageIndex + 1;
+
     setCurrentImageIndex(newIndex);
     setSelectedImage(productImages[newIndex]);
+  };
+
+  const handleDecreaseQty = () => {
+    setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const handleIncreaseQty = () => {
+    if (product?.stock && quantity < product.stock) {
+      setQuantity((prev) => prev + 1);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      setCartLoading(true);
+      setCartMessage("");
+      setCartError("");
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setCartError("Please login first to add items to cart");
+        return;
+      }
+
+      if (!product?._id) {
+        setCartError("Product not found");
+        return;
+      }
+
+      if (product?.stock <= 0) {
+        setCartError("This product is out of stock");
+        return;
+      }
+
+      const payload = {
+        productId: product._id,
+        quantity,
+      };
+
+      const res = await addToCartApi(payload);
+
+      setCartMessage(res?.data?.message || "Item added to cart successfully");
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      setCartError(
+        error?.response?.data?.message || "Failed to add item to cart"
+      );
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    await handleAddToCart();
+    navigate("/cart");
   };
 
   if (loading) {
@@ -182,9 +255,51 @@ const ProductDetails = () => {
             </div>
           </div>
 
+          <div className="quantitySection">
+            <h3 className="quantityTitle">Quantity</h3>
+
+            <div className="quantitySelector">
+              <button
+                type="button"
+                className="qtyBtn"
+                onClick={handleDecreaseQty}
+                disabled={quantity <= 1}
+              >
+                -
+              </button>
+
+              <span className="qtyValue">{quantity}</span>
+
+              <button
+                type="button"
+                className="qtyBtn"
+                onClick={handleIncreaseQty}
+                disabled={product?.stock ? quantity >= product.stock : false}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {cartMessage && <div className="cartSuccessMessage">{cartMessage}</div>}
+          {cartError && <div className="cartErrorMessage">{cartError}</div>}
+
           <div className="productActions">
-            <button className="addCartBtn">Add to Cart</button>
-            <button className="buyNowBtn">Buy Now</button>
+            <button
+              className="addCartBtn"
+              onClick={handleAddToCart}
+              disabled={cartLoading || product.stock <= 0}
+            >
+              {cartLoading ? "Adding..." : "Add to Cart"}
+            </button>
+
+            <button
+              className="buyNowBtn"
+              onClick={handleBuyNow}
+              disabled={cartLoading || product.stock <= 0}
+            >
+              Buy Now
+            </button>
           </div>
 
           <div className="productInfoBox">

@@ -17,19 +17,36 @@ const Cart = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const fetchCart = async () => {
-    try {
-      setLoading(true);
-      setError("");
-      const res = await getMyCartApi();
-      setCartItems(res?.data?.data || []);
-    } catch (err) {
-      console.error("Fetch cart error:", err);
-      setError(err?.response?.data?.message || "Failed to load cart");
-    } finally {
-      setLoading(false);
+ const fetchCart = async () => {
+  try {
+    setLoading(true);
+    setError("");
+
+    const res = await getMyCartApi();
+    setCartItems(res?.data?.data || []);
+
+  } catch (err) {
+    console.error("Fetch cart error:", err);
+
+    const status = err?.response?.status;
+    const code = err?.response?.data?.code;
+    if (status === 401) {
+      localStorage.removeItem("token");
+
+      // optional: show message before redirect
+      setError("Session expired. Please login again");
+
+      navigate("/login");
+      return;
     }
-  };
+
+    // other errors
+    setError(err?.response?.data?.message || "Failed to load cart");
+
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchCart();

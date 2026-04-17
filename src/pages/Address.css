@@ -1,0 +1,210 @@
+.addressPage {
+  min-height: 100vh;
+  padding: 110px 20px 40px;
+  background: linear-gradient(180deg, #fff 0%, #fff8fb 60%, #fff 100%);
+}
+
+.addressContainer {
+  max-width: 1250px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+}
+
+.addressFormCard,
+.savedAddressCard {
+  background: #fff;
+  border: 1px solid #f0e4f5;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
+}
+
+.addressFormCard h1,
+.savedAddressCard h2 {
+  margin: 0 0 8px;
+  color: #2f1a45;
+}
+
+.addressFormCard p {
+  margin: 0 0 18px;
+  color: #6d5d7d;
+}
+
+.addressSuccess,
+.addressError {
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.addressSuccess {
+  background: #ecfff2;
+  color: #1e7a42;
+  border: 1px solid #c7f1d6;
+}
+
+.addressError {
+  background: #fff1f1;
+  color: #c0392b;
+  border: 1px solid #ffd2d2;
+}
+
+.addressForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.addressGrid input,
+.addressGrid select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #eadcf1;
+  background: #fcfaff;
+  outline: none;
+  font-size: 14px;
+}
+
+.addressGrid input:focus,
+.addressGrid select:focus {
+  border-color: #c59be7;
+}
+
+.defaultCheck {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #4e3d62;
+  font-size: 14px;
+}
+
+.addressBtnRow {
+  display: flex;
+  gap: 12px;
+}
+
+.saveAddressBtn,
+.cancelAddressBtn,
+.addressActionBtn {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.saveAddressBtn {
+  background: linear-gradient(135deg, #6f42c1, #9b59b6);
+  color: #fff;
+}
+
+.cancelAddressBtn {
+  background: #f5eef8;
+  color: #5a3d7a;
+}
+
+.saveAddressBtn:hover,
+.cancelAddressBtn:hover,
+.addressActionBtn:hover {
+  transform: translateY(-2px);
+}
+
+.addressLoading,
+.addressEmpty {
+  padding: 18px;
+  border-radius: 14px;
+  background: #faf7fc;
+  color: #6b5a7d;
+}
+
+.addressList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.addressItemCard {
+  background: #fcfaff;
+  border: 1px solid #efe2f5;
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.addressTopRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.addressTopRow h3 {
+  margin: 0;
+  color: #2f1a45;
+}
+
+.addressTopRow p {
+  margin: 6px 0 0;
+  color: #6d5d7d;
+}
+
+.defaultBadge,
+.addressTypeBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.defaultBadge {
+  background: #efe2ff;
+  color: #7a35c1;
+  margin-left: 8px;
+}
+
+.addressTypeBadge {
+  background: #f7ecff;
+  color: #8e44ad;
+}
+
+.addressText,
+.addressLandmark {
+  color: #4f4160;
+  margin-top: 12px;
+}
+
+.addressActionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.addressActionBtn {
+  background: #f6effb;
+  color: #5f4178;
+}
+
+.primaryAction {
+  background: linear-gradient(135deg, #6f42c1, #9b59b6);
+  color: #fff;
+}
+
+@media (max-width: 991px) {
+  .addressContainer {
+    grid-template-columns: 1fr;
+  }
+}

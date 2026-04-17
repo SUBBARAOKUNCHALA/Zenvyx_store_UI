@@ -19,3 +19,17 @@ export const updateCartQuantityApi = (cartItemId, data) =>
 export const removeCartItemApi = (cartItemId) =>
   API.delete(`/cart/remove/${cartItemId}`);
 export const clearMyCartApi = () => API.delete("/cart/clear");
+
+// ADDRESS
+export const addAddressApi = (data) => API.post("/address/add", data);
+export const getMyAddressesApi = () => API.get("/address/my-addresses");
+export const getDefaultAddressApi = () => API.get("/address/default");
+export const updateAddressApi = (id, data) => API.put(`/address/update/${id}`, data);
+export const deleteAddressApi = (id) => API.delete(`/address/delete/${id}`);
+export const setDefaultAddressApi = (id) => API.put(`/address/set-default/${id}`);
+
+// ORDERS
+export const getCheckoutSummaryApi = () => API.get("/orders/checkout-summary");
+export const placeOrderApi = (data) => API.post("/orders/place", data);
+export const getMyOrdersApi = () => API.get("/orders/my-orders");
+export const getOrderByIdApi = (orderId) => API.get(`/orders/${orderId}`);

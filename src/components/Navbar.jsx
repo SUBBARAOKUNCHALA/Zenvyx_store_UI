@@ -1,11 +1,14 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import ProfilePanel from "../pages/ProfilePanel";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [showProfilePanel, setShowProfilePanel] = useState(false);
 
   const isLogin = location.pathname === "/login";
   const buttonText = isLogin ? "Register" : "Login";
@@ -20,97 +23,106 @@ const Navbar = () => {
     } catch (error) {
       return null;
     }
-  }, [location.pathname]);
+  }, [location.pathname, token]);
 
-  const firstLetter = user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "U";
+  const firstLetter =
+    user?.name?.charAt(0)?.toUpperCase() ||
+    user?.email?.charAt(0)?.toUpperCase() ||
+    "U";
 
-  const handleProfileClick = () => {
-    navigate("/");
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
+  const toggleProfilePanel = () => {
+    if (!token || !user) {
+      navigate(route);
+      return;
+    }
+    setShowProfilePanel((prev) => !prev);
   };
 
   return (
-    <motion.div
-      className="navbar"
-      initial={{ y: -60, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.4 }}
-    >
-      <div className="logoContainer" onClick={() => navigate("/")}>
-        <strong className="logoText">ZENVYX</strong>
-        <span className="subtext">-- We Create Attitude --</span>
-      </div>
-
-      <div className="searchContainer">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="searchInput"
-        />
-      </div>
-
-      <div className="actionsDesktop">
-        <div className="cartIconWrap" onClick={() => navigate("/cart")}>
-          <span className="cartIcon">🛒</span>
+    <>
+      <motion.div
+        className="navbar"
+        initial={{ y: -60, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="logoContainer" onClick={() => navigate("/")}>
+          <strong className="logoText">ZENVYX</strong>
+          <span className="subtext">-- We Create Attitude --</span>
         </div>
 
-        {!token || !user ? (
-          <button className="navBtn" onClick={() => navigate(route)}>
-            {buttonText}
-          </button>
-        ) : (
-          <div className="userSection">
-            <div className="userProfileBox" onClick={handleProfileClick}>
+        <div className="searchContainer">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="searchInput"
+          />
+        </div>
+
+        <div className="actionsDesktop">
+          <div className="cartIconWrap" onClick={() => navigate("/cart")}>
+            <span className="cartIcon">🛒</span>
+          </div>
+
+          {!token || !user ? (
+            <button className="navBtn" onClick={() => navigate(route)}>
+              {buttonText}
+            </button>
+          ) : (
+            <div className="userSection">
+              <div className="userProfileBox" onClick={toggleProfilePanel}>
+                {user?.profilePic ? (
+                  <img
+                    src={user.profilePic}
+                    alt={user.name || "User"}
+                    className="userProfileImage"
+                  />
+                ) : (
+                  <div className="userInitialAvatar">{firstLetter}</div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mobileRightActions">
+          <div
+            className="cartIconWrap mobileCartIcon"
+            onClick={() => navigate("/cart")}
+          >
+            <span className="cartIcon">🛒</span>
+          </div>
+
+          {!token || !user ? (
+            <div className="profileIconMobile" onClick={() => navigate(route)}>
+              <span>👤</span>
+            </div>
+          ) : (
+            <div className="profileIconMobile" onClick={toggleProfilePanel}>
               {user?.profilePic ? (
                 <img
                   src={user.profilePic}
                   alt={user.name || "User"}
-                  className="userProfileImage"
+                  className="mobileUserImage"
                 />
               ) : (
-                <div className="userInitialAvatar">{firstLetter}</div>
+                <span className="mobileUserInitial">{firstLetter}</span>
               )}
             </div>
-
-            <button className="logoutBtn" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="mobileRightActions">
-        <div
-          className="cartIconWrap mobileCartIcon"
-          onClick={() => navigate("/cart")}
-        >
-          <span className="cartIcon">🛒</span>
+          )}
         </div>
+      </motion.div>
 
-        {!token || !user ? (
-          <div className="profileIconMobile" onClick={() => navigate(route)}>
-            <span>👤</span>
-          </div>
-        ) : (
-          <div className="profileIconMobile" onClick={handleProfileClick}>
-            {user?.profilePic ? (
-              <img
-                src={user.profilePic}
-                alt={user.name || "User"}
-                className="mobileUserImage"
-              />
-            ) : (
-              <span className="mobileUserInitial">{firstLetter}</span>
-            )}
-          </div>
+      <AnimatePresence>
+        {showProfilePanel && user && (
+          <ProfilePanel
+            user={user}
+            firstLetter={firstLetter}
+            onClose={() => setShowProfilePanel(false)}
+          />
         )}
-      </div>
-    </motion.div>
+      </AnimatePresence>
+    </>
   );
 };
 

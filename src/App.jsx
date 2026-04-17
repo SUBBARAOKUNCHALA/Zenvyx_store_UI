@@ -5,6 +5,9 @@ import Home from "./pages/Dashboard";
 import Navbar from "./components/Navbar";
 import Cart from "./pages/Cart";
 import ProductDetails from "./pages/ProductDetails";
+import Address from "./pages/Address";
+import Checkout from "./pages/Checkout";
+import MyOrders from "./pages/MyOrders";
 import './App.css'
 
 function App() {
@@ -17,6 +20,9 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/address" element={<Address />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/my-orders" element={<MyOrders />} />
     </Routes>
     </>
   );

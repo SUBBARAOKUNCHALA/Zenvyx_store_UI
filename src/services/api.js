@@ -1,14 +1,11 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "https://zenvyx-store.onrender.com/api",
-  //baseURL:"http://localhost:5000/api"
+const api = axios.create({
+  //baseURL: "http://localhost:5000/api",
+  baseURL:"https://zenvyx-store.onrender.com/api"
 });
 
-console.log("API BASE URL:", API.defaults.baseURL);
-
-// Auto-attach token to every request
-API.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -16,4 +13,16 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export default API;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

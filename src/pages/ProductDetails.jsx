@@ -122,46 +122,52 @@ const ProductDetails = () => {
     }
   };
 
-  const handleAddToCart = async () => {
-    try {
-      setCartLoading(true);
-      setCartMessage("");
-      setCartError("");
+const handleAddToCart = async () => {
+  try {
+    setCartLoading(true);
+    setCartMessage("");
+    setCartError("");
 
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-      if (!token) {
-        setCartError("Please login first to add items to cart");
-        return;
-      }
-
-      if (!product?._id) {
-        setCartError("Product not found");
-        return;
-      }
-
-      if (product?.stock <= 0) {
-        setCartError("This product is out of stock");
-        return;
-      }
-
-      const payload = {
-        productId: product._id,
-        quantity,
-      };
-
-      const res = await addToCartApi(payload);
-
-      setCartMessage(res?.data?.message || "Item added to cart successfully");
-    } catch (error) {
-      console.error("Add to cart error:", error);
-      setCartError(
-        error?.response?.data?.message || "Failed to add item to cart"
-      );
-    } finally {
-      setCartLoading(false);
+    if (!token) {
+      setCartError("Please login first to add items to cart");
+      return;
     }
-  };
+
+    if (!product?._id) {
+      setCartError("Product not found");
+      return;
+    }
+
+    if (product?.stock <= 0) {
+      setCartError("This product is out of stock");
+      return;
+    }
+
+    if (!selectedSize) {
+      setCartError("Please select a size");
+      return;
+    }
+
+    const payload = {
+      productId: product._id,
+      quantity,
+      size: selectedSize
+    };
+
+    const res = await addToCartApi(payload);
+
+    setCartMessage(res?.data?.message || "Item added to cart successfully");
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    setCartError(
+      error?.response?.data?.message || "Failed to add item to cart"
+    );
+  } finally {
+    setCartLoading(false);
+  }
+};
 
   const handleBuyNow = async () => {
     await handleAddToCart();

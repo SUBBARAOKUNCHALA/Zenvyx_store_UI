@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getCheckoutSummaryApi,
@@ -56,16 +56,51 @@ const Checkout = () => {
     fetchCheckoutData();
   }, []);
 
+  const calculatedSummary = useMemo(() => {
+    const items = summary?.items || [];
+
+    let subtotal = 0;
+    let totalDiscount = 0;
+    let totalItems = 0;
+
+    items.forEach((item) => {
+        console.log("checkout item ",item)
+      const price = Number(item?.price || 0);
+      const qty = Number(item?.quantity || 1);
+      const discountPercent = Number(item?.discount || 0);
+
+      const itemSubtotal = price * qty;
+      const discountAmount = ((price * discountPercent) / 100) * qty;
+
+      subtotal += itemSubtotal;
+      totalDiscount += discountAmount;
+      totalItems += qty;
+    });
+
+    const discountedSubtotal = subtotal - totalDiscount;
+    const delivery = discountedSubtotal > 999 ? 50 : 99;
+    const finalTotal = discountedSubtotal + delivery;
+
+    return {
+      subtotal,
+      totalDiscount,
+      discountedSubtotal,
+      totalItems,
+      delivery,
+      finalTotal,
+    };
+  }, [summary]);
+
   const handlePlaceOrder = async () => {
+    if (!selectedAddressId) {
+      setError("Please select a delivery address");
+      return;
+    }
+
     try {
       setActionLoading(true);
       setMessage("");
       setError("");
-
-      if (!selectedAddressId) {
-        setError("Please select a delivery address");
-        return;
-      }
 
       const res = await placeOrderApi({
         addressId: selectedAddressId,
@@ -87,8 +122,15 @@ const Checkout = () => {
 
   const handleSelectAddress = async (id) => {
     setSelectedAddressId(id);
+
     try {
       await setDefaultAddressApi(id);
+      setAddresses((prev) =>
+        prev.map((address) => ({
+          ...address,
+          isDefault: address._id === id,
+        }))
+      );
     } catch (err) {
       console.error("Set default from checkout error:", err);
     }
@@ -155,8 +197,8 @@ const Checkout = () => {
                       </div>
 
                       <p>
-                        {address.houseNo}, {address.area}, {address.city}, {address.state} -{" "}
-                        {address.pincode}
+                        {address.houseNo}, {address.area}, {address.city},{" "}
+                        {address.state} - {address.pincode}
                       </p>
 
                       {address.landmark && <p>Landmark: {address.landmark}</p>}
@@ -215,23 +257,67 @@ const Checkout = () => {
                 <div className="emptyCheckoutItems">No items found in checkout.</div>
               ) : (
                 <div className="checkoutItemsList">
-                  {summary.items.map((item, index) => (
-                    <div className="checkoutItemCard" key={item.productId || index}>
-                      <div className="checkoutItemImage">
-                        <img src={item.image} alt={item.name} />
-                      </div>
+                  {summary.items.map((item, index) => {
+                    const price = Number(item?.price || 0);
+                    const qty = Number(item?.quantity || 1);
+                    const discountPercent = Number(item?.discount || 0);
+                    const discountAmount = (price * discountPercent) / 100;
+                    const finalPrice = price - discountAmount;
+                    const itemTotal = finalPrice * qty;
 
-                      <div className="checkoutItemContent">
-                        <h3>{item.name}</h3>
-                        <p>Quantity: {item.quantity}</p>
-                        {item.size && <p>Size: {item.size}</p>}
-                        <div className="checkoutItemPriceRow">
-                          <span>₹{item.price}.00</span>
-                          <strong>₹{item.subtotal}.00</strong>
+                    return (
+                      <div className="checkoutItemCard" key={item.productId || index}>
+                        <div className="checkoutItemImage">
+                          <img src={item.image} alt={item.name} />
+                        </div>
+
+                        <div className="checkoutItemContent">
+                          <h3>{item.name}</h3>
+                          <p>Quantity: {item.quantity}</p>
+                          {item.size && <p>Size: {item.size}</p>}
+
+                          <div className="checkoutItemPriceRow">
+                            <span>
+                              {discountPercent > 0 ? (
+                                <>
+                                  <span
+                                    style={{
+                                      textDecoration: "line-through",
+                                      marginRight: "8px",
+                                      opacity: 0.6,
+                                    }}
+                                  >
+                                    ₹{price.toFixed(2)}
+                                  </span>
+                                  <strong>₹{Math.round(finalPrice.toFixed(2))}.00</strong>
+                                  
+                                </>
+                              ) : (
+                                <>₹{price.toFixed(2)}</>
+                              )}
+                            </span>
+
+                            <strong>₹{Math.round(itemTotal.toFixed(2))}.00</strong>
+                           
+                          </div>
+
+                          {discountPercent > 0 && (
+                            <div
+                              className="checkoutDiscountTag"
+                              style={{
+                                marginTop: "8px",
+                                fontSize: "13px",
+                                fontWeight: "600",
+                                color: "#1e8e3e",
+                              }}
+                            >
+                              {discountPercent}% OFF
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -243,25 +329,25 @@ const Checkout = () => {
             <h2>Order Summary</h2>
 
             <div className="checkoutSummaryRow">
-              <span>Items ({summary?.totalItems || 0})</span>
-              <span>₹{summary?.subtotalAmount || 0}.00</span>
+              <span>Items ({calculatedSummary.totalItems})</span>
+              <span>₹{calculatedSummary.subtotal.toFixed(2)}</span>
             </div>
 
             <div className="checkoutSummaryRow">
               <span>Delivery</span>
-              <span>₹{summary?.deliveryCharge || 0}.00</span>
+              <span>₹{calculatedSummary.delivery.toFixed(2)}</span>
             </div>
 
             <div className="checkoutSummaryRow">
               <span>Discount</span>
-              <span>- ₹{summary?.discountAmount || 0}.00</span>
+              <span>- ₹{calculatedSummary.totalDiscount.toFixed(2)}</span>
             </div>
 
             <div className="checkoutDivider"></div>
 
             <div className="checkoutSummaryRow totalRow">
               <span>Total</span>
-              <span>₹{summary?.finalAmount || 0}.00</span>
+              <span>₹{Math.round(calculatedSummary.finalTotal)}.00</span>
             </div>
 
             <button

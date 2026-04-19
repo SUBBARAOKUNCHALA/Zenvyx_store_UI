@@ -1,0 +1,129 @@
+.adminLoginPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(138, 43, 226, 0.16), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255, 90, 95, 0.14), transparent 28%),
+    linear-gradient(135deg, #12081e 0%, #1b102a 45%, #26143a 100%);
+}
+
+.adminLoginCard {
+  width: 100%;
+  max-width: 460px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28px;
+  padding: 32px;
+  box-shadow: 0 30px 80px rgba(10, 0, 25, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.adminLoginTop {
+  margin-bottom: 24px;
+}
+
+.adminBadge {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #f4e9ff;
+  color: #7a35c1;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.adminLoginTop h1 {
+  margin: 0 0 8px;
+  color: #26143a;
+  font-size: 30px;
+}
+
+.adminLoginTop p {
+  margin: 0;
+  color: #6c5a7f;
+  line-height: 1.6;
+}
+
+.adminLoginError {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #ffd4d4;
+  font-weight: 600;
+}
+
+.adminLoginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.adminInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminInputGroup label {
+  color: #3f2a57;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.adminInputGroup input {
+  height: 52px;
+  border-radius: 16px;
+  border: 1px solid #e9dbf6;
+  background: #fbf8ff;
+  padding: 0 16px;
+  font-size: 15px;
+  color: #26143a;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.adminInputGroup input:focus {
+  border-color: #b980ff;
+  box-shadow: 0 0 0 4px rgba(185, 128, 255, 0.14);
+  background: #fff;
+}
+
+.adminLoginBtn {
+  margin-top: 8px;
+  height: 54px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #7a35c1, #d72638);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.adminLoginBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(122, 53, 193, 0.28);
+}
+
+.adminLoginBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 576px) {
+  .adminLoginCard {
+    padding: 24px 18px;
+    border-radius: 22px;
+  }
+
+  .adminLoginTop h1 {
+    font-size: 24px;
+  }
+}

@@ -3,7 +3,12 @@
   padding: 110px 20px 40px;
   background: linear-gradient(180deg, #fff 0%, #fff8fb 60%, #fff 100%);
 }
-
+.selectedSizeChip {
+  background: #f3e8ff;
+  color: #7c3aed;
+  font-weight: 700;
+  border: 1px solid #d8b4fe;
+}
 .checkoutContainer {
   max-width: 1250px;
   margin: 0 auto;

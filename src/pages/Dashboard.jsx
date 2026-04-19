@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Allproducts } from "../services/authService";
 import "./Dashboard.css";
 
@@ -9,32 +9,35 @@ const navItems = [
     label: "Shirts",
     key: "Shirt",
     sections: {
-      "Top Wear": ["Formal Shirts", "Casual Shirts", "Printed Shirts", "Slim Fit Shirts"],
-      "Popular": ["New Arrivals", "Trending Shirts", "Office Wear", "Party Wear"],
+      "Top Wear": [
+        "Formal Shirts",
+        "Casual Shirts",
+        "Printed Shirts",
+        "Trending Shirts",
+        "Party Wear",
+      ],
     },
   },
   {
     label: "T-Shirts",
     key: "T-Shirt",
     sections: {
-      "Styles": ["Round Neck", "Oversized", "Graphic", "Polo T-Shirts"],
-      "Popular": ["Cotton Tees", "Printed Tees", "Plain Tees", "Streetwear"],
+      Styles: ["Round Neck", "Polo T-Shirts", "Cotton T-Shirts"],
     },
   },
   {
     label: "Pants",
     key: "Pant",
     sections: {
-      "Bottom Wear": ["Chinos", "Jeans", "Cargo Pants", "Formal Pants"],
-      "Popular": ["Slim Fit", "Regular Fit", "Stretchable", "Daily Wear"],
+      "Bottom Wear": ["Jeans", "Cargo Pants", "Formal Pants"],
     },
   },
   {
     label: "New Arrivals",
     key: "All",
     sections: {
-      "Latest": ["Fresh Styles", "Trending Now", "Premium Picks", "Season Drop"],
-      "Collections": ["Urban Wear", "Classic Wear", "Summer Wear", "Festive Wear"],
+      Latest: ["Fresh Styles", "Trending Now", "Premium Picks", "Season Drop"],
+      Collections: ["Urban Wear", "Classic Wear", "Summer Wear", "Festive Wear"],
     },
   },
   {
@@ -42,15 +45,164 @@ const navItems = [
     key: "All",
     sections: {
       "Most Loved": ["Top Rated", "Most Ordered", "Popular Picks", "Budget Picks"],
-      "Explore": ["Premium Clothing", "Everyday Essentials", "Combo Styles", "Top Deals"],
+      Explore: ["Premium Clothing", "Everyday Essentials", "Combo Styles", "Top Deals"],
     },
   },
 ];
 
 const allSizes = ["", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
 
+const normalizeText = (value = "") =>
+  value
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[-_]/g, " ")
+    .replace(/\s+/g, " ");
+
+const synonymMap = {
+  shirt: ["shirt", "shirts", "formal shirt", "formal shirts", "casual shirt", "casual shirts"],
+  tshirt: [
+    "tshirt",
+    "t shirts",
+    "t shirt",
+    "t-shirts",
+    "tee",
+    "tees",
+    "round neck",
+    "polo",
+    "cotton t shirt",
+    "cotton t shirts",
+  ],
+  pant: ["pant", "pants", "trouser", "trousers", "jeans", "cargo", "formal pants"],
+  formal: ["formal", "office wear", "formal shirts", "formal pants"],
+  casual: ["casual", "casual shirts", "daily wear"],
+  roundneck: ["round neck", "roundneck"],
+  jeans: ["jeans", "denim", "pants"],
+  cargo: ["cargo", "cargo pants", "pants"],
+};
+
+const expandSearchTerms = (query = "") => {
+  const normalized = normalizeText(query);
+  if (!normalized) return [];
+
+  const words = normalized.split(" ").filter(Boolean);
+  const expanded = new Set([normalized, ...words]);
+
+  words.forEach((word) => {
+    if (synonymMap[word]) {
+      synonymMap[word].forEach((item) => expanded.add(normalizeText(item)));
+    }
+  });
+
+  if (normalized.includes("formal shirt")) {
+    expanded.add("shirt");
+    expanded.add("formal");
+    expanded.add("formal shirts");
+  }
+
+  if (
+    normalized.includes("t shirt") ||
+    normalized.includes("tshirt") ||
+    normalized.includes("tee") ||
+    normalized.includes("round neck") ||
+    normalized.includes("polo")
+  ) {
+    expanded.add("tshirt");
+    expanded.add("round neck");
+    expanded.add("polo");
+    expanded.add("cotton t shirts");
+  }
+
+  if (
+    normalized.includes("pant") ||
+    normalized.includes("pants") ||
+    normalized.includes("trouser") ||
+    normalized.includes("trousers") ||
+    normalized.includes("jeans") ||
+    normalized.includes("cargo")
+  ) {
+    expanded.add("pant");
+    expanded.add("pants");
+    expanded.add("jeans");
+    expanded.add("cargo pants");
+    expanded.add("formal pants");
+  }
+
+  return [...expanded];
+};
+
+const buildSearchBlob = (item) =>
+  normalizeText(
+    [
+      item?.name,
+      item?.description,
+      item?.category,
+      item?.subCategory,
+      ...(item?.sizes || []),
+      ...(item?.tags || []),
+    ].join(" ")
+  );
+
+const isTShirtProduct = (item) => {
+  const category = normalizeText(item?.category);
+  const subCategory = normalizeText(item?.subCategory);
+  const name = normalizeText(item?.name);
+
+  return (
+    category.includes("t shirt") ||
+    category.includes("tshirt") ||
+    category.includes("round neck") ||
+    category.includes("polo") ||
+    subCategory.includes("t shirt") ||
+    subCategory.includes("tshirt") ||
+    subCategory.includes("round neck") ||
+    subCategory.includes("polo") ||
+    name.includes("t shirt") ||
+    name.includes("tshirt") ||
+    name.includes("round neck") ||
+    name.includes("polo")
+  );
+};
+
+const matchesSelectedCategory = (item, selectedCategory) => {
+  if (selectedCategory === "All") return true;
+
+  const category = normalizeText(item?.category);
+  const subCategory = normalizeText(item?.subCategory);
+  const name = normalizeText(item?.name);
+
+  if (selectedCategory === "Shirt") {
+    return category.includes("shirt") && !isTShirtProduct(item);
+  }
+
+  if (selectedCategory === "T-Shirt") {
+    return isTShirtProduct(item);
+  }
+
+  if (selectedCategory === "Pant") {
+    return (
+      category.includes("pant") ||
+      category.includes("pants") ||
+      category.includes("jeans") ||
+      category.includes("cargo") ||
+      subCategory.includes("pant") ||
+      subCategory.includes("pants") ||
+      subCategory.includes("jeans") ||
+      subCategory.includes("cargo") ||
+      name.includes("pant") ||
+      name.includes("pants") ||
+      name.includes("jeans") ||
+      name.includes("cargo")
+    );
+  }
+
+  return false;
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +217,14 @@ const Dashboard = () => {
     const fetchProducts = async () => {
       try {
         const res = await Allproducts();
-        setProducts(res?.data?.data || []);
+        const rawProducts = res?.data?.data || [];
+
+        const enrichedProducts = rawProducts.map((item) => ({
+          ...item,
+          _searchBlob: buildSearchBlob(item),
+        }));
+
+        setProducts(enrichedProducts);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       } finally {
@@ -76,63 +235,117 @@ const Dashboard = () => {
     fetchProducts();
   }, []);
 
-const categoryCards = useMemo(() => {
-  const shirt = products.find((p) => p.category === "Shirt");
-  const tshirt = products.find((p) => p.category === "T-Shirt");
-  const pant = products.find((p) => p.category === "Pant");
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchFromUrl = params.get("search") || "";
+    setSearch(searchFromUrl);
+  }, [location.search]);
 
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80";
+  const chooseCategory = (category) => {
+    setSelectedCategory(category);
+    setHoveredNav(null);
 
-  return [
-    {
-      label: "Shirts",
-      value: "Shirt",
-      image: shirt?.image || fallbackImage,
-    },
-    {
-      label: "T-Shirts",
-      value: "T-Shirt",
-      image: tshirt?.image || fallbackImage,
-    },
-    {
-      label: "Pants",
-      value: "Pant",
-      image: pant?.image || fallbackImage,
-    },
-    {
-      label: "Trending",
-      value: "All",
-      image: products[0]?.image || fallbackImage,
-    },
-    {
-      label: "New",
-      value: "All",
-      image: products[1]?.image || products[0]?.image || fallbackImage,
-    },
-    {
-      label: "Best",
-      value: "All",
-      image: products[2]?.image || products[0]?.image || fallbackImage,
-    },
-  ];
-}, [products]);
+    const params = new URLSearchParams(location.search);
+    params.delete("search");
+    setSearch("");
+
+    navigate({
+      pathname: "/",
+      search: params.toString() ? `?${params.toString()}` : "",
+    });
+  };
+
+  const handleSubCategoryClick = (parentCategory, subCategory) => {
+    setSelectedCategory(parentCategory);
+    setSearch(subCategory);
+
+    const params = new URLSearchParams(location.search);
+    params.set("search", subCategory);
+
+    navigate({
+      pathname: "/",
+      search: `?${params.toString()}`,
+    });
+
+    setHoveredNav(null);
+  };
+
+  const toggleSize = (size) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    );
+  };
+
+  const clearAllFilters = () => {
+    setSelectedCategory("All");
+    setSelectedSizes([]);
+    setSearch("");
+    setSortBy("newest");
+    navigate("/");
+  };
+
+  const handleProductClick = (product) => {
+    navigate(`/product/${product._id}`, {
+      state: { product },
+    });
+  };
+
+  const categoryCards = useMemo(() => {
+    const shirt = products.find((p) => matchesSelectedCategory(p, "Shirt"));
+    const tshirt = products.find((p) => matchesSelectedCategory(p, "T-Shirt"));
+    const pant = products.find((p) => matchesSelectedCategory(p, "Pant"));
+
+    const fallbackImage =
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80";
+
+    return [
+      {
+        label: "Shirts",
+        value: "Shirt",
+        image: shirt?.image || fallbackImage,
+      },
+      {
+        label: "T-Shirts",
+        value: "T-Shirt",
+        image: tshirt?.image || fallbackImage,
+      },
+      {
+        label: "Pants",
+        value: "Pant",
+        image: pant?.image || fallbackImage,
+      },
+      {
+        label: "Trending",
+        value: "All",
+        image: products[0]?.image || fallbackImage,
+      },
+      {
+        label: "New",
+        value: "All",
+        image: products[1]?.image || products[0]?.image || fallbackImage,
+      },
+      {
+        label: "Best",
+        value: "All",
+        image: products[2]?.image || products[0]?.image || fallbackImage,
+      },
+    ];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     let data = [...products];
 
     if (selectedCategory !== "All") {
-      data = data.filter((item) => item.category === selectedCategory);
+      data = data.filter((item) => matchesSelectedCategory(item, selectedCategory));
     }
 
     if (search.trim()) {
-      const term = search.toLowerCase();
-      data = data.filter(
-        (item) =>
-          item.name?.toLowerCase().includes(term) ||
-          item.description?.toLowerCase().includes(term) ||
-          item.category?.toLowerCase().includes(term)
-      );
+      const searchTerms = expandSearchTerms(search);
+
+      data = data.filter((item) => {
+        const blob = item._searchBlob || buildSearchBlob(item);
+        return searchTerms.some((term) => blob.includes(term));
+      });
     }
 
     if (selectedSizes.length > 0) {
@@ -153,30 +366,6 @@ const categoryCards = useMemo(() => {
 
     return data;
   }, [products, selectedCategory, selectedSizes, search, sortBy]);
-
-  const toggleSize = (size) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
-  };
-
-  const chooseCategory = (category) => {
-    setSelectedCategory(category);
-    setHoveredNav(null);
-  };
-
-  const clearAllFilters = () => {
-    setSelectedCategory("All");
-    setSelectedSizes([]);
-    setSearch("");
-    setSortBy("newest");
-  };
-
-  const handleProductClick = (product) => {
-    navigate(`/product/${product._id}`, {
-      state: { product },
-    });
-  };
 
   return (
     <div className="dashboardPage">
@@ -225,7 +414,10 @@ const categoryCards = useMemo(() => {
                 <div className="megaColumn" key={title}>
                   <h4>{title}</h4>
                   {items.map((sub) => (
-                    <p key={sub} onClick={() => chooseCategory(hoveredNav.key)}>
+                    <p
+                      key={sub}
+                      onClick={() => handleSubCategoryClick(hoveredNav.key, sub)}
+                    >
                       {sub}
                     </p>
                   ))}
@@ -256,10 +448,7 @@ const categoryCards = useMemo(() => {
             >
               Shop Now
             </button>
-            <button
-              className="secondaryBtn"
-              onClick={() => setSelectedCategory("All")}
-            >
+            <button className="secondaryBtn" onClick={() => chooseCategory("All")}>
               Explore Collection
             </button>
           </div>
@@ -302,7 +491,7 @@ const categoryCards = useMemo(() => {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            onClick={() => setSelectedCategory(item.value)}
+            onClick={() => chooseCategory(item.value)}
           >
             <div className="categoryImageWrap">
               <img src={item.image} alt={item.label} />
@@ -396,6 +585,7 @@ const categoryCards = useMemo(() => {
 
             <div className="filterBlock">
               <h4>Category</h4>
+
               <label className="checkRow">
                 <input
                   type="radio"
@@ -405,6 +595,7 @@ const categoryCards = useMemo(() => {
                 />
                 <span>All</span>
               </label>
+
               <label className="checkRow">
                 <input
                   type="radio"
@@ -414,6 +605,7 @@ const categoryCards = useMemo(() => {
                 />
                 <span>Shirts</span>
               </label>
+
               <label className="checkRow">
                 <input
                   type="radio"
@@ -423,6 +615,7 @@ const categoryCards = useMemo(() => {
                 />
                 <span>T-Shirts</span>
               </label>
+
               <label className="checkRow">
                 <input
                   type="radio"
@@ -477,12 +670,13 @@ const categoryCards = useMemo(() => {
                   >
                     <div className="productImageBox">
                       <img src={product.image} alt={product.name} />
-                      <span className="productTag">{product.category}</span>
+                      <span className="productTag">
+                        {product.subCategory || product.category}
+                      </span>
                     </div>
 
                     <div className="productContent">
                       <h3>{product.name}</h3>
-                      {/* <p>{product.description}</p> */}
 
                       <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>

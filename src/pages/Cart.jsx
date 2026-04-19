@@ -17,55 +17,89 @@ const Cart = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
- const fetchCart = async () => {
-  try {
-    setLoading(true);
-    setError("");
+  const formatPrice = (value) => `₹${Number(value || 0).toFixed(0)}.00`;
 
-    const res = await getMyCartApi();
-    setCartItems(res?.data?.data || []);
+  const getDiscountedPriceDetails = (price, discountPercent, qty = 1) => {
+    const originalPrice = Number(price || 0);
+    const discount = Number(discountPercent || 0);
+    const quantity = Number(qty || 1);
 
-  } catch (err) {
-    console.error("Fetch cart error:", err);
+    const discountAmountPerUnit = Math.round((originalPrice * discount) / 100);
+    const discountedPricePerUnit = originalPrice - discountAmountPerUnit;
 
-    const status = err?.response?.status;
-    const code = err?.response?.data?.code;
-    if (status === 401) {
-      localStorage.removeItem("token");
+    const originalTotal = originalPrice * quantity;
+    const totalDiscount = discountAmountPerUnit * quantity;
+    const finalTotal = discountedPricePerUnit * quantity;
 
-      // optional: show message before redirect
-      setError("Session expired. Please login again");
+    return {
+      originalPrice,
+      discount,
+      quantity,
+      discountAmountPerUnit,
+      discountedPricePerUnit,
+      originalTotal,
+      totalDiscount,
+      finalTotal,
+    };
+  };
 
-      navigate("/login");
-      return;
+  const fetchCart = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await getMyCartApi();
+      setCartItems(res?.data?.data || []);
+    } catch (err) {
+      console.error("Fetch cart error:", err);
+
+      const status = err?.response?.status;
+      if (status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setError("Session expired. Please login again");
+        navigate("/login");
+        return;
+      }
+
+      setError(err?.response?.data?.message || "Failed to load cart");
+    } finally {
+      setLoading(false);
     }
-
-    // other errors
-    setError(err?.response?.data?.message || "Failed to load cart");
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   useEffect(() => {
     fetchCart();
   }, []);
 
   const cartSummary = useMemo(() => {
-    const subtotal = cartItems.reduce((acc, item) => {
-      const price = item?.productId?.price || 0;
-      const qty = item?.quantity || 1;
-      return acc + price * qty;
-    }, 0);
+    let subtotal = 0;
+    let totalDiscount = 0;
+    let totalItems = 0;
 
-    const totalItems = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    cartItems.forEach((item) => {
+      const product = item?.productId || {};
+      const qty = Number(item?.quantity || 1);
 
-    const shipping = subtotal > 0 ? 99 : 0;
-    const finalTotal = subtotal + shipping;
+      const priceDetails = getDiscountedPriceDetails(
+        product.price,
+        product.discount,
+        qty
+      );
+
+      subtotal += priceDetails.originalTotal;
+      totalDiscount += priceDetails.totalDiscount;
+      totalItems += qty;
+    });
+
+    const discountedSubtotal = subtotal - totalDiscount;
+    const shipping = discountedSubtotal > 999 ? 50 : 99;
+    const finalTotal = discountedSubtotal + shipping;
 
     return {
       subtotal,
+      totalDiscount,
+      discountedSubtotal,
       totalItems,
       shipping,
       finalTotal,
@@ -78,8 +112,8 @@ const Cart = () => {
       setMessage("");
       setError("");
 
-      const currentQty = item.quantity || 1;
-      const stock = item?.productId?.stock || 0;
+      const currentQty = Number(item?.quantity || 1);
+      const stock = Number(item?.productId?.stock || 0);
 
       if (stock > 0 && currentQty >= stock) {
         setError("Maximum stock reached");
@@ -111,11 +145,9 @@ const Cart = () => {
       setMessage("");
       setError("");
 
-      const currentQty = item.quantity || 1;
+      const currentQty = Number(item?.quantity || 1);
 
-      if (currentQty <= 1) {
-        return;
-      }
+      if (currentQty <= 1) return;
 
       await updateCartQuantityApi(item._id, {
         quantity: currentQty - 1,
@@ -221,8 +253,19 @@ const Cart = () => {
         <div className="cartLayout">
           <div className="cartItemsSection">
             {cartItems.map((item) => {
-              const product = item.productId || {};
-              const itemTotal = (product.price || 0) * (item.quantity || 1);
+              const product = item?.productId || {};
+              const qty = Number(item?.quantity || 1);
+
+              const {
+                originalPrice,
+                discount,
+                discountedPricePerUnit,
+                finalTotal,
+              } = getDiscountedPriceDetails(
+                product.price,
+                product.discount,
+                qty
+              );
 
               return (
                 <div className="cartCard" key={item._id}>
@@ -250,23 +293,48 @@ const Cart = () => {
                     </div>
 
                     <p className="cartDescription">
-                      {product.description || "Premium product selected for your cart."}
+                      {product.description ||
+                        "Premium product selected for your cart."}
                     </p>
 
                     <div className="cartMetaRow">
-                      <span className="cartPrice">₹{product.price}.00</span>
+                      <span className="cartPrice">
+                        {discount > 0 ? (
+                          <>
+                            <span
+                              style={{
+                                textDecoration: "line-through",
+                                marginRight: "8px",
+                                opacity: 0.6,
+                              }}
+                            >
+                              {formatPrice(originalPrice)}
+                            </span>
+                            <strong>{formatPrice(discountedPricePerUnit)}</strong>
+                          </>
+                        ) : (
+                          <>{formatPrice(originalPrice)}</>
+                        )}
+                      </span>
+
                       <span className="cartStock">
-                        {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}
+                        {product.stock > 0
+                          ? `${product.stock} in stock`
+                          : "Out of stock"}
                       </span>
                     </div>
 
-                    {product.sizes?.length > 0 && (
+                    {discount > 0 && (
+                      <div className="cartDiscountRow">
+                        <span>{discount}% OFF</span>
+                      </div>
+                    )}
+
+                    {item.size && (
                       <div className="cartSizesRow">
-                        {product.sizes.map((size) => (
-                          <span key={size} className="cartSizeChip">
-                            {size}
-                          </span>
-                        ))}
+                        <span className="cartSizeChip selectedSizeChip">
+                          Size: {item.size}
+                        </span>
                       </div>
                     )}
 
@@ -275,19 +343,19 @@ const Cart = () => {
                         <button
                           className="qtyControlBtn"
                           onClick={() => handleDecreaseQty(item)}
-                          disabled={actionLoading || item.quantity <= 1}
+                          disabled={actionLoading || qty <= 1}
                         >
                           -
                         </button>
 
-                        <span className="qtyNumber">{item.quantity}</span>
+                        <span className="qtyNumber">{qty}</span>
 
                         <button
                           className="qtyControlBtn"
                           onClick={() => handleIncreaseQty(item)}
                           disabled={
                             actionLoading ||
-                            (product.stock > 0 ? item.quantity >= product.stock : false)
+                            (product.stock > 0 ? qty >= product.stock : false)
                           }
                         >
                           +
@@ -295,7 +363,7 @@ const Cart = () => {
                       </div>
 
                       <div className="cartItemTotal">
-                        Total: <strong>₹{itemTotal}.00</strong>
+                        Total: <strong>{formatPrice(finalTotal)}</strong>
                       </div>
                     </div>
                   </div>
@@ -309,19 +377,24 @@ const Cart = () => {
 
             <div className="summaryRow">
               <span>Items ({cartSummary.totalItems})</span>
-              <span>₹{cartSummary.subtotal}.00</span>
+              <span>{formatPrice(cartSummary.subtotal)}</span>
+            </div>
+
+            <div className="summaryRow">
+              <span>Discount</span>
+              <span>- {formatPrice(cartSummary.totalDiscount)}</span>
             </div>
 
             <div className="summaryRow">
               <span>Shipping</span>
-              <span>₹{cartSummary.shipping}.00</span>
+              <span>{formatPrice(cartSummary.shipping)}</span>
             </div>
 
             <div className="summaryDivider"></div>
 
             <div className="summaryRow totalSummaryRow">
               <span>Total</span>
-              <span>₹{cartSummary.finalTotal}.00</span>
+              <span>{formatPrice(cartSummary.finalTotal)}</span>
             </div>
 
             <button className="checkoutBtn" onClick={handleCheckout}>

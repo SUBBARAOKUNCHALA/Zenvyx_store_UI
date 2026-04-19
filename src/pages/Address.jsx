@@ -51,6 +51,7 @@ const Address = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -102,6 +103,7 @@ const Address = () => {
       addressType: address.addressType || "Home",
       isDefault: !!address.isDefault,
     });
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -135,7 +137,20 @@ const Address = () => {
 
       const res = await setDefaultAddressApi(id);
       setMessage(res?.data?.message || "Default address updated");
-      fetchAddresses();
+
+      setAddresses((prev) =>
+        prev.map((address) => ({
+          ...address,
+          isDefault: address._id === id,
+        }))
+      );
+
+      if (editingId === id) {
+        setForm((prev) => ({
+          ...prev,
+          isDefault: true,
+        }));
+      }
     } catch (err) {
       console.error("Set default address error:", err);
       setError(err?.response?.data?.message || "Failed to set default address");

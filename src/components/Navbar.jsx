@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -9,6 +9,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const [showProfilePanel, setShowProfilePanel] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const isLogin = location.pathname === "/login";
   const buttonText = isLogin ? "Register" : "Login";
@@ -29,6 +30,40 @@ const Navbar = () => {
     user?.name?.charAt(0)?.toUpperCase() ||
     user?.email?.charAt(0)?.toUpperCase() ||
     "U";
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const urlSearch = params.get("search") || "";
+    setSearchText(urlSearch);
+  }, [location.search]);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+
+    const trimmedValue = value.trim();
+
+    if (location.pathname !== "/") {
+      navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
+      return;
+    }
+
+    const params = new URLSearchParams(location.search);
+
+    if (trimmedValue) {
+      params.set("search", trimmedValue);
+    } else {
+      params.delete("search");
+    }
+
+    navigate(
+      {
+        pathname: "/",
+        search: params.toString() ? `?${params.toString()}` : "",
+      },
+      { replace: true }
+    );
+  };
 
   const toggleProfilePanel = () => {
     if (!token || !user) {
@@ -56,6 +91,8 @@ const Navbar = () => {
             type="text"
             placeholder="Search..."
             className="searchInput"
+            value={searchText}
+            onChange={handleSearchChange}
           />
         </div>
 

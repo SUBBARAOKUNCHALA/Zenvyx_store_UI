@@ -37,6 +37,8 @@ export const getMyOrdersApi = () => API.get("/orders/my-orders");
 export const getOrderByIdApi = (orderId) => API.get(`/orders/${orderId}`);
 export const cancelMyOrderApi = (orderId, data) =>
   API.put(`/orders/${orderId}/cancel`, data);
+export const returnOrderApi = (orderId, data) =>
+  API.put(`/orders/${orderId}/return`, data);
 
 // ADMIN APIS
 export const adminLoginApi = (data) => API.post("/admin/login", data);

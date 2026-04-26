@@ -169,10 +169,40 @@ const handleAddToCart = async () => {
   }
 };
 
-  const handleBuyNow = async () => {
-    await handleAddToCart();
-    navigate("/cart");
-  };
+  // const handleBuyNow = async () => {
+  //   await handleAddToCart();
+  //   navigate("/cart");
+  // };
+  const handleBuyNow = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    setCartError("Please login first to buy this product");
+    return;
+  }
+
+  if (!selectedSize) {
+    setCartError("Please select a size");
+    return;
+  }
+
+  navigate("/checkout", {
+    state: {
+      mode: "buyNow",
+      item: {
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        discount: product.discount || 0,
+        quantity,
+        size: selectedSize,
+        image: product.image || product.images?.[0],
+        category: product.category,
+        stock: product.stock,
+      },
+    },
+  });
+};
 
   if (loading) {
     return <div style={{ padding: "100px 20px" }}>Loading product details...</div>;

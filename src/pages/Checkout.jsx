@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   getCheckoutSummaryApi,
   getMyAddressesApi,
@@ -9,7 +9,12 @@ import {
 import "./Checkout.css";
 
 const Checkout = () => {
+
+  // const navigate = useNavigate();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const buyNowItem = location.state?.mode === "buyNow" ? location.state.item : null;
 
   const [summary, setSummary] = useState(null);
   const [addresses, setAddresses] = useState([]);
@@ -25,24 +30,30 @@ const Checkout = () => {
       setLoading(true);
       setError("");
 
-      const [summaryRes, addressRes] = await Promise.all([
-        getCheckoutSummaryApi(),
-        getMyAddressesApi(),
-      ]);
-
-      const summaryData = summaryRes?.data?.data || null;
+      const addressRes = await getMyAddressesApi();
       const addressData = addressRes?.data?.data || [];
 
-      setSummary(summaryData);
       setAddresses(addressData);
 
-      if (summaryData?.address?._id) {
-        setSelectedAddressId(summaryData.address._id);
+      if (buyNowItem) {
+        setSummary({
+          items: [buyNowItem],
+          address: null,
+        });
       } else {
-        const defaultAddress = addressData.find((item) => item.isDefault);
-        if (defaultAddress) {
-          setSelectedAddressId(defaultAddress._id);
+        const summaryRes = await getCheckoutSummaryApi();
+        const summaryData = summaryRes?.data?.data || null;
+
+        setSummary(summaryData);
+
+        if (summaryData?.address?._id) {
+          setSelectedAddressId(summaryData.address._id);
         }
+      }
+
+      const defaultAddress = addressData.find((item) => item.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress._id);
       }
     } catch (err) {
       console.error("Checkout fetch error:", err);
@@ -64,7 +75,7 @@ const Checkout = () => {
     let totalItems = 0;
 
     items.forEach((item) => {
-        console.log("checkout item ",item)
+      console.log("checkout item ", item)
       const price = Number(item?.price || 0);
       const qty = Number(item?.quantity || 1);
       const discountPercent = Number(item?.discount || 0);
@@ -102,10 +113,21 @@ const Checkout = () => {
       setMessage("");
       setError("");
 
-      const res = await placeOrderApi({
+      // const res = await placeOrderApi({
+      //   addressId: selectedAddressId,
+      //   paymentMethod,
+      // });
+      const payload = {
         addressId: selectedAddressId,
         paymentMethod,
-      });
+      };
+
+      if (buyNowItem) {
+        payload.mode = "buyNow";
+        payload.item = buyNowItem;
+      }
+
+      const res = await placeOrderApi(payload);
 
       setMessage(res?.data?.message || "Order placed successfully");
 
@@ -290,7 +312,7 @@ const Checkout = () => {
                                     ₹{price.toFixed(2)}
                                   </span>
                                   <strong>₹{Math.round(finalPrice.toFixed(2))}.00</strong>
-                                  
+
                                 </>
                               ) : (
                                 <>₹{price.toFixed(2)}</>
@@ -298,7 +320,7 @@ const Checkout = () => {
                             </span>
 
                             <strong>₹{Math.round(itemTotal.toFixed(2))}.00</strong>
-                           
+
                           </div>
 
                           {discountPercent > 0 && (

@@ -177,6 +177,7 @@ const Address = () => {
                 placeholder="Full Name"
                 value={form.fullName}
                 onChange={handleChange}
+                autoComplete="off"
                 required
               />
               <input
@@ -185,6 +186,7 @@ const Address = () => {
                 placeholder="Mobile Number"
                 value={form.mobile}
                 onChange={handleChange}
+                autoComplete="off"
                 required
               />
               <input
@@ -192,6 +194,7 @@ const Address = () => {
                 name="pincode"
                 placeholder="Pincode"
                 value={form.pincode}
+                autoComplete="off"
                 onChange={handleChange}
                 required
               />
@@ -200,6 +203,7 @@ const Address = () => {
                 name="state"
                 placeholder="State"
                 value={form.state}
+                autoComplete="off"
                 onChange={handleChange}
                 required
               />
@@ -208,6 +212,7 @@ const Address = () => {
                 name="city"
                 placeholder="City"
                 value={form.city}
+                autoComplete="off"
                 onChange={handleChange}
                 required
               />
@@ -216,6 +221,7 @@ const Address = () => {
                 name="houseNo"
                 placeholder="House No / Flat / Building"
                 value={form.houseNo}
+                autoComplete="off"
                 onChange={handleChange}
                 required
               />
@@ -224,6 +230,7 @@ const Address = () => {
                 name="area"
                 placeholder="Area / Street / Locality"
                 value={form.area}
+                autoComplete="off"
                 onChange={handleChange}
                 required
               />
@@ -232,6 +239,7 @@ const Address = () => {
                 name="landmark"
                 placeholder="Landmark"
                 value={form.landmark}
+                autoComplete="off"
                 onChange={handleChange}
               />
 

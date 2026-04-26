@@ -676,7 +676,7 @@ const Dashboard = () => {
                     </div>
 
                     <div className="productContent">
-                      <h3>{product.name}</h3>
+                      <h4>{product.name}</h4>
 
                       <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>

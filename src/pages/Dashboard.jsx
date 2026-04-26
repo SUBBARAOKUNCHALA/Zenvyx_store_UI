@@ -200,7 +200,18 @@ const matchesSelectedCategory = (item, selectedCategory) => {
   return false;
 };
 
+
+const getLetterSizes = (sizes = []) => {
+  return sizes.filter((size) => isNaN(Number(size)));
+};
+
+const getNumberSizes = (sizes = []) => {
+  return sizes.filter((size) => !isNaN(Number(size)));
+};
+
 const Dashboard = () => {
+
+  const [showInchSizes, setShowInchSizes] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -379,12 +390,11 @@ const Dashboard = () => {
           {navItems.map((item, index) => (
             <motion.button
               key={item.label}
-              className={`subNavItem ${
-                selectedCategory === item.key ||
+              className={`subNavItem ${selectedCategory === item.key ||
                 (item.key === "All" && selectedCategory === "All")
-                  ? "activeSubNav"
-                  : ""
-              }`}
+                ? "activeSubNav"
+                : ""
+                }`}
               onMouseEnter={() => setHoveredNav(item)}
               onClick={() => chooseCategory(item.key)}
               initial={{ opacity: 0, y: -10 }}
@@ -636,9 +646,8 @@ const Dashboard = () => {
                     <button
                       key={size}
                       type="button"
-                      className={`sizeChip ${
-                        selectedSizes.includes(size) ? "activeSize" : ""
-                      }`}
+                      className={`sizeChip ${selectedSizes.includes(size) ? "activeSize" : ""
+                        }`}
                       onClick={() => toggleSize(size)}
                     >
                       {size}
@@ -687,13 +696,44 @@ const Dashboard = () => {
                         </span>
                       </div>
 
-                      <div className="sizesRow">
+                      {/* <div className="sizesRow">
                         {product.sizes?.map((size) => (
                           <span key={size} className="productSize">
                             {size}
                           </span>
                         ))}
+                      </div> */}
+                      <div className="sizesRow">
+                        {(showInchSizes[product._id]
+                          ? getNumberSizes(product.sizes)
+                          : getLetterSizes(product.sizes)
+                        ).map((size) => (
+                          <span key={size} className="productSize">
+                            {size}
+                          </span>
+                        ))}
                       </div>
+
+                      {getNumberSizes(product.sizes).length > 0 && (
+                        <div
+                          className="inchSizeBox"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <label className="inchCheckLabel">
+                            <input
+                              type="checkbox"
+                              checked={!!showInchSizes[product._id]}
+                              onChange={(e) =>
+                                setShowInchSizes((prev) => ({
+                                  ...prev,
+                                  [product._id]: e.target.checked,
+                                }))
+                              }
+                            />
+                            In Inches
+                          </label>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}

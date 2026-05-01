@@ -81,9 +81,16 @@ const Navbar = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="logoContainer" onClick={() => navigate("/")}>
+        {/* <div className="logoContainer" onClick={() => navigate("/")}>
           <strong className="logoText">ZENVYX</strong>
           <span className="subtext">-- We Create Attitude --</span>
+        </div> */}
+        <div className="logoContainer" onClick={() => navigate("/")}>
+          <img
+            src="/zenvyx_logo.png" 
+            alt="ZENVYX"
+            className="logoImage"
+          />
         </div>
 
         <div className="searchContainer">

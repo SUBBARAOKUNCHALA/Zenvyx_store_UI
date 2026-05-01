@@ -34,6 +34,7 @@
   letter-spacing: 1px;
 }
 
+
 .subtext {
   font-size: 11px;
   color: #7f6a92;
@@ -101,6 +102,17 @@
   font-size: 20px;
 }
 
+.logoContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logoImage {
+  height: 30px;   /* adjust based on your navbar */
+  width: auto;
+  object-fit: contain;
+}
 /* LOGIN BUTTON */
 .navBtn {
   border: none;

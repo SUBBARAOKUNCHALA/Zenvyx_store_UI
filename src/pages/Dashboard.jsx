@@ -686,15 +686,51 @@ const Dashboard = () => {
 
                     <div className="productContent">
                       <h4>{product.name}</h4>
+                      {/* <p>{product.description}</p> */}
 
-                      <div className="priceRow">
+                      {/* <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>
                         <span className="stockText">
                           {product.stock > 0
                             ? `${product.stock} left`
                             : "Out of stock"}
                         </span>
-                      </div>
+                      </div> */}
+
+                      {(() => {
+                        const price = Number(product.price) || 0;
+                        const discountPercent = Number(product.discount) || 0;
+                        const finalPrice =
+                          discountPercent > 0 ? price - (price * discountPercent) / 100 : price;
+
+                        return (
+                          <div className="productMetaBlock">
+                            <div className="productPriceStockRow">
+                              <div className="productPriceArea">
+                                {discountPercent > 0 && (
+                                  <span className="oldPrice">₹{price.toFixed(2)}</span>
+                                )}
+
+                                <span className="price">₹{Math.round(finalPrice)}.00</span>
+
+                                {discountPercent > 0 && (
+                                  <span className="dashboardDiscountTag">
+                                    {discountPercent}% OFF
+                                  </span>
+                                )}
+                              </div>
+
+                              <span
+                                className={`stockText 
+                                ${product.stock > 40 ? "highStockText" : ""}
+                                ${product.stock <= 40 && product.stock > 0 ? "lowStockText" : ""}
+                                ${product.stock <= 0 ? "outStockText" : ""}`}>
+                                {product.stock > 0 ? `${product.stock} left` : "Out of stock"}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })()}
 
                       {/* <div className="sizesRow">
                         {product.sizes?.map((size) => (
@@ -703,7 +739,7 @@ const Dashboard = () => {
                           </span>
                         ))}
                       </div> */}
-                      <div className="sizesRow">
+                      {/* <div className="sizesRow">
                         {(showInchSizes[product._id]
                           ? getNumberSizes(product.sizes)
                           : getLetterSizes(product.sizes)
@@ -733,7 +769,7 @@ const Dashboard = () => {
                             In Inches
                           </label>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </motion.div>
                 ))}

@@ -478,8 +478,33 @@
   align-items: center;
   margin-bottom: 14px;
   gap: 10px;
+  margin-top: 10px;
 }
 
+.dashboardPriceBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.oldPrice {
+  font-size: 18px;
+  color:#d61c1c;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.dashboardDiscountTag {
+  margin-top: 6px;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e8e3e;
+  background: #eaf7ee;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
 .price {
   font-size: 20px;
   font-weight: 800;
@@ -487,7 +512,7 @@
 }
 
 .stockText {
-  color: #0f9f6e;
+  /* color: #0f9f6e; */
   font-size: 13px;
   font-weight: 700;
 }
@@ -725,4 +750,123 @@
 .inchSize {
   background: #f4ecff;
   color: #4c1d95;
+}
+
+.productContent {
+  padding: 14px 16px 16px;
+}
+
+.productContent h4 {
+  margin: 0 0 10px;
+  color: #08051f;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 800;
+  min-height: 58px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.productMetaBlock {
+  margin-bottom: 12px;
+}
+
+.productPriceStockRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.productPriceArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.oldPrice {
+    font-size: 18px;
+  color:#000000;
+  text-decoration: line-through;
+  line-height: 1;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 900;
+  color: #08051f;
+  line-height: 1.1;
+}
+
+.dashboardDiscountTag {
+  margin-top: 5px;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 800;
+  color: #15803d;
+  background: #e9f8ef;
+  padding: 5px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.stockText {
+  min-width: 48px;
+  text-align: right;
+  /* color: #ef1235; */
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.25;
+  margin-top: 22px;
+}
+
+.outStockText {
+  color: #777;
+}
+
+.sizesRow {
+  display: inline-table;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
+}
+
+.productSize {
+  background: #f7f0fb;
+  color: #5a4770;
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 7px 10px;
+  font-weight: 800;
+}
+
+.inchSizeBox {
+  margin-top: 4px;
+}
+
+.inchCheckLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6d28d9;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.highStockText {
+  color: #16a34a !important; /* green */
+}
+
+.lowStockText {
+  color: #ef4444 !important; /* red */
+}
+
+.outStockText {
+  color: #777 !important; /* grey */
 }

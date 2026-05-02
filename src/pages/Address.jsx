@@ -7,7 +7,6 @@ import {
   updateAddressApi,
 } from "../services/authService";
 import "./Address.css";
-
 const initialForm = {
   fullName: "",
   mobile: "",

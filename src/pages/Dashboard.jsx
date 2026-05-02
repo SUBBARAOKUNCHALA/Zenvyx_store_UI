@@ -210,7 +210,7 @@ const getNumberSizes = (sizes = []) => {
 };
 
 const Dashboard = () => {
-
+  const [hoveredProductId, setHoveredProductId] = useState(null);
   const [showInchSizes, setShowInchSizes] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
@@ -677,16 +677,61 @@ const Dashboard = () => {
                     transition={{ delay: index * 0.04 }}
                     onClick={() => handleProductClick(product)}
                   >
-                    <div className="productImageBox">
+                    {/* <div className="productImageBox">
                       <img src={product.image} alt={product.name} />
                       <span className="productTag">
                         {product.subCategory || product.category}
                       </span>
-                    </div>
+                    </div> */}
+                    <div
+  className="productImageBox"
+  onMouseEnter={() => setHoveredProductId(product._id)}
+  onMouseLeave={() => setHoveredProductId(null)}
+>
+  {(() => {
+    const productImages = [
+      product.image,
+      ...(product.images || []),
+    ].filter(Boolean);
+
+    return (
+      <>
+        {productImages.map((img, imgIndex) => (
+          <img
+            key={imgIndex}
+            src={img}
+            alt={product.name}
+            className={`slideImage ${
+              hoveredProductId === product._id ? "playSlide" : ""
+            }`}
+            style={{
+              animationDelay: `${imgIndex * 1.4}s`,
+            }}
+          />
+        ))}
+
+       <div className="slideDots">
+  {productImages.map((_, dotIndex) => (
+    <span
+      key={dotIndex}
+      style={{
+        animationDelay: `${dotIndex * 2}s`,
+      }}
+    ></span>
+  ))}
+</div>
+      </>
+    );
+  })()}
+
+  <span className="productTag">
+    {product.subCategory || product.category}
+  </span>
+</div>
 
                     <div className="productContent">
-                      <h4>{product.name}</h4>
-                      {/* <p>{product.description}</p> */}
+                      <h3>{product.name}</h3>
+                      <p>{product.description}</p>
 
                       {/* <div className="priceRow">
                         <span className="price">₹{product.price}.00</span>
@@ -704,30 +749,17 @@ const Dashboard = () => {
                           discountPercent > 0 ? price - (price * discountPercent) / 100 : price;
 
                         return (
-                          <div className="productMetaBlock">
-                            <div className="productPriceStockRow">
-                              <div className="productPriceArea">
-                                {discountPercent > 0 && (
-                                  <span className="oldPrice">₹{price.toFixed(2)}</span>
-                                )}
+                          <div className="priceRowSingle">
+                            <span className="price">₹{Math.round(finalPrice)}.00</span>
 
-                                <span className="price">₹{Math.round(finalPrice)}.00</span>
-
-                                {discountPercent > 0 && (
-                                  <span className="dashboardDiscountTag">
-                                    {discountPercent}% OFF
-                                  </span>
-                                )}
-                              </div>
-
-                              <span
-                                className={`stockText 
-                                ${product.stock > 40 ? "highStockText" : ""}
-                                ${product.stock <= 40 && product.stock > 0 ? "lowStockText" : ""}
-                                ${product.stock <= 0 ? "outStockText" : ""}`}>
-                                {product.stock > 0 ? `${product.stock} left` : "Out of stock"}
+                            {discountPercent > 0 && (
+                              <span className="oldPrice">₹{price.toFixed(2)}</span>
+                            )}
+                            {discountPercent > 0 && (
+                              <span className="discountText">
+                                ({discountPercent}% OFF)
                               </span>
-                            </div>
+                            )}
                           </div>
                         );
                       })()}

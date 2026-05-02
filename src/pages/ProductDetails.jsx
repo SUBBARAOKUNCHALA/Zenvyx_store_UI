@@ -360,6 +360,10 @@ const handleAddToCart = async () => {
                 <strong>Discount</strong>
                 {product.discount > 0 ? `${product.discount}%` : "No discount"}
               </div>
+              <div className="infoItem productDetailsItem">
+                <strong>ProductDetails</strong>
+                {product.ProductDetails}
+              </div>  
             </div>
           </div>
 

@@ -544,3 +544,33 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 28px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: #4b3f68;
+}
+
+.infoItem strong {
+  color: #160039;
+  font-size: 14px;
+}
+
+.productDetailsItem {
+  grid-column: 1 / -1;
+}
+
+.productDetailsItem p {
+  margin: 0;
+  line-height: 1.7;
+  font-size: 14px;
+  color: #4b3f68;
+  white-space: pre-line;
+  max-width: 100%;
+}

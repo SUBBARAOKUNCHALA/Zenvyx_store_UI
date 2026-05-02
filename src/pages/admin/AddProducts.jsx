@@ -9,15 +9,16 @@ const categoryOptions = {
 };
 
 const sizeOptionsByCategory = {
-  Shirt: ["S", "M", "L", "XL", "XXL","28", "30", "32", "34", "36", "38"],
-  "T-Shirt": ["S", "M", "L", "XL", "XXL","28", "30", "32", "34", "36", "38"],
-  Pant: ["28", "30", "32", "34", "36", "38","S", "M", "L", "XL", "XXL",],
+  Shirt: ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"],
+  "T-Shirt": ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"],
+  Pant: ["28", "30", "32", "34", "36", "38", "S", "M", "L", "XL", "XXL"],
 };
 
 const AddProducts = () => {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    ProductDetails: "",
     price: "",
     category: "",
     subCategory: "",
@@ -80,10 +81,29 @@ const AddProducts = () => {
     setPreviewUrls(urls);
   };
 
+  const moveImage = (fromIndex, toIndex) => {
+    if (toIndex < 0 || toIndex >= images.length) return;
+
+    const updatedImages = [...images];
+    const updatedPreviewUrls = [...previewUrls];
+
+    const [movedImage] = updatedImages.splice(fromIndex, 1);
+    const [movedPreview] = updatedPreviewUrls.splice(fromIndex, 1);
+
+    updatedImages.splice(toIndex, 0, movedImage);
+    updatedPreviewUrls.splice(toIndex, 0, movedPreview);
+
+    setImages(updatedImages);
+    setPreviewUrls(updatedPreviewUrls);
+  };
+
   const resetForm = () => {
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
     setForm({
       name: "",
       description: "",
+      ProductDetails: "",
       price: "",
       category: "",
       subCategory: "",
@@ -91,6 +111,7 @@ const AddProducts = () => {
       discount: "",
       sizes: [],
     });
+
     setImages([]);
     setPreviewUrls([]);
   };
@@ -124,8 +145,10 @@ const AddProducts = () => {
       }
 
       const formData = new FormData();
+
       formData.append("name", form.name);
       formData.append("description", form.description);
+      formData.append("ProductDetails", form.ProductDetails);
       formData.append("price", form.price);
       formData.append("category", form.category);
       formData.append("subCategory", form.subCategory);
@@ -171,16 +194,29 @@ const AddProducts = () => {
                   placeholder="Enter product name"
                   value={form.name}
                   onChange={handleChange}
+                  maxLength={20}
                   required
                 />
               </div>
 
               <div className="inputGroup fullWidth">
                 <label>Description</label>
-                <textarea
+                <input
                   name="description"
                   placeholder="Enter product description"
                   value={form.description}
+                  onChange={handleChange}
+                  maxLength={30}
+                  required
+                />
+              </div>
+
+              <div className="inputGroup fullWidth">
+                <label>ProductDetails</label>
+                <textarea
+                  name="ProductDetails"
+                  placeholder="Enter product ProductDetails"
+                  value={form.ProductDetails}
                   onChange={handleChange}
                   rows={4}
                   required
@@ -270,7 +306,9 @@ const AddProducts = () => {
                 <label>Sizes</label>
 
                 {!form.category ? (
-                  <p className="selectCategoryHint">Select category first to choose sizes.</p>
+                  <p className="selectCategoryHint">
+                    Select category first to choose sizes.
+                  </p>
                 ) : (
                   <div className="sizesButtonWrap">
                     {sizeOptions.map((size) => (
@@ -302,14 +340,36 @@ const AddProducts = () => {
               {previewUrls.length > 0 && (
                 <div className="inputGroup fullWidth">
                   <label>Image Preview</label>
+
                   <div className="imagePreviewGrid">
                     {previewUrls.map((url, index) => (
-                      <img
-                        key={index}
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        className="previewImage"
-                      />
+                      <div className="previewImageBox" key={index}>
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          className="previewImage"
+                        />
+
+                        <span className="imageOrderBadge">{index + 1}</span>
+
+                        <div className="imageMoveActions">
+                          <button
+                            type="button"
+                            onClick={() => moveImage(index, index - 1)}
+                            disabled={index === 0}
+                          >
+                            ←
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => moveImage(index, index + 1)}
+                            disabled={index === previewUrls.length - 1}
+                          >
+                            →
+                          </button>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </div>

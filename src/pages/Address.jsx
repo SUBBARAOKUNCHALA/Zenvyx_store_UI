@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   addAddressApi,
   deleteAddressApi,
@@ -28,6 +29,7 @@ const Address = () => {
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const fetchAddresses = async () => {
     try {
@@ -80,6 +82,7 @@ const Address = () => {
 
       resetForm();
       fetchAddresses();
+      navigate(-1);
     } catch (err) {
       console.error("Save address error:", err);
       setError(err?.response?.data?.message || "Failed to save address");

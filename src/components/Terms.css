@@ -1,0 +1,41 @@
+.termsPage {
+  padding: 60px 6%;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+.termsContainer {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.termsContainer h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.lastUpdated {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 25px;
+}
+
+.termsContainer section {
+  margin-bottom: 24px;
+}
+
+.termsContainer h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.termsContainer p {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.7;
+}

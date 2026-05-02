@@ -574,3 +574,55 @@
   white-space: pre-line;
   max-width: 100%;
 }
+.sizeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inchCheckBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  color: rgb(2, 2, 2);
+}
+
+.inchCheckBox input {
+  width: 16px;
+  height: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.productPriceWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  color: #888;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.finalPrice {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.productDiscountBadge {
+  background: #ff4d4f;
+  color: #fff;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+}

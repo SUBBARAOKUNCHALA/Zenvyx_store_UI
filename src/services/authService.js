@@ -7,7 +7,12 @@ export const sendOtp = (data) => API.post("/auth/send-otp", data);
 export const validateOtp = (data) => API.post("/auth/validate-otp", data);
 export const resetPasswordWithOtp = (data) =>
   API.post("/auth/reset-password", data);
+// Payment APis
+export const createRazorpayOrderApi = (data) =>
+  API.post("/payment/create-order", data);
 
+export const verifyRazorpayPaymentApi = (data) =>
+  API.post("/payment/verify", data);
 export const Allproducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const getSimilarProducts = (id) => API.get(`/products/${id}/similar`);

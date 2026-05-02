@@ -17,6 +17,7 @@ import AddProducts from "./pages/admin/AddProducts";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminOrders from "./pages/admin/AdminOrders";
 import ReturnedOrders from "./pages/admin/ReturnedOrders";
+import Terms from "./components/Terms";
 import "./App.css";
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/terms" element={<Terms />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/product/:id" element={<ProductDetails />} />

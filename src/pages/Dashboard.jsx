@@ -4,6 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Allproducts } from "../services/authService";
 import "./Dashboard.css";
 
+const footerLinks = {
+  Shop: ["Shirts", "T-Shirts", "Pants", "New Arrivals", "Best Sellers"],
+  Support: ["Contact Us", "Track Order", "Returns & Refunds", "Shipping Policy"],
+  Company: ["About ZENVYX", "Privacy Policy", "Terms & Conditions", "Careers"],
+};
+
+const socialLinks = ["Instagram", "Facebook", "YouTube", "LinkedIn"];
+
 const navItems = [
   {
     label: "Shirts",
@@ -684,50 +692,49 @@ const Dashboard = () => {
                       </span>
                     </div> */}
                     <div
-  className="productImageBox"
-  onMouseEnter={() => setHoveredProductId(product._id)}
-  onMouseLeave={() => setHoveredProductId(null)}
->
-  {(() => {
-    const productImages = [
-      product.image,
-      ...(product.images || []),
-    ].filter(Boolean);
+                      className="productImageBox"
+                      onMouseEnter={() => setHoveredProductId(product._id)}
+                      onMouseLeave={() => setHoveredProductId(null)}
+                    >
+                      {(() => {
+                        const productImages = [
+                          product.image,
+                          ...(product.images || []),
+                        ].filter(Boolean);
 
-    return (
-      <>
-        {productImages.map((img, imgIndex) => (
-          <img
-            key={imgIndex}
-            src={img}
-            alt={product.name}
-            className={`slideImage ${
-              hoveredProductId === product._id ? "playSlide" : ""
-            }`}
-            style={{
-              animationDelay: `${imgIndex * 1.4}s`,
-            }}
-          />
-        ))}
+                        return (
+                          <>
+                            {productImages.map((img, imgIndex) => (
+                              <img
+                                key={imgIndex}
+                                src={img}
+                                alt={product.name}
+                                className={`slideImage ${hoveredProductId === product._id ? "playSlide" : ""
+                                  }`}
+                                style={{
+                                  animationDelay: `${imgIndex * 1.4}s`,
+                                }}
+                              />
+                            ))}
 
-       <div className="slideDots">
-  {productImages.map((_, dotIndex) => (
-    <span
-      key={dotIndex}
-      style={{
-        animationDelay: `${dotIndex * 2}s`,
-      }}
-    ></span>
-  ))}
-</div>
-      </>
-    );
-  })()}
+                            <div className="slideDots">
+                              {productImages.map((_, dotIndex) => (
+                                <span
+                                  key={dotIndex}
+                                  style={{
+                                    animationDelay: `${dotIndex * 2}s`,
+                                  }}
+                                ></span>
+                              ))}
+                            </div>
+                          </>
+                        );
+                      })()}
 
-  <span className="productTag">
-    {product.subCategory || product.category}
-  </span>
-</div>
+                      <span className="productTag">
+                        {product.subCategory || product.category}
+                      </span>
+                    </div>
 
                     <div className="productContent">
                       <h3>{product.name}</h3>
@@ -810,7 +817,106 @@ const Dashboard = () => {
           </div>
         </div>
       </section>
+
+      <footer className="dashboardFooter">
+        <div className="footerTop">
+          <div className="footerBrand">
+            <h2>ZENVYX</h2>
+            <p>We Create Attitude</p>
+            <span>
+              Premium fashion for everyday confidence. Built with comfort, trend, and
+              quality.
+            </span>
+          </div>
+
+          {Object.entries(footerLinks).map(([title, links]) => (
+            <div className="footerColumn" key={title}>
+              <h4>{title}</h4>
+
+              {links.map((link) => (
+                <button
+                  key={link}
+                  type="button"
+                  onClick={() => {
+                    // ✅ Terms navigation
+                    if (link === "Terms & Conditions") {
+                      navigate("/terms");
+                      return;
+                    }
+
+                    // ✅ Category navigation
+                    if (["Shirts", "T-Shirts", "Pants"].includes(link)) {
+                      chooseCategory(
+                        link === "Shirts"
+                          ? "Shirt"
+                          : link === "T-Shirts"
+                            ? "T-Shirt"
+                            : "Pant"
+                      );
+
+                      document
+                        .getElementById("productsSection")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                >
+                  {link}
+                </button>
+              ))}
+            </div>
+          ))}
+
+          <div className="footerColumn">
+            <h4>Follow Us</h4>
+            {socialLinks.map((item) => (
+              <button key={item} type="button">
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="footerPolicyBox">
+          <div>
+            <h4
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate("/terms")}
+            >
+              Terms & Conditions
+            </h4>
+            <p>
+              By using ZENVYX, customers agree to provide accurate order, address, and
+              contact information. Product colors may slightly vary due to screen
+              settings. Orders are subject to stock availability and verification.
+            </p>
+          </div>
+
+          <div>
+            <h4>Privacy & Payments</h4>
+            <p>
+              Customer data is used only for order processing, delivery, support, and
+              account security. Online payments are processed through secure payment
+              gateway partners.
+            </p>
+          </div>
+
+          <div>
+            <h4>Returns & Refunds</h4>
+            <p>
+              Eligible products can be returned within the allowed return window if
+              unused, undamaged, and with original packaging. Refund timelines depend
+              on the selected payment method.
+            </p>
+          </div>
+        </div>
+
+        <div className="footerBottom">
+          <p>© {new Date().getFullYear()} ZENVYX. All rights reserved.</p>
+          <p>Secure Shopping • Easy Returns • Trusted Delivery</p>
+        </div>
+      </footer>
     </div>
+
   );
 };
 

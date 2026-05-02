@@ -5,6 +5,8 @@ import {
   getMyAddressesApi,
   placeOrderApi,
   setDefaultAddressApi,
+  createRazorpayOrderApi,
+  verifyRazorpayPaymentApi,
 } from "../services/authService";
 import "./Checkout.css";
 
@@ -102,7 +104,50 @@ const Checkout = () => {
     };
   }, [summary]);
 
+  // const handlePlaceOrder = async () => {
+  //   if (!selectedAddressId) {
+  //     setError("Please select a delivery address");
+  //     return;
+  //   }
+
+  //   try {
+  //     setActionLoading(true);
+  //     setMessage("");
+  //     setError("");
+
+  //     // const res = await placeOrderApi({
+  //     //   addressId: selectedAddressId,
+  //     //   paymentMethod,
+  //     // });
+  //     const payload = {
+  //       addressId: selectedAddressId,
+  //       paymentMethod,
+  //     };
+
+  //     if (buyNowItem) {
+  //       payload.mode = "buyNow";
+  //       payload.item = buyNowItem;
+  //     }
+
+  //     const res = await placeOrderApi(payload);
+
+  //     setMessage(res?.data?.message || "Order placed successfully");
+
+  //     setTimeout(() => {
+  //       navigate("/my-orders");
+  //     }, 800);
+  //   } catch (err) {
+  //     console.error("Place order error:", err);
+  //     setError(err?.response?.data?.message || "Failed to place order");
+  //   } finally {
+  //     setActionLoading(false);
+  //   }
+  // };
+
+
   const handlePlaceOrder = async () => {
+    const isUPI = paymentMethod === "UPI";
+    const isNetBanking = paymentMethod === "NET_BANKING";
     if (!selectedAddressId) {
       setError("Please select a delivery address");
       return;
@@ -113,10 +158,6 @@ const Checkout = () => {
       setMessage("");
       setError("");
 
-      // const res = await placeOrderApi({
-      //   addressId: selectedAddressId,
-      //   paymentMethod,
-      // });
       const payload = {
         addressId: selectedAddressId,
         paymentMethod,
@@ -127,13 +168,67 @@ const Checkout = () => {
         payload.item = buyNowItem;
       }
 
-      const res = await placeOrderApi(payload);
+      // ✅ COD old flow
+      if (paymentMethod === "COD") {
+        const res = await placeOrderApi(payload);
 
-      setMessage(res?.data?.message || "Order placed successfully");
+        setMessage(res?.data?.message || "Order placed successfully");
 
-      setTimeout(() => {
-        navigate("/my-orders");
-      }, 800);
+        setTimeout(() => {
+          navigate("/my-orders");
+        }, 800);
+
+        return;
+      }
+
+      // ✅ UPI / Net Banking Razorpay flow
+      const orderRes = await createRazorpayOrderApi({
+        amount: Math.round(calculatedSummary.finalTotal),
+      });
+
+      const razorpayOrder = orderRes?.data?.data;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "ZENVYX",
+        description:
+          paymentMethod === "UPI"
+            ? "UPI Payment"
+            : "Net Banking Payment",
+        order_id: razorpayOrder.id,
+
+        method: {
+          upi: true,
+          netbanking: true,
+          card: false,
+          wallet: false,
+          paylater: false,
+          emi: false,
+        },
+
+        handler: async function (response) {
+          // verify payment code
+        },
+
+        prefill: {
+          name: addresses.find((a) => a._id === selectedAddressId)?.fullName || "",
+          contact: addresses.find((a) => a._id === selectedAddressId)?.mobile || "",
+        },
+
+        theme: {
+          color: "#111827",
+        },
+      };
+      const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", function (response) {
+        console.error("Payment failed:", response.error);
+        setError(response.error?.description || "Payment failed. Please try again.");
+      });
+
+      rzp.open();
     } catch (err) {
       console.error("Place order error:", err);
       setError(err?.response?.data?.message || "Failed to place order");
@@ -233,7 +328,7 @@ const Checkout = () => {
             <div className="checkoutSection">
               <h2>Payment Method</h2>
 
-              <div className="paymentOptions">
+              {/* <div className="paymentOptions">
                 <label className="paymentCard">
                   <input
                     type="radio"
@@ -267,6 +362,44 @@ const Checkout = () => {
                   <div>
                     <h4>UPI</h4>
                     <p>Collect via UPI payment flow later.</p>
+                  </div>
+                </label>
+              </div> */}
+
+              <div className="paymentOptions">
+                <label className={`paymentCard ${paymentMethod === "COD" ? "active" : ""}`}>
+                  <input
+                    type="radio"
+                    checked={paymentMethod === "COD"}
+                    onChange={() => setPaymentMethod("COD")}
+                  />
+                  <div>
+                    <h4>Cash on Delivery</h4>
+                    <p>Pay after product delivery.</p>
+                  </div>
+                </label>
+
+                <label className={`paymentCard ${paymentMethod === "UPI" ? "active" : ""}`}>
+                  <input
+                    type="radio"
+                    checked={paymentMethod === "UPI"}
+                    onChange={() => setPaymentMethod("UPI")}
+                  />
+                  <div>
+                    <h4>UPI Payment</h4>
+                    <p>Pay securely using PhonePe, GPay, Paytm or any UPI app.</p>
+                  </div>
+                </label>
+
+                <label className={`paymentCard ${paymentMethod === "NET_BANKING" ? "active" : ""}`}>
+                  <input
+                    type="radio"
+                    checked={paymentMethod === "NET_BANKING"}
+                    onChange={() => setPaymentMethod("NET_BANKING")}
+                  />
+                  <div>
+                    <h4>Net Banking</h4>
+                    <p>Pay directly through your bank account.</p>
                   </div>
                 </label>
               </div>

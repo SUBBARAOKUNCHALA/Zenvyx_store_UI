@@ -225,3 +225,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+.paymentCard.active {
+  border-color: #111827;
+  background: #f8fafc;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+}
+
+.paymentCard input {
+  accent-color: #111827;
+}
+
+.paymentCard h4 {
+  margin-bottom: 4px;
+}
+
+.paymentCard p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}

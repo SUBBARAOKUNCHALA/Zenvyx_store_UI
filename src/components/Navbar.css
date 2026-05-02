@@ -57,7 +57,8 @@
   width: 100%;
   height: 44px;
   border: 1px solid #eadcf1;
-  border-radius: 999px;
+  border-radius: 5px;
+  /* border-radius: 999px; */
   padding: 0 18px;
   outline: none;
   background: #fcfaff;
@@ -109,7 +110,7 @@
 }
 
 .logoImage {
-  height: 30px;   /* adjust based on your navbar */
+  height: 50px;   /* adjust based on your navbar */
   width: auto;
   object-fit: contain;
 }
@@ -224,7 +225,7 @@
 }
 
 /* MOBILE */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .navbar {
     padding: 10px 14px;
     min-height: auto;
@@ -286,6 +287,85 @@
 
   .cartIcon {
     font-size: 18px;
+  }
+} */
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    gap: 8px;
+    flex-wrap: nowrap; /* ❌ remove wrapping */
+  }
+
+  /* LOGO */
+  .logoContainer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .logoImage {
+    height: 34px;
+    /* width: 34px; */
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  /* SEARCH (take full remaining space) */
+  .searchContainer {
+    border-radius: 5px;
+    flex: 1;
+    margin: 0 6px;
+  }
+
+  .searchInput {
+    width: 100%;
+    height: 36px;
+    font-size: 13px;
+    padding: 0 12px;
+    border-radius: 20px;
+  }
+
+  /* DESKTOP HIDE */
+  .actionsDesktop {
+    display: none;
+  }
+
+  /* RIGHT ICONS */
+  .mobileRightActions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+
+  .cartIconWrap,
+  .profileIconMobile {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cartIcon {
+    font-size: 18px;
+  }
+
+  .mobileUserImage {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .mobileUserInitial {
+    font-size: 14px;
   }
 }
 

@@ -11,7 +11,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [showInches, setShowInches] = useState(false);
   const [product, setProduct] = useState(location.state?.product || null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +23,16 @@ const ProductDetails = () => {
   const [cartMessage, setCartMessage] = useState("");
   const [cartError, setCartError] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+  const alphabetSizes = product.sizes?.filter((size) =>
+    ["S", "M", "L", "XL", "XXL"].includes(String(size).toUpperCase())
+  );
+
+  const inchSizes = product.sizes?.filter((size) =>
+    ["28", "30", "32", "34", "36", "38"].includes(String(size))
+  );
+
+  const visibleSizes = showInches ? inchSizes : alphabetSizes;
 
   const productImages = useMemo(() => {
     if (product?.images?.length > 0) {
@@ -122,26 +132,62 @@ const ProductDetails = () => {
     }
   };
 
-const handleAddToCart = async () => {
-  try {
-    setCartLoading(true);
-    setCartMessage("");
-    setCartError("");
+  const handleAddToCart = async () => {
+    try {
+      setCartLoading(true);
+      setCartMessage("");
+      setCartError("");
 
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setCartError("Please login first to add items to cart");
+        return;
+      }
+
+      if (!product?._id) {
+        setCartError("Product not found");
+        return;
+      }
+
+      if (product?.stock <= 0) {
+        setCartError("This product is out of stock");
+        return;
+      }
+
+      if (!selectedSize) {
+        setCartError("Please select a size");
+        return;
+      }
+
+      const payload = {
+        productId: product._id,
+        quantity,
+        size: selectedSize
+      };
+
+      const res = await addToCartApi(payload);
+
+      setCartMessage(res?.data?.message || "Item added to cart successfully");
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      setCartError(
+        error?.response?.data?.message || "Failed to add item to cart"
+      );
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  // const handleBuyNow = async () => {
+  //   await handleAddToCart();
+  //   navigate("/cart");
+  // };
+  const handleBuyNow = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      setCartError("Please login first to add items to cart");
-      return;
-    }
-
-    if (!product?._id) {
-      setCartError("Product not found");
-      return;
-    }
-
-    if (product?.stock <= 0) {
-      setCartError("This product is out of stock");
+      setCartError("Please login first to buy this product");
       return;
     }
 
@@ -150,59 +196,23 @@ const handleAddToCart = async () => {
       return;
     }
 
-    const payload = {
-      productId: product._id,
-      quantity,
-      size: selectedSize
-    };
-
-    const res = await addToCartApi(payload);
-
-    setCartMessage(res?.data?.message || "Item added to cart successfully");
-  } catch (error) {
-    console.error("Add to cart error:", error);
-    setCartError(
-      error?.response?.data?.message || "Failed to add item to cart"
-    );
-  } finally {
-    setCartLoading(false);
-  }
-};
-
-  // const handleBuyNow = async () => {
-  //   await handleAddToCart();
-  //   navigate("/cart");
-  // };
-  const handleBuyNow = () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    setCartError("Please login first to buy this product");
-    return;
-  }
-
-  if (!selectedSize) {
-    setCartError("Please select a size");
-    return;
-  }
-
-  navigate("/checkout", {
-    state: {
-      mode: "buyNow",
-      item: {
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        discount: product.discount || 0,
-        quantity,
-        size: selectedSize,
-        image: product.image || product.images?.[0],
-        category: product.category,
-        stock: product.stock,
+    navigate("/checkout", {
+      state: {
+        mode: "buyNow",
+        item: {
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          discount: product.discount || 0,
+          quantity,
+          size: selectedSize,
+          image: product.image || product.images?.[0],
+          category: product.category,
+          stock: product.stock,
+        },
       },
-    },
-  });
-};
+    });
+  };
 
   if (loading) {
     return <div style={{ padding: "100px 20px" }}>Loading product details...</div>;
@@ -244,9 +254,8 @@ const handleAddToCart = async () => {
             {productImages.map((img, index) => (
               <div
                 key={index}
-                className={`thumbBox ${
-                  selectedImage === img ? "activeThumb" : ""
-                }`}
+                className={`thumbBox ${selectedImage === img ? "activeThumb" : ""
+                  }`}
                 onClick={() => handleThumbnailSelect(img, index)}
                 onMouseEnter={() => handleThumbnailSelect(img, index)}
               >
@@ -262,20 +271,44 @@ const handleAddToCart = async () => {
           <p className="productCategory">{product.category}</p>
 
           <div className="productPriceWrap">
-            <p className="productPrice">₹{product.price}.00</p>
+            {product.discount > 0 ? (
+              <>
+                <p className="finalPrice">
+                  ₹{Math.round(product.price - (product.price * product.discount) / 100)}.00
+                </p>
+                <p className="originalPrice">₹{product.price}.00</p>
 
-            {product.discount > 0 && (
-              <span className="productDiscountBadge">{product.discount}% OFF</span>
+                <span className="productDiscountBadge">
+                  {product.discount}% OFF
+                </span>
+              </>
+            ) : (
+              <p className="finalPrice">₹{product.price}.00</p>
             )}
           </div>
 
           <p className="productDesc">{product.description}</p>
 
           <div className="sizeSection">
-            <h3 className="sizeTitle">Available Sizes</h3>
+            <div className="sizeHeader">
+              <h3 className="sizeTitle">Available Sizes</h3>
+            </div>
+
             <div className="sizeOptions">
-              {product.sizes?.length > 0 ? (
-                product.sizes.map((size) => (
+              <label className="inchCheckBox">
+                <input
+                  type="checkbox"
+                  checked={showInches}
+                  onChange={(e) => {
+                    setShowInches(e.target.checked);
+                    setSelectedSize("");
+                  }}
+                />
+                <span>In Inches</span>
+              </label>
+
+              {visibleSizes?.length > 0 ? (
+                visibleSizes.map((size) => (
                   <button
                     key={size}
                     type="button"
@@ -363,7 +396,7 @@ const handleAddToCart = async () => {
               <div className="infoItem productDetailsItem">
                 <strong>ProductDetails</strong>
                 {product.ProductDetails}
-              </div>  
+              </div>
             </div>
           </div>
 

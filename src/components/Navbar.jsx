@@ -37,33 +37,73 @@ const Navbar = () => {
     setSearchText(urlSearch);
   }, [location.search]);
 
+  // const handleSearchChange = (e) => {
+  //   const value = e.target.value;
+  //   setSearchText(value);
+
+  //   const trimmedValue = value.trim();
+
+  //   if (location.pathname !== "/") {
+  //     navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
+  //     return;
+  //   }
+
+  //   const params = new URLSearchParams(location.search);
+
+  //   if (trimmedValue) {
+  //     params.set("search", trimmedValue);
+  //   } else {
+  //     params.delete("search");
+  //   }
+
+  //   navigate(
+  //     {
+  //       pathname: "/",
+  //       search: params.toString() ? `?${params.toString()}` : "",
+  //     },
+  //     { replace: true }
+  //   );
+  // };
+const scrollToProducts = () => {
+  setTimeout(() => {
+    document
+      .getElementById("productsSection")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+};
   const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchText(value);
+  const value = e.target.value;
+  setSearchText(value);
 
-    const trimmedValue = value.trim();
+  const trimmedValue = value.trim();
 
-    if (location.pathname !== "/") {
-      navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
-      return;
-    }
+  if (location.pathname !== "/") {
+    navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
+    scrollToProducts();
+    return;
+  }
 
-    const params = new URLSearchParams(location.search);
+  const params = new URLSearchParams(location.search);
 
-    if (trimmedValue) {
-      params.set("search", trimmedValue);
-    } else {
-      params.delete("search");
-    }
+  if (trimmedValue) {
+    params.set("search", trimmedValue);
+  } else {
+    params.delete("search");
+  }
 
-    navigate(
-      {
-        pathname: "/",
-        search: params.toString() ? `?${params.toString()}` : "",
-      },
-      { replace: true }
-    );
-  };
+  navigate(
+    {
+      pathname: "/",
+      search: params.toString() ? `?${params.toString()}` : "",
+    },
+    { replace: true }
+  );
+
+  if (trimmedValue) {
+    scrollToProducts();
+  }
+};
+
 
   const toggleProfilePanel = () => {
     if (!token || !user) {
@@ -87,7 +127,7 @@ const Navbar = () => {
         </div> */}
         <div className="logoContainer" onClick={() => navigate("/")}>
           <img
-            src="/zenvyx_logo.png" 
+            src="/Logo_Canva.png" 
             alt="ZENVYX"
             className="logoImage"
           />

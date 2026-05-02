@@ -278,7 +278,7 @@ const MyOrders = () => {
                       >
                         {isExpanded ? "Hide Details" : "View Details"}
                         <span className={isExpanded ? "arrowUp" : "arrowDown"}>
-                          ⌄
+                          
                         </span>
                       </button>
                     </div>
@@ -330,12 +330,12 @@ const MyOrders = () => {
                             </p>
                           )}
 
-                          {order.returnData.pickedUpAt && (
+                          {/* {order.returnData.pickedUpAt && (
                             <p>
                               Picked Up On:{" "}
                               {formatDateTime(order.returnData.pickedUpAt)}
                             </p>
-                          )}
+                          )} */}
 
                           {order.returnData.refundedAt && (
                             <p>

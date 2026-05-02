@@ -503,7 +503,7 @@
 
 @media (max-width: 1400px) {
   .adminThreeColumnGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 4fr ;
   }
 
   .salesList {
@@ -513,7 +513,7 @@
 
 @media (max-width: 1100px) {
   .adminHero {
-    grid-template-columns: 1fr;
+    grid-template-columns: 4fr;
   }
 
   .adminThreeColumnGrid,

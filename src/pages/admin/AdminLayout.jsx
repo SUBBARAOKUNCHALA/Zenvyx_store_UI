@@ -1,11 +1,20 @@
 import React, { useMemo, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+// import {
+//   LayoutDashboard,
+//   PackagePlus,
+//   ShoppingBag,
+//   Users,
+//   Settings,
+//   LogOut,
+//   Menu,
+//   X,
+// } from "lucide-react";
 import {
   LayoutDashboard,
   PackagePlus,
   ShoppingBag,
-  Users,
-  Settings,
+  RefreshCcw,
   LogOut,
   Menu,
   X,
@@ -41,16 +50,11 @@ const AdminLayout = () => {
       path: "/~fiadmin/orders",
       icon: <ShoppingBag size={18} />,
     },
-    // {
-    //   label: "Customers",
-    //   path: "/~fiadmin/customers",
-    //   icon: <Users size={18} />,
-    // },
-    // {
-    //   label: "Settings",
-    //   path: "/~fiadmin/settings",
-    //   icon: <Settings size={18} />,
-    // },
+    {
+      label: "Returns",
+      path: "/~fiadmin/returns",
+      icon: <RefreshCcw size={18} />,
+    },
   ];
 
   const currentPageTitle = useMemo(() => {
@@ -105,9 +109,8 @@ const AdminLayout = () => {
               {navItems.map((item) => (
                 <button
                   key={item.path}
-                  className={`adminNavItem ${
-                    location.pathname === item.path ? "active" : ""
-                  }`}
+                  className={`adminNavItem ${location.pathname === item.path ? "active" : ""
+                    }`}
                   onClick={() => handleNavigate(item.path)}
                 >
                   <span className="adminNavIcon">{item.icon}</span>

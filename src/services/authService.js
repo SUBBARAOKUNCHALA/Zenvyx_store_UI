@@ -82,3 +82,23 @@ export const updateOrderStatusApi = (orderId, data) => {
     },
   });
 };
+
+export const getReturnedOrdersApi = () => {
+  const adminToken = localStorage.getItem("adminToken");
+
+  return API.get("/admin/returns", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+};
+
+export const updateReturnedOrderStatusApi = (returnId, data) => {
+  const adminToken = localStorage.getItem("adminToken");
+
+  return API.put(`/admin/returns/${returnId}/status`, data, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+};

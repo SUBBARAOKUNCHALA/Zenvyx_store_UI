@@ -16,6 +16,7 @@ import AdminHome from "./pages/admin/AdminHome";
 import AddProducts from "./pages/admin/AddProducts";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminOrders from "./pages/admin/AdminOrders";
+import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import "./App.css";
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
             path="customers"
             element={<div style={{ padding: "20px" }}>Customers Page</div>}
           />
+           <Route path="returns" element={<ReturnedOrders />} />
           <Route
             path="settings"
             element={<div style={{ padding: "20px" }}>Settings Page</div>}

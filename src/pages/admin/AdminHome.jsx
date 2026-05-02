@@ -238,7 +238,7 @@ const AdminHome = () => {
               </div>
             </div>
 
-            <div className="adminPanelCard">
+            {/* <div className="adminPanelCard">
               <div className="adminPanelHeader">
                 <h2>Latest Users</h2>
                 <span className="panelBadge">Recent</span>
@@ -264,7 +264,7 @@ const AdminHome = () => {
               ) : (
                 <p className="emptyText">No users found.</p>
               )}
-            </div>
+            </div> */}
 
             {/* <div className="adminPanelCard">
               <div className="adminPanelHeader">

@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { cancelMyOrderApi, getMyOrdersApi,returnOrderApi } from "../services/authService";
+import {
+  cancelMyOrderApi,
+  getMyOrdersApi,
+  returnOrderApi,
+} from "../services/authService";
 import "./MyOrders.css";
 
 const MyOrders = () => {
@@ -9,9 +13,9 @@ const MyOrders = () => {
   const [actionLoadingId, setActionLoadingId] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const [actionLoadingId, setActionLoadingId] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [expandedOrderId, setExpandedOrderId] = useState("");
 
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState("");
@@ -26,49 +30,6 @@ const MyOrders = () => {
     });
   };
 
-  const openReturnModal = (orderId) => {
-    setSelectedReturnOrderId(orderId);
-    setReturnReason("");
-    setShowReturnModal(true);
-  };
-
-  const closeReturnModal = () => {
-    setShowReturnModal(false);
-    setSelectedReturnOrderId("");
-    setReturnReason("");
-  };
-
-  const handleConfirmReturn = async () => {
-  try {
-    if (!returnReason.trim()) {
-      alert("Please enter return reason");
-      return;
-    }
-
-    setActionLoadingId(selectedReturnOrderId);
-
-    await returnOrderApi(selectedReturnOrderId, {
-      reason: returnReason,
-    });
-
-    // update UI
-    setOrders((prev) =>
-      prev.map((o) =>
-        o._id === selectedReturnOrderId
-          ? { ...o, orderStatus: "Returned" }
-          : o
-      )
-    );
-
-    closeReturnModal();
-  } catch (err) {
-    console.error("Return error:", err);
-    alert(err?.response?.data?.message || "Return failed");
-  } finally {
-    setActionLoadingId("");
-  }
-};
-
   const formatDateTime = (date) => {
     if (!date) return "Not updated";
     return new Date(date).toLocaleString("en-IN", {
@@ -78,6 +39,44 @@ const MyOrders = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case "ReturnRequested":
+        return "Return Requested";
+      case "ReturnAccepted":
+        return "Return Accepted";
+      case "PickedUp":
+        return "Return Picked Up";
+      case "Refunded":
+        return "Refunded";
+      case "Rejected":
+        return "Return Rejected";
+      case "OutForDelivery":
+        return "Out For Delivery";
+      default:
+        return status || "Not updated";
+    }
+  };
+
+  const getDisplayStatus = (order) => {
+    return order?.returnData?.returnStatus || order?.orderStatus;
+  };
+
+  const getDisplayHistory = (order) => {
+    if (order?.returnData?.statusHistory?.length > 0) {
+      return order.returnData.statusHistory;
+    }
+
+    return order?.statusHistory || [];
+  };
+
+  const getStatusClass = (status) => {
+    return String(status || "")
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/_/g, "");
   };
 
   const fetchOrders = async () => {
@@ -98,6 +97,48 @@ const MyOrders = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+
+  const toggleOrderDetails = (orderId) => {
+    setExpandedOrderId((prev) => (prev === orderId ? "" : orderId));
+  };
+
+  const openReturnModal = (orderId) => {
+    setSelectedReturnOrderId(orderId);
+    setReturnReason("");
+    setShowReturnModal(true);
+    setError("");
+    setMessage("");
+  };
+
+  const closeReturnModal = () => {
+    setShowReturnModal(false);
+    setSelectedReturnOrderId("");
+    setReturnReason("");
+  };
+
+  const handleConfirmReturn = async () => {
+    try {
+      if (!returnReason.trim()) {
+        alert("Please enter return reason");
+        return;
+      }
+
+      setActionLoadingId(selectedReturnOrderId);
+
+      const res = await returnOrderApi(selectedReturnOrderId, {
+        reason: returnReason.trim(),
+      });
+
+      setMessage(res?.data?.message || "Return requested successfully");
+      closeReturnModal();
+      fetchOrders();
+    } catch (err) {
+      console.error("Return error:", err);
+      alert(err?.response?.data?.message || "Return failed");
+    } finally {
+      setActionLoadingId("");
+    }
+  };
 
   const openCancelModal = (orderId) => {
     setSelectedOrderId(orderId);
@@ -134,11 +175,11 @@ const MyOrders = () => {
         prev.map((order) =>
           order._id === selectedOrderId
             ? {
-              ...order,
-              orderStatus: "Cancelled",
-              cancelReason: cancelReason.trim(),
-              cancelledAt: new Date().toISOString(),
-            }
+                ...order,
+                orderStatus: "Cancelled",
+                cancelReason: cancelReason.trim(),
+                cancelledAt: new Date().toISOString(),
+              }
             : order
         )
       );
@@ -150,10 +191,6 @@ const MyOrders = () => {
     } finally {
       setActionLoadingId("");
     }
-  };
-
-  const handleReturnOrder = (orderId) => {
-    alert(`Return order API not created yet. Order ID: ${orderId}`);
   };
 
   if (loading) {
@@ -183,149 +220,286 @@ const MyOrders = () => {
         ) : (
           <div className="ordersList">
             {orders.map((order) => {
+              const displayStatus = getDisplayStatus(order);
+              const displayHistory = getDisplayHistory(order);
+              const firstItem = order.items?.[0];
+              const isExpanded = expandedOrderId === order._id;
+
               const isCancelled = order.orderStatus === "Cancelled";
               const isDelivered = order.orderStatus === "Delivered";
+              const hasReturn = Boolean(order.returnData);
 
               const canCancel =
-                order.orderStatus === "Pending" ||
-                order.orderStatus === "Placed" ||
-                order.orderStatus === "Confirmed";
+                !hasReturn &&
+                (order.orderStatus === "Pending" ||
+                  order.orderStatus === "Placed" ||
+                  order.orderStatus === "Confirmed");
 
-              const canReturn = order.orderStatus === "Delivered";
+              const canReturn = order.orderStatus === "Delivered" && !hasReturn;
 
               return (
                 <div className="orderCard" key={order._id}>
-                  <div className="orderTopRow">
-                    <div>
-                      <h3>Order ID: {order.orderNumber || order._id}</h3>
-                      <p>{formatDateTime(order.createdAt)}</p>
-                    </div>
+                  <div className="orderCompactRow">
+                    <div className="orderCompactLeft">
+                      <img
+                        src={firstItem?.image}
+                        alt={firstItem?.name || "Product"}
+                        className="orderCompactImg"
+                      />
 
-                    <div className="orderStatusGroup">
-                      <span
-                        className={`orderStatusBadge ${order.orderStatus
-                          ?.toLowerCase()
-                          ?.replace(/\s+/g, "")}`}
-                      >
-                        {order.orderStatus}
-                      </span>
+                      <div className="orderCompactInfo">
+                        <h3>{firstItem?.name || "Product"}</h3>
+                        <p>Size: {firstItem?.size || "N/A"}</p>
+                        <p>Qty: {firstItem?.quantity || 1}</p>
 
-                      <span
-                        className={`paymentStatusBadge ${order.paymentStatus
-                          ?.toLowerCase()
-                          ?.replace(/\s+/g, "")}`}
-                      >
-                        {order.paymentStatus}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="orderMetaGrid">
-                    <div>
-                      <strong>Total Items</strong>
-                      <p>{order.totalItems}</p>
-                    </div>
-
-                    <div>
-                      <strong>Payment Method</strong>
-                      <p>{order.paymentMethod}</p>
-                    </div>
-
-                    <div>
-                      <strong>Final Amount</strong>
-                      <p>₹{Number(order.finalAmount || 0).toFixed(2)}</p>
-                    </div>
-                  </div>
-
-                  <div className="orderTrackingBox">
-                    {/* <div>
-                      <strong>Shipping Provider</strong>
-                      <p>{order.shippingProvider || "Not assigned yet"}</p>
-                    </div>
-
-                    <div>
-                      <strong>Tracking ID</strong>
-                      <p>{order.trackingId || "Not available"}</p>
-                    </div> */}
-
-                    <div>
-                      <strong>Estimated Delivery</strong>
-                      <p>{formatDate(order.estimatedDeliveryDate)}</p>
-                    </div>
-
-                    {order.deliveredAt && (
-                      <div>
-                        <strong>Delivered On</strong>
-                        <p>{formatDate(order.deliveredAt)}</p>
+                        {order.items?.length > 1 && (
+                          <small>+{order.items.length - 1} more item(s)</small>
+                        )}
                       </div>
-                    )}
+                    </div>
+
+                    <div className="orderCompactRight">
+                      <span
+                        className={`orderStatusBadge ${getStatusClass(
+                          displayStatus
+                        )}`}
+                      >
+                        {getStatusLabel(displayStatus)}
+                      </span>
+
+                      <div className="compactDateBox">
+                        <strong>Estimated Delivery</strong>
+                        <p>{formatDate(order.estimatedDeliveryDate)}</p>
+                      </div>
+
+                      <button
+                        className="viewDetailsBtn"
+                        onClick={() => toggleOrderDetails(order._id)}
+                      >
+                        {isExpanded ? "Hide Details" : "View Details"}
+                        <span className={isExpanded ? "arrowUp" : "arrowDown"}>
+                          ⌄
+                        </span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="orderItemsWrap">
-                    {order.items?.map((item, index) => (
-                      <div className="orderItemRow" key={index}>
-                        <img src={item.image} alt={item.name} />
-
+                  {isExpanded && (
+                    <div className="orderExpandedDetails">
+                      <div className="orderTopRow">
                         <div>
-                          <h4>{item.name}</h4>
-                          <p>Qty: {item.quantity}</p>
-                          {item.size && <p>Size: {item.size}</p>}
+                          <h3>Order ID: {order.orderNumber || order._id}</h3>
+                          <p>{formatDateTime(order.createdAt)}</p>
                         </div>
 
-                        <strong>₹{Number(item.subtotal || 0).toFixed(2)}</strong>
+                        <div className="orderStatusGroup">
+                          <span
+                            className={`orderStatusBadge ${getStatusClass(
+                              displayStatus
+                            )}`}
+                          >
+                            {getStatusLabel(displayStatus)}
+                          </span>
+
+                          <span
+                            className={`paymentStatusBadge ${getStatusClass(
+                              order.paymentStatus
+                            )}`}
+                          >
+                            {order.paymentStatus}
+                          </span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="orderAddressBox">
-                    <strong>Delivery Address</strong>
-                    <p>
-                      {order.address?.fullName}, {order.address?.mobile}
-                    </p>
-                    <p>
-                      {order.address?.houseNo}, {order.address?.area},{" "}
-                      {order.address?.city}, {order.address?.state} -{" "}
-                      {order.address?.pincode}
-                    </p>
-                    {order.address?.landmark && (
-                      <p>Landmark: {order.address.landmark}</p>
-                    )}
-                  </div>
+                      {hasReturn && (
+                        <div className="returnInfoBox">
+                          <strong>Return Details</strong>
+                          <p>
+                            Status:{" "}
+                            <span>
+                              {getStatusLabel(order.returnData.returnStatus)}
+                            </span>
+                          </p>
+                          <p>Reason: {order.returnData.returnReason}</p>
+                          <p>Refund Amount: ₹{order.returnData.refundAmount}</p>
 
-                  <div className="orderBottomRow">
-                    {!isCancelled && canCancel && (
-                      <button
-                        className="cancelOrderBtn"
-                        onClick={() => openCancelModal(order._id)}
-                        disabled={actionLoadingId === order._id}
-                      >
-                        {actionLoadingId === order._id
-                          ? "Cancelling..."
-                          : "Cancel Order"}
-                      </button>
-                    )}
+                          {order.returnData.pickupDate && (
+                            <p>
+                              Pickup Date:{" "}
+                              {formatDateTime(order.returnData.pickupDate)}
+                            </p>
+                          )}
 
-                    {!isCancelled && canReturn && (
-                      <button
-                        className="returnOrderBtn"
-                        onClick={() => openReturnModal(order._id)}
-                      >
-                        Return Order
-                      </button>
-                    )}
+                          {order.returnData.pickedUpAt && (
+                            <p>
+                              Picked Up On:{" "}
+                              {formatDateTime(order.returnData.pickedUpAt)}
+                            </p>
+                          )}
 
-                    {isCancelled && (
-                      <span className="cancelledText">
-                        This order has been cancelled.
-                      </span>
-                    )}
+                          {order.returnData.refundedAt && (
+                            <p>
+                              Refunded On:{" "}
+                              {formatDateTime(order.returnData.refundedAt)}
+                            </p>
+                          )}
+                        </div>
+                      )}
 
-                    {isDelivered && !isCancelled && (
-                      <span className="deliveredText">
-                        Delivered successfully. You can request return.
-                      </span>
-                    )}
-                  </div>
+                      <div className="orderMetaGrid">
+                        <div>
+                          <strong>Total Items</strong>
+                          <p>{order.totalItems}</p>
+                        </div>
+
+                        <div>
+                          <strong>Payment Method</strong>
+                          <p>{order.paymentMethod}</p>
+                        </div>
+
+                        <div>
+                          <strong>Final Amount</strong>
+                          <p>₹{Number(order.finalAmount || 0).toFixed(2)}</p>
+                        </div>
+                      </div>
+
+                      <div className="orderTrackingBox">
+                        <div>
+                          <strong>Estimated Delivery</strong>
+                          <p>{formatDate(order.estimatedDeliveryDate)}</p>
+                        </div>
+
+                        {order.deliveredAt && (
+                          <div>
+                            <strong>Delivered On</strong>
+                            <p>{formatDate(order.deliveredAt)}</p>
+                          </div>
+                        )}
+
+                        {order.trackingId && (
+                          <div>
+                            <strong>Tracking ID</strong>
+                            <p>{order.trackingId}</p>
+                          </div>
+                        )}
+
+                        {order.shippingProvider && (
+                          <div>
+                            <strong>Shipping Provider</strong>
+                            <p>{order.shippingProvider}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="orderItemsWrap">
+                        {order.items?.map((item, index) => (
+                          <div className="orderItemRow" key={index}>
+                            <img src={item.image} alt={item.name} />
+
+                            <div>
+                              <h4>{item.name}</h4>
+                              <p>Qty: {item.quantity}</p>
+                              {item.size && <p>Size: {item.size}</p>}
+                            </div>
+
+                            <strong>
+                              ₹{Number(item.subtotal || 0).toFixed(2)}
+                            </strong>
+                          </div>
+                        ))}
+                      </div>
+
+                      {displayHistory.length > 0 && (
+                        <div className="orderHistoryBox">
+                          <strong>
+                            {hasReturn
+                              ? "Return Tracking History"
+                              : "Order Tracking History"}
+                          </strong>
+
+                          <div className="orderTimeline">
+                            {displayHistory.map((history, index) => (
+                              <div className="timelineItem" key={index}>
+                                <div className="timelineDot"></div>
+
+                                {index !== displayHistory.length - 1 && (
+                                  <div className="timelineLine"></div>
+                                )}
+
+                                <div className="timelineContent">
+                                  <h4>{getStatusLabel(history.status)}</h4>
+                                  <p>{history.note}</p>
+                                  <span>
+                                    {formatDateTime(history.changedAt)}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="orderAddressBox">
+                        <strong>Delivery Address</strong>
+                        <p>
+                          {order.address?.fullName}, {order.address?.mobile}
+                        </p>
+                        <p>
+                          {order.address?.houseNo}, {order.address?.area},{" "}
+                          {order.address?.city}, {order.address?.state} -{" "}
+                          {order.address?.pincode}
+                        </p>
+                        {order.address?.landmark && (
+                          <p>Landmark: {order.address.landmark}</p>
+                        )}
+                      </div>
+
+                      <div className="orderBottomRow">
+                        {!isCancelled && canCancel && (
+                          <button
+                            className="cancelOrderBtn"
+                            onClick={() => openCancelModal(order._id)}
+                            disabled={actionLoadingId === order._id}
+                          >
+                            {actionLoadingId === order._id
+                              ? "Cancelling..."
+                              : "Cancel Order"}
+                          </button>
+                        )}
+
+                        {!isCancelled && canReturn && (
+                          <button
+                            className="returnOrderBtn"
+                            onClick={() => openReturnModal(order._id)}
+                            disabled={actionLoadingId === order._id}
+                          >
+                            {actionLoadingId === order._id
+                              ? "Submitting..."
+                              : "Return Order"}
+                          </button>
+                        )}
+
+                        {isCancelled && (
+                          <span className="cancelledText">
+                            This order has been cancelled.
+                          </span>
+                        )}
+
+                        {hasReturn && (
+                          <span className="deliveredText">
+                            Return status:{" "}
+                            {getStatusLabel(order.returnData.returnStatus)}
+                          </span>
+                        )}
+
+                        {isDelivered && !isCancelled && !hasReturn && (
+                          <span className="deliveredText">
+                            Delivered successfully. You can request return.
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -369,42 +543,43 @@ const MyOrders = () => {
           </div>
         </div>
       )}
+
       {showReturnModal && (
-  <div className="cancelModalOverlay">
-    <div className="cancelModal">
-      <h2>Return Order</h2>
-      <p>Please tell us why you want to return this order.</p>
+        <div className="cancelModalOverlay">
+          <div className="cancelModal">
+            <h2>Return Order</h2>
+            <p>Please tell us why you want to return this order.</p>
 
-      <textarea
-        className="cancelReasonInput"
-        placeholder="Enter return reason..."
-        value={returnReason}
-        onChange={(e) => setReturnReason(e.target.value)}
-        rows={5}
-      />
+            <textarea
+              className="cancelReasonInput"
+              placeholder="Enter return reason..."
+              value={returnReason}
+              onChange={(e) => setReturnReason(e.target.value)}
+              rows={5}
+            />
 
-      <div className="cancelModalActions">
-        <button
-          className="cancelModalBtn secondaryBtn"
-          onClick={closeReturnModal}
-          disabled={actionLoadingId === selectedReturnOrderId}
-        >
-          Close
-        </button>
+            <div className="cancelModalActions">
+              <button
+                className="cancelModalBtn secondaryBtn"
+                onClick={closeReturnModal}
+                disabled={actionLoadingId === selectedReturnOrderId}
+              >
+                Close
+              </button>
 
-        <button
-          className="cancelModalBtn primaryBtn"
-          onClick={handleConfirmReturn}
-          disabled={actionLoadingId === selectedReturnOrderId}
-        >
-          {actionLoadingId === selectedReturnOrderId
-            ? "Submitting..."
-            : "Submit Return"}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <button
+                className="cancelModalBtn primaryBtn"
+                onClick={handleConfirmReturn}
+                disabled={actionLoadingId === selectedReturnOrderId}
+              >
+                {actionLoadingId === selectedReturnOrderId
+                  ? "Submitting..."
+                  : "Submit Return"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

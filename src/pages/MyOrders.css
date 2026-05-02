@@ -393,3 +393,240 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.returnInfoBox {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.returnInfoBox strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #9a3412;
+}
+
+.returnInfoBox p {
+  margin: 5px 0;
+  color: #7c2d12;
+  font-size: 14px;
+}
+
+.returnInfoBox span {
+  font-weight: 800;
+}
+
+.orderHistoryBox {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.orderHistoryBox > strong {
+  display: block;
+  margin-bottom: 16px;
+  color: #111827;
+  font-size: 16px;
+}
+
+.orderTimeline {
+  position: relative;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.timelineDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #16a34a;
+  margin-top: 4px;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.timelineLine {
+  position: absolute;
+  left: 6px;
+  top: 20px;
+  width: 2px;
+  height: calc(100% - 12px);
+  background: #bbf7d0;
+}
+
+.timelineContent h4 {
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 15px;
+}
+
+.timelineContent p {
+  margin: 0 0 4px;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.timelineContent span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.orderStatusBadge.returnrequested,
+.orderStatusBadge.returnaccepted,
+.orderStatusBadge.pickedup,
+.orderStatusBadge.refunded,
+.orderStatusBadge.rejected {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.orderStatusBadge.returnaccepted {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.orderStatusBadge.pickedup {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.orderStatusBadge.refunded {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+.orderStatusBadge.rejected {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.orderCompactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+}
+
+.orderCompactLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.orderCompactImg {
+  width: 88px;
+  height: 104px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #f3f4f6;
+}
+
+.orderCompactInfo h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.orderCompactInfo p {
+  margin: 4px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.orderCompactInfo small {
+  display: inline-block;
+  margin-top: 4px;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.orderCompactRight {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: right;
+}
+
+.compactDateBox strong {
+  display: block;
+  color: #374151;
+  font-size: 13px;
+}
+
+.compactDateBox p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.viewDetailsBtn {
+  border: none;
+  background: #111827;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.arrowDown,
+.arrowUp {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.orderExpandedDetails {
+  border-top: 1px solid #eef2f7;
+  padding: 18px;
+  animation: expandFade 0.25s ease;
+}
+
+@keyframes expandFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .orderCompactRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .orderCompactRight {
+    width: 100%;
+    justify-content: space-between;
+    text-align: left;
+    flex-wrap: wrap;
+  }
+
+  .orderCompactImg {
+    width: 78px;
+    height: 94px;
+  }
+}

@@ -93,6 +93,7 @@ const Checkout = () => {
     const discountedSubtotal = subtotal - totalDiscount;
     const delivery = discountedSubtotal > 999 ? 50 : 99;
     const finalTotal = discountedSubtotal + delivery;
+    //const finalTotal = discountedSubtotal;
 
     return {
       subtotal,
@@ -104,50 +105,10 @@ const Checkout = () => {
     };
   }, [summary]);
 
-  // const handlePlaceOrder = async () => {
-  //   if (!selectedAddressId) {
-  //     setError("Please select a delivery address");
-  //     return;
-  //   }
-
-  //   try {
-  //     setActionLoading(true);
-  //     setMessage("");
-  //     setError("");
-
-  //     // const res = await placeOrderApi({
-  //     //   addressId: selectedAddressId,
-  //     //   paymentMethod,
-  //     // });
-  //     const payload = {
-  //       addressId: selectedAddressId,
-  //       paymentMethod,
-  //     };
-
-  //     if (buyNowItem) {
-  //       payload.mode = "buyNow";
-  //       payload.item = buyNowItem;
-  //     }
-
-  //     const res = await placeOrderApi(payload);
-
-  //     setMessage(res?.data?.message || "Order placed successfully");
-
-  //     setTimeout(() => {
-  //       navigate("/my-orders");
-  //     }, 800);
-  //   } catch (err) {
-  //     console.error("Place order error:", err);
-  //     setError(err?.response?.data?.message || "Failed to place order");
-  //   } finally {
-  //     setActionLoading(false);
-  //   }
-  // };
-
-
   const handlePlaceOrder = async () => {
     const isUPI = paymentMethod === "UPI";
     const isNetBanking = paymentMethod === "NET_BANKING";
+
     if (!selectedAddressId) {
       setError("Please select a delivery address");
       return;
@@ -157,6 +118,8 @@ const Checkout = () => {
       setActionLoading(true);
       setMessage("");
       setError("");
+
+      const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
 
       const payload = {
         addressId: selectedAddressId,
@@ -168,7 +131,7 @@ const Checkout = () => {
         payload.item = buyNowItem;
       }
 
-      // ✅ COD old flow
+      // ✅ COD order directly place
       if (paymentMethod === "COD") {
         const res = await placeOrderApi(payload);
 
@@ -181,27 +144,46 @@ const Checkout = () => {
         return;
       }
 
-      // ✅ UPI / Net Banking Razorpay flow
+      // ✅ Online payment validation
+      if (!isUPI && !isNetBanking) {
+        setError("Please select UPI or Net Banking");
+        return;
+      }
+
+      // ✅ Real amount
+      const paymentAmount = Math.round(Number(calculatedSummary.finalTotal || 0));
+
+      // ✅ For live ₹1 testing only, use this instead:
+      // const paymentAmount = 1;
+
+      if (!paymentAmount || paymentAmount <= 0) {
+        setError("Invalid payment amount");
+        return;
+      }
+
+      // ✅ Create Razorpay order
       const orderRes = await createRazorpayOrderApi({
-        amount: Math.round(calculatedSummary.finalTotal),
+        amount: paymentAmount,
       });
 
       const razorpayOrder = orderRes?.data?.data;
 
+      if (!razorpayOrder?.id) {
+        setError("Unable to create Razorpay order");
+        return;
+      }
+
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: razorpayOrder.amount,
-        currency: razorpayOrder.currency,
+        currency: razorpayOrder.currency || "INR",
         name: "ZENVYX",
-        description:
-          paymentMethod === "UPI"
-            ? "UPI Payment"
-            : "Net Banking Payment",
+        description: isUPI ? "UPI Payment" : "Net Banking Payment",
         order_id: razorpayOrder.id,
 
         method: {
-          upi: true,
-          netbanking: true,
+          upi: isUPI,
+          netbanking: isNetBanking,
           card: false,
           wallet: false,
           paylater: false,
@@ -209,18 +191,64 @@ const Checkout = () => {
         },
 
         handler: async function (response) {
-          // verify payment code
+          try {
+            console.log("Razorpay success response:", response);
+
+            // ✅ 1. Verify payment
+            const verifyRes = await verifyRazorpayPaymentApi({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (!verifyRes?.data?.success) {
+              setError("Payment verification failed");
+              return;
+            }
+
+            // ✅ 2. After successful verification, place order
+            const orderPayload = {
+              ...payload,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              paymentStatus: "Paid",
+            };
+
+            const placedOrderRes = await placeOrderApi(orderPayload);
+
+            setMessage(
+              placedOrderRes?.data?.message ||
+              "Payment successful. Order placed successfully."
+            );
+
+            setTimeout(() => {
+              navigate("/my-orders");
+            }, 800);
+          } catch (verifyErr) {
+            console.error("Payment verify/order create error:", verifyErr);
+            setError(
+              verifyErr?.response?.data?.message ||
+              "Payment completed but order creation failed"
+            );
+          }
         },
 
         prefill: {
-          name: addresses.find((a) => a._id === selectedAddressId)?.fullName || "",
-          contact: addresses.find((a) => a._id === selectedAddressId)?.mobile || "",
+          name: selectedAddress?.fullName || "",
+          contact: selectedAddress?.mobile || "",
+        },
+
+        notes: {
+          addressId: selectedAddressId,
+          paymentMethod,
         },
 
         theme: {
           color: "#111827",
         },
       };
+
       const rzp = new window.Razorpay(options);
 
       rzp.on("payment.failed", function (response) {

@@ -626,3 +626,42 @@
   font-size: 12px;
   border-radius: 4px;
 }
+.sizeBtn.disabledSize {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  text-decoration: line-through;
+}
+
+.sizeBtn.disabledSize:hover {
+  transform: none;
+  background: #f3f4f6;
+  box-shadow: none;
+}
+
+.sizeBtn:disabled {
+  pointer-events: none;
+}
+
+.stockText {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.selectedStockText {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #7c3aed;
+}

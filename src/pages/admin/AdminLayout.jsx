@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { FileText } from "lucide-react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 // import {
 //   LayoutDashboard,
@@ -55,6 +56,11 @@ const AdminLayout = () => {
       path: "/~fiadmin/returns",
       icon: <RefreshCcw size={18} />,
     },
+    {
+      label: "Reports",
+      path: "/~fiadmin/reports",
+      icon: <FileText size={18} />,
+    }
   ];
 
   const currentPageTitle = useMemo(() => {

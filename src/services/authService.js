@@ -107,3 +107,26 @@ export const updateReturnedOrderStatusApi = (returnId, data) => {
     },
   });
 };
+
+export const getAdminPaymentsApi = (params = {}) => {
+  const adminToken = localStorage.getItem("adminToken");
+
+  return API.get("/admin/payments", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+    params,
+  });
+};
+
+export const downloadAdminPaymentsCsvApi = (params = {}) => {
+  const adminToken = localStorage.getItem("adminToken");
+
+  return API.get("/admin/payments/export/csv", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+    params,
+    responseType: "blob",
+  });
+};

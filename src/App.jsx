@@ -9,7 +9,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Address from "./pages/Address";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
-
+import AdminReports from "./pages/admin/AdminReports";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminHome from "./pages/admin/AdminHome";
@@ -67,6 +67,7 @@ function App() {
             element={<div style={{ padding: "20px" }}>Customers Page</div>}
           />
            <Route path="returns" element={<ReturnedOrders />} />
+           <Route path="reports" element={<AdminReports />} />
           <Route
             path="settings"
             element={<div style={{ padding: "20px" }}>Settings Page</div>}

@@ -1141,3 +1141,20 @@
     grid-template-columns: 1fr;
   }
 }
+.socialBtn {
+  display: block;
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  /* background: linear-gradient(135deg, #111, #333); */
+  color: #fff;
+  text-decoration: none;
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+
+.socialBtn:hover {
+  /* background: linear-gradient(135deg, #ff4d4d, #ff9900); */
+  color: #d484fa;
+  transform: translateX(5px);
+}

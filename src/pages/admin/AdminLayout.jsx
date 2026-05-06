@@ -135,24 +135,17 @@ const AdminLayout = () => {
 
       <main className="adminMain">
         <header className="adminTopHeader">
-          <div className="adminTopHeaderLeft">
-            <button
-              className="adminMenuToggle"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu size={22} />
-            </button>
+  <div className="adminTopHeaderLeft">
+    <button
+      className="adminMenuToggle"
+      onClick={() => setSidebarOpen(true)}
+    >
+      <Menu size={22} />
+    </button>
 
-            <div>
-              <h1>{currentPageTitle}</h1>
-              <p>Manage your store operations in one place</p>
-            </div>
-          </div>
-
-          <div className="adminTopHeaderRight">
-            <div className="adminHeaderBadge">Admin Panel</div>
-          </div>
-        </header>
+    <h2 className="mobileTitle">{currentPageTitle}</h2>
+  </div>
+</header>
 
         <section className="adminContentWrapper">
           <Outlet />

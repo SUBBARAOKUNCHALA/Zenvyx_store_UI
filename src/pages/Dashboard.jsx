@@ -10,7 +10,20 @@ const footerLinks = {
   Company: ["About ZENVYX", "Privacy Policy", "Terms & Conditions", "Careers"],
 };
 
-const socialLinks = ["Instagram", "Facebook", "YouTube", "LinkedIn"];
+const socialLinks = [
+  {
+    name: "Instagram",
+    url: "https://www.instagram.com/zenvyx_store?igsh=Ym9qajYzamFjNHQ2",
+  },
+  {
+    name: "Facebook",
+    url: "https://www.facebook.com/share/1LL3hmj2Eb/",
+  },
+  {
+    name: "YouTube",
+    url: "https://youtube.com/@zenvyx_store?si=v6oLp5IwFG1C9Rno",
+  },
+];
 
 const navItems = [
   {
@@ -511,6 +524,7 @@ const Dashboard = () => {
             transition={{ delay: index * 0.05 }}
             onClick={() => chooseCategory(item.value)}
           >
+            
             <div className="categoryImageWrap">
               <img src={item.image} alt={item.label} />
             </div>
@@ -843,6 +857,10 @@ const Dashboard = () => {
                       navigate("/terms");
                       return;
                     }
+                    else if(link==="Track Order"){
+                       navigate("/my-orders");
+                      return;
+                    }
 
                     // ✅ Category navigation
                     if (["Shirts", "T-Shirts", "Pants"].includes(link)) {
@@ -868,10 +886,17 @@ const Dashboard = () => {
 
           <div className="footerColumn">
             <h4>Follow Us</h4>
+
             {socialLinks.map((item) => (
-              <button key={item} type="button">
-                {item}
-              </button>
+              <a
+                key={item.name}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="socialBtn"
+              >
+                {item.name}
+              </a>
             ))}
           </div>
         </div>

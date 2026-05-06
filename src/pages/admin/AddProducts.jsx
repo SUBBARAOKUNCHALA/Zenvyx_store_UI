@@ -59,19 +59,29 @@ const AddProducts = () => {
       [name]: value,
     }));
   };
+const toggleSize = (selectedSize) => {
+  setForm((prev) => {
+    const exists = prev.sizes.some((item) => item.size === selectedSize);
 
-  const toggleSize = (selectedSize) => {
-    setForm((prev) => {
-      const alreadySelected = prev.sizes.includes(selectedSize);
+    return {
+      ...prev,
+      sizes: exists
+        ? prev.sizes.filter((item) => item.size !== selectedSize)
+        : [...prev.sizes, { size: selectedSize, stock: 1 }],
+    };
+  });
+};
 
-      return {
-        ...prev,
-        sizes: alreadySelected
-          ? prev.sizes.filter((size) => size !== selectedSize)
-          : [...prev.sizes, selectedSize],
-      };
-    });
-  };
+const handleSizeStockChange = (selectedSize, value) => {
+  setForm((prev) => ({
+    ...prev,
+    sizes: prev.sizes.map((item) =>
+      item.size === selectedSize
+        ? { ...item, stock: Number(value) }
+        : item
+    ),
+  }));
+};
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files || []);
@@ -135,9 +145,18 @@ const AddProducts = () => {
       }
 
       if (form.sizes.length === 0) {
-        setError("Please select at least one size");
-        return;
-      }
+  setError("Please select at least one size");
+  return;
+}
+
+const invalidSizeStock = form.sizes.some(
+  (item) => item.stock === "" || Number(item.stock) < 0
+);
+
+if (invalidSizeStock) {
+  setError("Please enter valid stock for selected sizes");
+  return;
+}
 
       if (images.length === 0) {
         setError("Please select at least one product image");
@@ -152,8 +171,15 @@ const AddProducts = () => {
       formData.append("price", form.price);
       formData.append("category", form.category);
       formData.append("subCategory", form.subCategory);
-      formData.append("stock", form.stock);
+      //formData.append("stock", form.stock);
       formData.append("discount", form.discount || 0);
+      //formData.append("sizes", JSON.stringify(form.sizes));
+      const totalStock = form.sizes.reduce(
+        (sum, item) => sum + Number(item.stock || 0),
+        0
+      );
+
+      formData.append("stock", totalStock);
       formData.append("sizes", JSON.stringify(form.sizes));
 
       images.forEach((file) => {
@@ -303,39 +329,59 @@ const AddProducts = () => {
               </div>
 
               <div className="inputGroup fullWidth">
-                <label>Sizes</label>
+  <label>Sizes & Quantity</label>
 
-                {!form.category ? (
-                  <p className="selectCategoryHint">
-                    Select category first to choose sizes.
-                  </p>
-                ) : (
-                  <div className="sizesButtonWrap">
-                    {sizeOptions.map((size) => (
-                      <button
-                        key={size}
-                        type="button"
-                        className={`sizeSelectBtn ${
-                          form.sizes.includes(size) ? "activeSize" : ""
-                        }`}
-                        onClick={() => toggleSize(size)}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                )}
+  {!form.category ? (
+    <p className="selectCategoryHint">
+      Select category first to choose sizes.
+    </p>
+  ) : (
+    <div className="sizesButtonWrap">
+      {sizeOptions.map((size) => {
+        const selected = form.sizes.some((item) => item.size === size);
 
-                {form.sizes.length > 0 && (
-                  <div className="sizesList">
-                    {form.sizes.map((size) => (
-                      <span className="sizeTag" key={size}>
-                        {size}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+        return (
+          <button
+            key={size}
+            type="button"
+            className={`sizeSelectBtn ${selected ? "activeSize" : ""}`}
+            onClick={() => toggleSize(size)}
+          >
+            {size}
+          </button>
+        );
+      })}
+    </div>
+  )}
+
+  {form.sizes.length > 0 && (
+    <div className="sizeStockGrid">
+      {form.sizes.map((item) => (
+        <div className="sizeStockBox" key={item.size}>
+          <span className="sizeStockLabel">{item.size}</span>
+
+          <input
+            type="number"
+            min="0"
+            value={item.stock}
+            onChange={(e) =>
+              handleSizeStockChange(item.size, e.target.value)
+            }
+            placeholder="Qty"
+          />
+
+          <button
+            type="button"
+            className="removeSizeBtn"
+            onClick={() => toggleSize(item.size)}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
               {previewUrls.length > 0 && (
                 <div className="inputGroup fullWidth">

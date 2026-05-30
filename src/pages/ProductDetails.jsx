@@ -190,6 +190,7 @@ const ProductDetails = () => {
   const validateBeforeAction = () => {
     if (!localStorage.getItem("token")) {
       setCartError("Please login first");
+      navigate("/login")
       return false;
     }
 

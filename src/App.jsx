@@ -1,4 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -18,17 +19,37 @@ import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminOrders from "./pages/admin/AdminOrders";
 import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import Terms from "./components/Terms";
+import GlobalLoader from "./components/GlobalLoader"
+
 import "./App.css";
 
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/~fiadmin");
 
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const showLoader = () => setLoading(true);
+    const hideLoader = () => setLoading(false);
+
+    document.addEventListener("show-loader", showLoader);
+    document.addEventListener("hide-loader", hideLoader);
+
+    return () => {
+      document.removeEventListener("show-loader", showLoader);
+      document.removeEventListener("hide-loader", hideLoader);
+    };
+  }, []);
+
   return (
     <>
+      {loading && <GlobalLoader />}
+
       {!isAdminRoute && <Navbar />}
 
       <Routes>
+        {/* User Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/login" element={<Login />} />
@@ -39,16 +60,16 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />
 
-        {/* admin login */}
+        {/* Admin Login */}
         <Route path="/~fiadmin/login" element={<AdminLogin />} />
 
-        {/* redirect base admin url to login */}
+        {/* Redirect Admin Root */}
         <Route
           path="/~fiadmin"
           element={<Navigate to="/~fiadmin/login" replace />}
         />
 
-        {/* protected admin routes */}
+        {/* Protected Admin Routes */}
         <Route
           path="/~fiadmin/*"
           element={
@@ -57,20 +78,33 @@ function App() {
             </AdminProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route
+            index
+            element={<Navigate to="dashboard" replace />}
+          />
+
           <Route path="dashboard" element={<AdminHome />} />
           <Route path="add-products" element={<AddProducts />} />
-          <Route
-            path="orders" element={<AdminOrders/>} />
+          <Route path="orders" element={<AdminOrders />} />
+          <Route path="returns" element={<ReturnedOrders />} />
+          <Route path="reports" element={<AdminReports />} />
+
           <Route
             path="customers"
-            element={<div style={{ padding: "20px" }}>Customers Page</div>}
+            element={
+              <div style={{ padding: "20px" }}>
+                Customers Page
+              </div>
+            }
           />
-           <Route path="returns" element={<ReturnedOrders />} />
-           <Route path="reports" element={<AdminReports />} />
+
           <Route
             path="settings"
-            element={<div style={{ padding: "20px" }}>Settings Page</div>}
+            element={
+              <div style={{ padding: "20px" }}>
+                Settings Page
+              </div>
+            }
           />
         </Route>
       </Routes>

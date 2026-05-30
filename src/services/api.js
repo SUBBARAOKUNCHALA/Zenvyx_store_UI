@@ -1,8 +1,8 @@
 import axios from "axios";
 import { startLoading, stopLoading } from "../services/loaderService";
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
-  //baseURL:"https://zenvyx-store.onrender.com/api"
+  //baseURL: "http://localhost:5000/api",
+  baseURL:"https://zenvyx-store.onrender.com/api"
 });
 
 api.interceptors.request.use((config) => {

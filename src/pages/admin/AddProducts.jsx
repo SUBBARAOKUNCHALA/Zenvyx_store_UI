@@ -9,9 +9,36 @@ const categoryOptions = {
 };
 
 const sizeOptionsByCategory = {
-  Shirt: ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"],
-  "T-Shirt": ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"],
-  Pant: ["28", "30", "32", "34", "36", "38", "S", "M", "L", "XL", "XXL"],
+  Shirt: ["S", "M", "L", "XL", "XXL"],
+  "T-Shirt": ["S", "M", "L", "XL", "XXL"],
+  Pant: ["28", "30", "32", "34", "36", "38"],
+};
+
+const sizeCharts = {
+  Shirt: {
+    S: { chest: "36-38", shoulder: "17", length: "27" },
+    M: { chest: "38-40", shoulder: "18", length: "28" },
+    L: { chest: "40-42", shoulder: "19", length: "29" },
+    XL: { chest: "42-44", shoulder: "20", length: "30" },
+    XXL: { chest: "44-46", shoulder: "21", length: "31" },
+  },
+
+  "T-Shirt": {
+    S: { chest: "36-38", length: "26-27" },
+    M: { chest: "38-40", length: "27-28" },
+    L: { chest: "40-42", length: "28-29" },
+    XL: { chest: "42-44", length: "29-30" },
+    XXL: { chest: "44-46", length: "30-31" },
+  },
+
+  Pant: {
+    28: { waist: "28", length: "40-41" },
+    30: { waist: "30", length: "40-41" },
+    32: { waist: "32", length: "41-42" },
+    34: { waist: "34", length: "41-42" },
+    36: { waist: "36", length: "42-43" },
+    38: { waist: "38", length: "42-43" },
+  },
 };
 
 const AddProducts = () => {
@@ -59,29 +86,45 @@ const AddProducts = () => {
       [name]: value,
     }));
   };
-const toggleSize = (selectedSize) => {
-  setForm((prev) => {
-    const exists = prev.sizes.some((item) => item.size === selectedSize);
+  const toggleSize = (selectedSize) => {
+    setForm((prev) => {
+      const exists = prev.sizes.some(
+        (item) => item.size === selectedSize
+      );
 
-    return {
+      if (exists) {
+        return {
+          ...prev,
+          sizes: prev.sizes.filter(
+            (item) => item.size !== selectedSize
+          ),
+        };
+      }
+
+      return {
+        ...prev,
+        sizes: [
+          ...prev.sizes,
+          {
+            size: selectedSize,
+            stock: 1,
+            measurements:
+              sizeCharts[prev.category]?.[selectedSize] || {},
+          },
+        ],
+      };
+    });
+  };
+  const handleSizeStockChange = (selectedSize, value) => {
+    setForm((prev) => ({
       ...prev,
-      sizes: exists
-        ? prev.sizes.filter((item) => item.size !== selectedSize)
-        : [...prev.sizes, { size: selectedSize, stock: 1 }],
-    };
-  });
-};
-
-const handleSizeStockChange = (selectedSize, value) => {
-  setForm((prev) => ({
-    ...prev,
-    sizes: prev.sizes.map((item) =>
-      item.size === selectedSize
-        ? { ...item, stock: Number(value) }
-        : item
-    ),
-  }));
-};
+      sizes: prev.sizes.map((item) =>
+        item.size === selectedSize
+          ? { ...item, stock: Number(value) }
+          : item
+      ),
+    }));
+  };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files || []);
@@ -145,18 +188,18 @@ const handleSizeStockChange = (selectedSize, value) => {
       }
 
       if (form.sizes.length === 0) {
-  setError("Please select at least one size");
-  return;
-}
+        setError("Please select at least one size");
+        return;
+      }
 
-const invalidSizeStock = form.sizes.some(
-  (item) => item.stock === "" || Number(item.stock) < 0
-);
+      const invalidSizeStock = form.sizes.some(
+        (item) => item.stock === "" || Number(item.stock) < 0
+      );
 
-if (invalidSizeStock) {
-  setError("Please enter valid stock for selected sizes");
-  return;
-}
+      if (invalidSizeStock) {
+        setError("Please enter valid stock for selected sizes");
+        return;
+      }
 
       if (images.length === 0) {
         setError("Please select at least one product image");
@@ -329,59 +372,89 @@ if (invalidSizeStock) {
               </div>
 
               <div className="inputGroup fullWidth">
-  <label>Sizes & Quantity</label>
+                <label>Sizes & Quantity</label>
 
-  {!form.category ? (
-    <p className="selectCategoryHint">
-      Select category first to choose sizes.
-    </p>
-  ) : (
-    <div className="sizesButtonWrap">
-      {sizeOptions.map((size) => {
-        const selected = form.sizes.some((item) => item.size === size);
+                {!form.category ? (
+                  <p className="selectCategoryHint">
+                    Select category first to choose sizes.
+                  </p>
+                ) : (
+                  <div className="sizesButtonWrap">
+                    {sizeOptions.map((size) => {
+                      const selected = form.sizes.some((item) => item.size === size);
 
-        return (
-          <button
-            key={size}
-            type="button"
-            className={`sizeSelectBtn ${selected ? "activeSize" : ""}`}
-            onClick={() => toggleSize(size)}
-          >
-            {size}
-          </button>
-        );
-      })}
-    </div>
-  )}
+                      return (
+                        <button
+                          key={size}
+                          type="button"
+                          className={`sizeSelectBtn ${selected ? "activeSize" : ""}`}
+                          onClick={() => toggleSize(size)}
+                        >
+                          {size}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
 
-  {form.sizes.length > 0 && (
-    <div className="sizeStockGrid">
-      {form.sizes.map((item) => (
-        <div className="sizeStockBox" key={item.size}>
-          <span className="sizeStockLabel">{item.size}</span>
+                {form.sizes.length > 0 && (
+                  <div className="sizeStockGrid">
+                    {form.sizes.map((item) => (
+                      <div className="sizeStockBox" key={item.size}>
+                        <div className="sizeStockInfo">
+                          <span className="sizeStockLabel">
+                            {item.size}
+                          </span>
 
-          <input
-            type="number"
-            min="0"
-            value={item.stock}
-            onChange={(e) =>
-              handleSizeStockChange(item.size, e.target.value)
-            }
-            placeholder="Qty"
-          />
+                          <input
+                            type="number"
+                            min="0"
+                            value={item.stock}
+                            onChange={(e) =>
+                              handleSizeStockChange(item.size, e.target.value)
+                            }
+                            placeholder="Qty"
+                          />
 
-          <button
-            type="button"
-            className="removeSizeBtn"
-            onClick={() => toggleSize(item.size)}
-          >
-            ×
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
+                          <div className="measurementInfo">
+                            {item.measurements?.chest && (
+                              <span>
+                                Chest: {item.measurements.chest}
+                              </span>
+                            )}
+
+                            {item.measurements?.shoulder && (
+                              <span>
+                                Shoulder: {item.measurements.shoulder}
+                              </span>
+                            )}
+
+                            {item.measurements?.waist && (
+                              <span>
+                                Waist: {item.measurements.waist}
+                              </span>
+                            )}
+
+                            {item.measurements?.length && (
+                              <span>
+                                Length: {item.measurements.length}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="removeSizeBtn"
+                          onClick={() => toggleSize(item.size)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {previewUrls.length > 0 && (
                 <div className="inputGroup fullWidth">

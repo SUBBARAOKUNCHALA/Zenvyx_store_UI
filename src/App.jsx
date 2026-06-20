@@ -20,6 +20,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import Terms from "./components/Terms";
 import GlobalLoader from "./components/GlobalLoader"
+import NotFound from "./utils/NotFound";
 
 import "./App.css";
 
@@ -107,6 +108,7 @@ function App() {
             }
           />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

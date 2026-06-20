@@ -71,7 +71,7 @@ const navItems = [
   },
 ];
 
-const allSizes = ["", "S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
+const allSizes = ["S", "M", "L", "XL", "XXL", "28", "30", "32", "34", "36", "38"];
 
 const normalizeText = (value = "") =>
   value

@@ -269,17 +269,42 @@ const Cart = () => {
 
               return (
                 <div className="cartCard" key={item._id}>
-                  <div className="cartImageBox">
+                  {/* <div className="cartImageBox">
                     <img
                       src={product.image || product.images?.[0]}
                       alt={product.name}
                     />
-                  </div>
+                  </div> */}
+
+                  <div
+  className="cartImageBox clickableProduct"
+  onClick={() =>
+    navigate(`/product/${product._id}`, {
+      state: { product },
+    })
+  }
+>
+  <img
+    src={product.image || product.images?.[0]}
+    alt={product.name}
+  />
+</div>
 
                   <div className="cartCardContent">
                     <div className="cartTopRow">
                       <div>
-                        <h3>{product.name}</h3>
+                        {/* <h3>{product.name}</h3> */}
+
+                        <h3
+  className="cartProductLink"
+  onClick={() =>
+    navigate(`/product/${product._id}`, {
+      state: { product },
+    })
+  }
+>
+  {product.name}
+</h3>
                         <p className="cartCategory">{product.category}</p>
                       </div>
 
@@ -330,13 +355,32 @@ const Cart = () => {
                       </div>
                     )}
 
-                    {item.size && (
+                    {/* {item.size && (
                       <div className="cartSizesRow">
                         <span className="cartSizeChip selectedSizeChip">
                           Size: {item.size}
                         </span>
                       </div>
-                    )}
+                    )} */}
+
+                    {item.size && (
+  <div className="cartSizesRow">
+    <span className="cartSizeChip selectedSizeChip">
+      Size: {item.size}
+    </span>
+
+    <button
+      className="changeSizeBtn"
+      onClick={() =>
+        navigate(`/product/${product._id}`, {
+          state: { product },
+        })
+      }
+    >
+      Change Size
+    </button>
+  </div>
+)}
 
                     <div className="cartBottomRow">
                       <div className="cartQtyBox">

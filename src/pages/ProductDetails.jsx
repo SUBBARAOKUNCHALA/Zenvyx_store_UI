@@ -7,8 +7,35 @@ import {
 } from "../services/authService";
 import "./ProductDetails.css";
 
-const ALPHABET_SIZES = ["S", "M", "L", "XL", "XXL"];
-const INCH_SIZES = ["28", "30", "32", "34", "36", "38"];
+const SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"];
+const PANT_SIZES = ["28", "30", "32", "34", "36", "38"];
+
+const SIZE_CHARTS = {
+  Shirt: [
+    { size: "S", chest: "36-38", shoulder: "17", length: "27" },
+    { size: "M", chest: "38-40", shoulder: "18", length: "28" },
+    { size: "L", chest: "40-42", shoulder: "19", length: "29" },
+    { size: "XL", chest: "42-44", shoulder: "20", length: "30" },
+    { size: "XXL", chest: "44-46", shoulder: "21", length: "31" },
+  ],
+
+  "T-Shirt": [
+    { size: "S", chest: "36-38", length: "26-27" },
+    { size: "M", chest: "38-40", length: "27-28" },
+    { size: "L", chest: "40-42", length: "28-29" },
+    { size: "XL", chest: "42-44", length: "29-30" },
+    { size: "XXL", chest: "44-46", length: "30-31" },
+  ],
+
+  Pant: [
+    { size: "28", waist: "28", length: "40-41" },
+    { size: "30", waist: "30", length: "40-41" },
+    { size: "32", waist: "32", length: "41-42" },
+    { size: "34", waist: "34", length: "41-42" },
+    { size: "36", waist: "36", length: "42-43" },
+    { size: "38", waist: "38", length: "42-43" },
+  ],
+};
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -18,8 +45,8 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(location.state?.product || null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const [showInches, setShowInches] = useState(false);
+  const [showSizeChart, setShowSizeChart] = useState(false);
+  //const [showInches, setShowInches] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
 
   const [selectedImage, setSelectedImage] = useState("");
@@ -33,6 +60,8 @@ const ProductDetails = () => {
   const sizeStockMap = useMemo(() => {
     const map = {};
 
+    const isPant = product?.category === "Pant";
+    const visibleSizes = isPant ? PANT_SIZES : SHIRT_SIZES;
     product?.sizes?.forEach((item) => {
       const size = String(item?.size || "").toUpperCase();
       map[size] = Number(item?.stock || 0);
@@ -40,8 +69,9 @@ const ProductDetails = () => {
 
     return map;
   }, [product]);
+  const visibleSizes = product?.category === "Pant" ? PANT_SIZES : SHIRT_SIZES;
 
-  const visibleSizes = showInches ? INCH_SIZES : ALPHABET_SIZES;
+  //const visibleSizes = showInches ? INCH_SIZES : ALPHABET_SIZES;
 
   const selectedSizeStock = selectedSize
     ? sizeStockMap[String(selectedSize).toUpperCase()] || 0
@@ -83,22 +113,35 @@ const ProductDetails = () => {
           tempMap[size] = Number(item?.stock || 0);
         });
 
-        const firstAlphabetSize =
-          ALPHABET_SIZES.find((size) => tempMap[size] > 0) || "";
+        // const firstAlphabetSize =
+        //   ALPHABET_SIZES.find((size) => tempMap[size] > 0) || "";
 
-        const firstInchSize =
-          INCH_SIZES.find((size) => tempMap[size] > 0) || "";
+        // const firstInchSize =
+        //   INCH_SIZES.find((size) => tempMap[size] > 0) || "";
 
-        if (firstAlphabetSize) {
-          setShowInches(false);
-          setSelectedSize(firstAlphabetSize);
-        } else if (firstInchSize) {
-          setShowInches(true);
-          setSelectedSize(firstInchSize);
-        } else {
-          setShowInches(false);
-          setSelectedSize("");
-        }
+        // if (firstAlphabetSize) {
+        //   setShowInches(false);
+        //   setSelectedSize(firstAlphabetSize);
+        // } else if (firstInchSize) {
+        //   setShowInches(true);
+        //   setSelectedSize(firstInchSize);
+        // } else {
+        //   setShowInches(false);
+        //   setSelectedSize("");
+        // }
+
+        const availableSizes =
+          singleProduct?.category === "Pant"
+            ? PANT_SIZES
+            : SHIRT_SIZES;
+
+        const firstAvailableSize =
+          availableSizes.find(
+            size =>
+              tempMap[String(size).toUpperCase()] > 0
+          ) || "";
+
+        setSelectedSize(firstAvailableSize);
 
         if (singleProduct?.images?.length > 0) {
           setSelectedImage(singleProduct.images[0]);
@@ -124,15 +167,15 @@ const ProductDetails = () => {
     fetchProductDetails();
   }, [id]);
 
-  const handleSizeTypeChange = (checked) => {
-    setShowInches(checked);
-    setCartError("");
-    setCartMessage("");
-    setQuantity(1);
+  // const handleSizeTypeChange = (checked) => {
+  //   setShowInches(checked);
+  //   setCartError("");
+  //   setCartMessage("");
+  //   setQuantity(1);
 
-    const nextSizes = checked ? INCH_SIZES : ALPHABET_SIZES;
-    setSelectedSize(getFirstAvailableSize(nextSizes));
-  };
+  //   const nextSizes = checked ? INCH_SIZES : ALPHABET_SIZES;
+  //   setSelectedSize(getFirstAvailableSize(nextSizes));
+  // };
 
   const handleSizeSelect = (size) => {
     if (!isSizeAvailable(size)) return;
@@ -368,14 +411,14 @@ const ProductDetails = () => {
             </div>
 
             <div className="sizeOptions">
-               <label className="inchCheckBox">
+              {/* <label className="inchCheckBox">
                 <input
                   type="checkbox"
                   checked={showInches}
                   onChange={(e) => handleSizeTypeChange(e.target.checked)}
                 />
                 <span>In Inches</span>
-              </label>
+              </label> */}
               {visibleSizes.map((size) => {
                 const stock = sizeStockMap[String(size).toUpperCase()] || 0;
                 const available = stock > 0;
@@ -395,6 +438,81 @@ const ProductDetails = () => {
                   </button>
                 );
               })}
+            </div>
+            <div className="sizeChartSection">
+
+              <button
+                type="button"
+                className="sizeChartToggle"
+                onClick={() => setShowSizeChart(!showSizeChart)}
+              >
+                {showSizeChart ? "Hide Size Chart ▲" : "View Size Chart ▼"}
+              </button>
+
+              {showSizeChart && (
+                <div className="sizeChartTableWrapper">
+                  <table className="sizeChartTable">
+                    <thead>
+                      <tr>
+                        {product.category === "Pant" ? (
+                          <>
+                            <th>Size</th>
+                            <th>Waist</th>
+                            <th>Length</th>
+                          </>
+                        ) : product.category === "Shirt" ? (
+                          <>
+                            <th>Size</th>
+                            <th>Chest</th>
+                            <th>Shoulder</th>
+                            <th>Length</th>
+                          </>
+                        ) : (
+                          <>
+                            <th>Size</th>
+                            <th>Chest</th>
+                            <th>Length</th>
+                          </>
+                        )}
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {SIZE_CHARTS[product.category]?.map((row) => (
+                        <tr
+                          key={row.size}
+                          className={
+                            selectedSize === row.size
+                              ? "activeSizeRow"
+                              : ""
+                          }
+                        >
+                          {product.category === "Pant" ? (
+                            <>
+                              <td>{row.size}</td>
+                              <td>{row.waist}</td>
+                              <td>{row.length}</td>
+                            </>
+                          ) : product.category === "Shirt" ? (
+                            <>
+                              <td>{row.size}</td>
+                              <td>{row.chest}</td>
+                              <td>{row.shoulder}</td>
+                              <td>{row.length}</td>
+                            </>
+                          ) : (
+                            <>
+                              <td>{row.size}</td>
+                              <td>{row.chest}</td>
+                              <td>{row.length}</td>
+                            </>
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
 
@@ -439,7 +557,7 @@ const ProductDetails = () => {
             <button
               className="addCartBtn"
               onClick={handleAddToCart}
-              disabled={cartLoading || product.stock <= 0 || !selectedSize}
+              disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
             >
               {cartLoading ? "Adding..." : "Add to Cart"}
             </button>
@@ -447,7 +565,7 @@ const ProductDetails = () => {
             <button
               className="buyNowBtn"
               onClick={handleBuyNow}
-              disabled={cartLoading || product.stock <= 0 || !selectedSize}
+              disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
             >
               Buy Now
             </button>

@@ -53,6 +53,28 @@ const Address = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
+    // Mobile Number: Only numbers, max 10 digits
+    if (name === "mobile") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+
+      setForm((prev) => ({
+        ...prev,
+        mobile: numericValue,
+      }));
+      return;
+    }
+
+    // Pincode: Only numbers, max 6 digits
+    if (name === "pincode") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 6);
+
+      setForm((prev) => ({
+        ...prev,
+        pincode: numericValue,
+      }));
+      return;
+    }
+
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -66,6 +88,16 @@ const Address = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (form.mobile.length !== 10) {
+      setError("Mobile number must be exactly 10 digits");
+      return;
+    }
+
+    if (form.pincode.length !== 6) {
+      setError("Pincode must be exactly 6 digits");
+      return;
+    }
 
     try {
       setActionLoading(true);
@@ -189,6 +221,8 @@ const Address = () => {
                 value={form.mobile}
                 onChange={handleChange}
                 autoComplete="off"
+                maxLength={10}
+                pattern="[0-9]{10}"
                 required
               />
               <input
@@ -198,6 +232,8 @@ const Address = () => {
                 value={form.pincode}
                 autoComplete="off"
                 onChange={handleChange}
+                maxLength={6}
+                pattern="[0-9]{6}"
                 required
               />
               <input
@@ -271,8 +307,8 @@ const Address = () => {
                 {actionLoading
                   ? "Saving..."
                   : editingId
-                  ? "Update Address"
-                  : "Save Address"}
+                    ? "Update Address"
+                    : "Save Address"}
               </button>
 
               {editingId && (

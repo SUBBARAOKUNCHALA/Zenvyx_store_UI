@@ -299,3 +299,15 @@
   font-size: 20px;
   cursor: pointer;
 }
+.measurementInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.sizeStockInfo {
+  flex: 1;
+}

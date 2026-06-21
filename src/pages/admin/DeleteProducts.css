@@ -1,0 +1,391 @@
+.deleteProductsPage {
+  width: 100%;
+}
+
+.deleteHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.deleteHeader h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.deleteHeader p {
+  margin-top: 6px;
+  color: #6b7280;
+}
+
+.deleteRefreshBtn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: #111827;
+  color: #fff;
+  font-weight: 700;
+}
+
+.deleteSearchWrapper {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 12px 35px rgba(17, 24, 39, 0.08);
+}
+
+.deleteSearchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 0 14px;
+}
+
+.deleteSearchBox input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 14px 4px;
+  font-size: 15px;
+}
+
+.deleteTableWrapper {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(17, 24, 39, 0.08);
+}
+
+.deleteProductList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.deleteProductItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  border-bottom: 1px solid #eef2f7;
+  transition: 0.3s;
+}
+
+.deleteProductItem:hover {
+  background: #f9fafb;
+}
+
+.deleteProductInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.deleteProductImage {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid #eef2f7;
+}
+
+.deleteProductName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.deleteProductPrice {
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.deleteStock {
+  color: #9ca3af;
+  margin-left: 8px;
+}
+
+.deleteBtn {
+  border: 1px solid #fecaca;
+  background: #fff;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.deleteBtn:hover {
+  background: #fef2f2;
+}
+
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deleteLoading,
+.deleteEmpty {
+  min-height: 250px;
+  background: #fff;
+  border-radius: 20px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  color: #6b7280;
+  box-shadow: 0 12px 35px rgba(17, 24, 39, 0.08);
+}
+
+.deleteModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 999;
+}
+
+.deleteModal {
+  width: min(500px, 100%);
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.deleteModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.deleteModalTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.deleteWarningIcon {
+  width: 45px;
+  height: 45px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteModalHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #111827;
+}
+
+.closeDeleteModal {
+  border: none;
+  background: #f3f4f6;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.deleteModalText {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.deleteModalNote {
+  margin-top: 10px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.deleteModalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancelDeleteBtn {
+  border: none;
+  background: #f3f4f6;
+  color: #111827;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.confirmDeleteBtn {
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmDeleteBtn:hover {
+  background: #b91c1c;
+}
+
+.confirmDeleteBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.deleteToast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 700;
+  z-index: 9999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.deleteToast.success {
+  background: #16a34a;
+}
+
+.deleteToast.error {
+  background: #dc2626;
+}
+
+.spinIcon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .deleteHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .deleteProductItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .deleteBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .deleteModalActions {
+    flex-direction: column;
+  }
+
+  .cancelDeleteBtn,
+  .confirmDeleteBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.deleteProductsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.deleteProductCard {
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(17, 24, 39, 0.08);
+  border: 1px solid #eef2f7;
+  transition: all 0.3s ease;
+}
+
+.deleteProductCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.12);
+}
+
+.deleteProductImage {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.deleteProductContent {
+  padding: 16px;
+}
+
+.deleteProductName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.deleteProductPrice {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.deleteStock {
+  color: #6b7280;
+  margin-bottom: 15px;
+}
+
+.deleteBtn {
+  width: 100%;
+  border: none;
+  background: #dc2626;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.deleteBtn:hover {
+  background: #b91c1c;
+}

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FileText } from "lucide-react";
+import { FileText,Trash2  } from "lucide-react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 // import {
 //   LayoutDashboard,
@@ -60,6 +60,11 @@ const AdminLayout = () => {
       label: "Reports",
       path: "/~fiadmin/reports",
       icon: <FileText size={18} />,
+    },
+    {
+      label: "Delete Products",
+      path: "/~fiadmin/deleteproduts",
+      icon: <Trash2 size={18} />,
     }
   ];
 
@@ -135,17 +140,17 @@ const AdminLayout = () => {
 
       <main className="adminMain">
         <header className="adminTopHeader">
-  <div className="adminTopHeaderLeft">
-    <button
-      className="adminMenuToggle"
-      onClick={() => setSidebarOpen(true)}
-    >
-      <Menu size={22} />
-    </button>
+          <div className="adminTopHeaderLeft">
+            <button
+              className="adminMenuToggle"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={22} />
+            </button>
 
-    <h2 className="mobileTitle">{currentPageTitle}</h2>
-  </div>
-</header>
+            <h2 className="mobileTitle">{currentPageTitle}</h2>
+          </div>
+        </header>
 
         <section className="adminContentWrapper">
           <Outlet />

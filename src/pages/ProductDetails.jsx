@@ -47,6 +47,8 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [showSizeChart, setShowSizeChart] = useState(false);
   //const [showInches, setShowInches] = useState(false);
+  const [showImagePopup, setShowImagePopup] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState({});
   const [selectedSize, setSelectedSize] = useState("");
 
   const [selectedImage, setSelectedImage] = useState("");
@@ -56,6 +58,25 @@ const ProductDetails = () => {
   const [cartMessage, setCartMessage] = useState("");
   const [cartError, setCartError] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+
+  const handleImageZoom = (e) => {
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: "scale(2)",
+    });
+  };
+
+  const resetZoom = () => {
+    setZoomStyle({
+      transform: "scale(1)",
+    });
+  };
 
   const sizeStockMap = useMemo(() => {
     const map = {};
@@ -334,8 +355,13 @@ const ProductDetails = () => {
       <div className="productDetailsContainer">
         <div className="productDetailsLeft">
           <div className="productDetailsImage">
-            <img src={selectedImage || product.image} alt={product.name} />
-
+            {/* <img src={selectedImage || product.image} alt={product.name} /> */}
+            <img
+              src={selectedImage || product.image}
+              alt={product.name}
+              onClick={() => setShowImagePopup(true)}
+              style={{ cursor: "zoom-in" }}
+            />
             {productImages.length > 1 && (
               <>
                 <button
@@ -668,6 +694,44 @@ const ProductDetails = () => {
           )}
         </div>
       </div>
+
+      {showImagePopup && (
+  <div
+    className="imagePopupOverlay"
+    onClick={() => setShowImagePopup(false)}
+  >
+    <div
+      className="imagePopupContainer"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        className="popupCloseBtn"
+        onClick={() => setShowImagePopup(false)}
+      >
+        ✕
+      </button>
+
+      <button className="popupNavBtn popupPrev" onClick={handlePrevImage}>
+        ‹
+      </button>
+
+      <div className="popupImageWrapper">
+        <img
+          src={selectedImage}
+          alt=""
+          className="popupImage"
+          style={zoomStyle}
+          onMouseMove={handleImageZoom}
+          onMouseLeave={resetZoom}
+        />
+      </div>
+
+      <button className="popupNavBtn popupNext" onClick={handleNextImage}>
+        ›
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 };

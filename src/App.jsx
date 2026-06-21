@@ -21,8 +21,8 @@ import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import Terms from "./components/Terms";
 import GlobalLoader from "./components/GlobalLoader"
 import NotFound from "./utils/NotFound";
-
 import "./App.css";
+import DeleteProducts from "./pages/admin/DeleteProducts"
 
 function App() {
   const location = useLocation();
@@ -89,6 +89,7 @@ function App() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="returns" element={<ReturnedOrders />} />
           <Route path="reports" element={<AdminReports />} />
+          <Route path="deleteproduts" element={<DeleteProducts />} />
 
           <Route
             path="customers"

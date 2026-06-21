@@ -108,6 +108,16 @@ export const updateReturnedOrderStatusApi = (returnId, data) => {
   });
 };
 
+export const deleteProductApi = (productId) => {
+  const adminToken = localStorage.getItem("adminToken");
+
+  return API.delete(`/admin/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+};
+
 export const getAdminPaymentsApi = (params = {}) => {
   const adminToken = localStorage.getItem("adminToken");
 

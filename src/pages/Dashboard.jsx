@@ -659,7 +659,7 @@ const Dashboard = () => {
               </label>
             </div>
 
-            <div className="filterBlock">
+            {/* <div className="filterBlock">
               <h4>Sizes</h4>
               <div className="sizeWrap">
                 {allSizes
@@ -676,7 +676,7 @@ const Dashboard = () => {
                     </button>
                   ))}
               </div>
-            </div>
+            </div> */}
 
             <button className="clearBtn" onClick={clearAllFilters}>
               Clear Filters

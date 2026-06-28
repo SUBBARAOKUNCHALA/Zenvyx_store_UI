@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Allproducts } from "../services/authService";
+import { Allproducts, toggleWishlistApi, removeWishlistApi } from "../services/authService";
+import { Heart } from "lucide-react";
 import "./Dashboard.css";
 
 const footerLinks = {
@@ -235,7 +236,6 @@ const Dashboard = () => {
   const [showInchSizes, setShowInchSizes] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
-
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredNav, setHoveredNav] = useState(null);
@@ -244,6 +244,22 @@ const Dashboard = () => {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [likedProducts, setLikedProducts] = useState({});
+
+  const toggleWishlist = async (productId) => {
+  try {
+    const res = await toggleWishlistApi(productId);
+
+    if (res.data.success) {
+      setLikedProducts((prev) => ({
+        ...prev,
+        [productId]: res.data.liked,
+      }));
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -524,7 +540,7 @@ const Dashboard = () => {
             transition={{ delay: index * 0.05 }}
             onClick={() => chooseCategory(item.value)}
           >
-            
+
             <div className="categoryImageWrap">
               <img src={item.image} alt={item.label} />
             </div>
@@ -748,6 +764,19 @@ const Dashboard = () => {
                       <span className="productTag">
                         {product.subCategory || product.category}
                       </span>
+
+                      {/* ❤️ Wishlist Button */}
+<button
+  className={`wishlistBtn ${
+    likedProducts[product._id] ? "active" : ""
+  }`}
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleWishlist(product._id);
+  }}
+>
+  <Heart size={28} />
+</button>
                     </div>
 
                     <div className="productContent">
@@ -857,8 +886,8 @@ const Dashboard = () => {
                       navigate("/terms");
                       return;
                     }
-                    else if(link==="Track Order"){
-                       navigate("/my-orders");
+                    else if (link === "Track Order") {
+                      navigate("/my-orders");
                       return;
                     }
 

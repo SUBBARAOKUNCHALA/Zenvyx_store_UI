@@ -1,0 +1,266 @@
+.wishlistPage{
+    max-width:1400px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.wishlistHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.wishlistHeader h2{
+    font-size:34px;
+    color:#2b174f;
+}
+
+.wishlistHeader span{
+    color:#777;
+    font-weight:600;
+}
+
+.wishlistGrid{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.wishlistCard {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  transition: .3s;
+}
+
+.wishlistCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,.12);
+}
+
+
+.wishlistCard img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.removeWishlist{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:50%;
+    background:#fff;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.wishlistContent{
+    padding:18px;
+}
+
+.wishlistContent h3{
+    margin-bottom:8px;
+    font-size:20px;
+}
+
+.wishlistContent p{
+    color:#777;
+    font-size:14px;
+    height:40px;
+    overflow:hidden;
+}
+
+.wishlistPrice{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:15px 0;
+}
+
+.newPrice{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.oldPrice{
+    text-decoration:line-through;
+    color:#888;
+}
+
+.discount{
+    color:#1ca34b;
+    font-weight:bold;
+}
+
+.moveCartBtn{
+    width:100%;
+    border:none;
+    padding:14px;
+    background:#7b4dff;
+    color:white;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.moveCartBtn:hover{
+    background:#6437eb;
+}
+
+.wishlistEmpty{
+    text-align:center;
+    padding:100px 20px;
+}
+
+.wishlistEmpty h3{
+    margin:20px 0;
+}
+
+.wishlistEmpty button{
+    margin-top:25px;
+    border:none;
+    padding:14px 28px;
+    background:#7b4dff;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+.wishlistContent {
+  padding: 12px;
+}
+
+.wishlistContent h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wishlistContent p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.wishlistPrice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.newPrice {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.oldPrice {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 13px;
+}
+
+.discount {
+  color: #00a651;
+  font-weight: 600;
+  font-size: 13px;
+}
+.moveCartBtn {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg,#7b4dff,#5d2dfd);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.moveCartBtn:hover {
+  opacity: .9;
+}
+
+.removeWishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+@media (max-width: 1400px) {
+  .wishlistGrid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .wishlistGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .wishlistGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .wishlistGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .wishlistCard img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wishlistGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .wishlistCard img {
+    height: 150px;
+  }
+
+  .wishlistContent h3 {
+    font-size: 14px;
+  }
+
+  .newPrice {
+    font-size: 17px;
+  }
+
+  .moveCartBtn {
+    height: 36px;
+    font-size: 13px;
+  }
+}

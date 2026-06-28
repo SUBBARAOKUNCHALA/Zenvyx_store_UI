@@ -1158,3 +1158,65 @@
   color: #d484fa;
   transform: translateX(5px);
 }
+
+.productImageBox {
+  position: relative;
+}
+
+.wishlistBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlistBtn svg {
+  width: 28px;
+  height: 28px;
+  stroke: #ffffff;
+  stroke-width: 2;
+  fill: transparent;
+  transition: all 0.25s ease;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+}
+
+.wishlistBtn:hover svg {
+  transform: scale(1.15);
+}
+
+.wishlistBtn.active svg {
+  fill: #ff1493;      /* Pure Pink */
+  stroke: #ff1493;
+}
+
+.wishlistBtn:not(.active):hover svg {
+  stroke: #ff1493;
+}
+.productCard{
+    position: relative;
+    overflow: hidden;
+}
+
+.productImageBox{
+    position: relative;
+    overflow: hidden;
+}
+
+.wishlistBtn{
+    position:absolute;
+    top:12px;
+    right:12px;
+
+    background:transparent;
+    border:none;
+    cursor:pointer;
+
+    z-index:5;
+}

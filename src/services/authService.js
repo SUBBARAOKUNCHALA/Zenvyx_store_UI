@@ -35,6 +35,36 @@ export const deleteAddressApi = (id) => API.delete(`/address/delete/${id}`);
 export const setDefaultAddressApi = (id) =>
   API.put(`/address/set-default/${id}`);
 
+
+//wish list route
+
+export const toggleWishlistApi = (productId) => {
+  const token = localStorage.getItem("token");
+
+  return API.post(
+    `/wishlist/toggle/${productId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const getWishlistApi = () => {
+  const token = localStorage.getItem("token");
+
+  return API.get("/wishlist", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const removeWishlistApi = (productId) =>
+  API.delete(`/wishlist/${productId}`);
+
 // ORDERS
 export const getCheckoutSummaryApi = () => API.get("/orders/checkout-summary");
 export const placeOrderApi = (data) => API.post("/orders/place", data);
@@ -44,6 +74,11 @@ export const cancelMyOrderApi = (orderId, data) =>
   API.put(`/orders/${orderId}/cancel`, data);
 export const returnOrderApi = (orderId, data) =>
   API.put(`/orders/${orderId}/return`, data);
+
+export const downloadInvoiceApi = (orderId) =>
+  API.get(`/orders/${orderId}/invoice`, {
+    responseType: "blob",
+  });
 
 // ADMIN APIS
 export const adminLoginApi = (data) => API.post("/admin/login", data);

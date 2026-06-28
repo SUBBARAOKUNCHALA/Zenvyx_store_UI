@@ -64,45 +64,45 @@ const Navbar = () => {
   //     { replace: true }
   //   );
   // };
-const scrollToProducts = () => {
-  setTimeout(() => {
-    document
-      .getElementById("productsSection")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 100);
-};
+  const scrollToProducts = () => {
+    setTimeout(() => {
+      document
+        .getElementById("productsSection")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
   const handleSearchChange = (e) => {
-  const value = e.target.value;
-  setSearchText(value);
+    const value = e.target.value;
+    setSearchText(value);
 
-  const trimmedValue = value.trim();
+    const trimmedValue = value.trim();
 
-  if (location.pathname !== "/") {
-    navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
-    scrollToProducts();
-    return;
-  }
+    if (location.pathname !== "/") {
+      navigate(trimmedValue ? `/?search=${encodeURIComponent(trimmedValue)}` : "/");
+      scrollToProducts();
+      return;
+    }
 
-  const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(location.search);
 
-  if (trimmedValue) {
-    params.set("search", trimmedValue);
-  } else {
-    params.delete("search");
-  }
+    if (trimmedValue) {
+      params.set("search", trimmedValue);
+    } else {
+      params.delete("search");
+    }
 
-  navigate(
-    {
-      pathname: "/",
-      search: params.toString() ? `?${params.toString()}` : "",
-    },
-    { replace: true }
-  );
+    navigate(
+      {
+        pathname: "/",
+        search: params.toString() ? `?${params.toString()}` : "",
+      },
+      { replace: true }
+    );
 
-  if (trimmedValue) {
-    scrollToProducts();
-  }
-};
+    if (trimmedValue) {
+      scrollToProducts();
+    }
+  };
 
 
   const toggleProfilePanel = () => {
@@ -127,7 +127,7 @@ const scrollToProducts = () => {
         </div> */}
         <div className="logoContainer" onClick={() => navigate("/")}>
           <img
-            src="/Logo_Canva.png" 
+            src="/Logo_Canva.png"
             alt="ZENVYX"
             className="logoImage"
           />
@@ -144,9 +144,29 @@ const scrollToProducts = () => {
         </div>
 
         <div className="actionsDesktop">
-          <div className="cartIconWrap" onClick={() => navigate("/cart")}>
-            <span className="cartIcon">🛒</span>
-          </div>
+          <span
+            className={`navMenuItem ${location.pathname === "/wishlist" ? "activeNavMenu" : ""
+              }`}
+            onClick={() => navigate("/wishlist")}
+          >
+            My Wishlist
+          </span>
+
+          <span
+            className={`navMenuItem ${location.pathname === "/cart" ? "activeNavMenu" : ""
+              }`}
+            onClick={() => navigate("/cart")}
+          >
+            Cart
+          </span>
+
+          <span
+            className={`navMenuItem ${location.pathname === "/my-orders" ? "activeNavMenu" : ""
+              }`}
+            onClick={() => navigate("/my-orders")}
+          >
+            Orders
+          </span>
 
           {!token || !user ? (
             <button className="navBtn" onClick={() => navigate(route)}>
@@ -170,19 +190,40 @@ const scrollToProducts = () => {
         </div>
 
         <div className="mobileRightActions">
+
           <div
-            className="cartIconWrap mobileCartIcon"
-            onClick={() => navigate("/cart")}
+            className="mobileNavIcon"
+            onClick={() => navigate("/wishlist")}
           >
-            <span className="cartIcon">🛒</span>
+            ❤️
           </div>
 
+          <div
+            className="mobileNavIcon"
+            onClick={() => navigate("/cart")}
+          >
+            🛒
+          </div>
+
+          {/* <div
+            className="mobileNavIcon"
+            onClick={() => navigate("/my-orders")}
+          >
+            📦
+          </div> */}
+
           {!token || !user ? (
-            <div className="profileIconMobile" onClick={() => navigate(route)}>
-              <span>👤</span>
+            <div
+              className="profileIconMobile"
+              onClick={() => navigate(route)}
+            >
+              👤
             </div>
           ) : (
-            <div className="profileIconMobile" onClick={toggleProfilePanel}>
+            <div
+              className="profileIconMobile"
+              onClick={toggleProfilePanel}
+            >
               {user?.profilePic ? (
                 <img
                   src={user.profilePic}
@@ -190,7 +231,9 @@ const scrollToProducts = () => {
                   className="mobileUserImage"
                 />
               ) : (
-                <span className="mobileUserInitial">{firstLetter}</span>
+                <span className="mobileUserInitial">
+                  {firstLetter}
+                </span>
               )}
             </div>
           )}

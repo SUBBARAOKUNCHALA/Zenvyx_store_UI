@@ -21,6 +21,7 @@ import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import Terms from "./components/Terms";
 import GlobalLoader from "./components/GlobalLoader"
 import NotFound from "./utils/NotFound";
+import Wishlist from "./pages/wishlist"
 import "./App.css";
 import DeleteProducts from "./pages/admin/DeleteProducts"
 
@@ -57,6 +58,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist/>} />
         <Route path="/address" element={<Address />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />

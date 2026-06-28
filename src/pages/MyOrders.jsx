@@ -3,6 +3,7 @@ import {
   cancelMyOrderApi,
   getMyOrdersApi,
   returnOrderApi,
+  downloadInvoiceApi
 } from "../services/authService";
 import "./MyOrders.css";
 
@@ -57,6 +58,33 @@ const MyOrders = () => {
         return "Out For Delivery";
       default:
         return status || "Not updated";
+    }
+  };
+
+  const handleDownloadInvoice = async (orderId) => {
+    try {
+      const response = await downloadInvoiceApi(orderId);
+
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Invoice-${orderId}.pdf`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(
+        err?.response?.data?.message ||
+        "Unable to download invoice."
+      );
     }
   };
 
@@ -140,6 +168,20 @@ const MyOrders = () => {
     }
   };
 
+
+  const isReturnWindowExpired = (order) => {
+    if (!order.deliveredAt) return false;
+
+    const deliveredDate = new Date(order.deliveredAt);
+    const today = new Date();
+
+    const diffDays = Math.floor(
+      (today - deliveredDate) / (1000 * 60 * 60 * 24)
+    );
+
+    return diffDays > 7;
+  };
+
   const openCancelModal = (orderId) => {
     setSelectedOrderId(orderId);
     setCancelReason("");
@@ -175,11 +217,11 @@ const MyOrders = () => {
         prev.map((order) =>
           order._id === selectedOrderId
             ? {
-                ...order,
-                orderStatus: "Cancelled",
-                cancelReason: cancelReason.trim(),
-                cancelledAt: new Date().toISOString(),
-              }
+              ...order,
+              orderStatus: "Cancelled",
+              cancelReason: cancelReason.trim(),
+              cancelledAt: new Date().toISOString(),
+            }
             : order
         )
       );
@@ -228,6 +270,19 @@ const MyOrders = () => {
               const isCancelled = order.orderStatus === "Cancelled";
               const isDelivered = order.orderStatus === "Delivered";
               const hasReturn = Boolean(order.returnData);
+
+              const returnExpired = (() => {
+                if (!order.deliveredAt) return false;
+
+                const deliveredDate = new Date(order.deliveredAt);
+                const today = new Date();
+
+                const diffDays = Math.floor(
+                  (today - deliveredDate) / (1000 * 60 * 60 * 24)
+                );
+
+                return diffDays > 7;
+              })();
 
               const canCancel =
                 !hasReturn &&
@@ -278,7 +333,7 @@ const MyOrders = () => {
                       >
                         {isExpanded ? "Hide Details" : "View Details"}
                         <span className={isExpanded ? "arrowUp" : "arrowDown"}>
-                          
+
                         </span>
                       </button>
                     </div>
@@ -417,21 +472,23 @@ const MyOrders = () => {
                               : "Order Tracking History"}
                           </strong>
 
-                          <div className="orderTimeline">
+                          <div className="horizontalTimeline">
                             {displayHistory.map((history, index) => (
-                              <div className="timelineItem" key={index}>
-                                <div className="timelineDot"></div>
+                              <div className="timelineStep" key={index}>
+                                <div className="timelineTop">
+                                  <div className="timelineCircle completed">
+                                    ✓
+                                  </div>
 
-                                {index !== displayHistory.length - 1 && (
-                                  <div className="timelineLine"></div>
-                                )}
+                                  {index !== displayHistory.length - 1 && (
+                                    <div className="timelineConnector"></div>
+                                  )}
+                                </div>
 
-                                <div className="timelineContent">
+                                <div className="timelineDetails">
                                   <h4>{getStatusLabel(history.status)}</h4>
                                   <p>{history.note}</p>
-                                  <span>
-                                    {formatDateTime(history.changedAt)}
-                                  </span>
+                                  <span>{formatDateTime(history.changedAt)}</span>
                                 </div>
                               </div>
                             ))}
@@ -467,18 +524,27 @@ const MyOrders = () => {
                           </button>
                         )}
 
-                        {!isCancelled && canReturn && (
+                        {!isCancelled &&
+                          canReturn &&
+                          !returnExpired && (
+                            <button
+                              className="returnOrderBtn"
+                              onClick={() => openReturnModal(order._id)}
+                              disabled={actionLoadingId === order._id}
+                            >
+                              {actionLoadingId === order._id
+                                ? "Submitting..."
+                                : "Return Order"}
+                            </button>
+                          )}
+                        {order.orderStatus === "Delivered" && (
                           <button
                             className="returnOrderBtn"
-                            onClick={() => openReturnModal(order._id)}
-                            disabled={actionLoadingId === order._id}
+                            onClick={() => handleDownloadInvoice(order._id)}
                           >
-                            {actionLoadingId === order._id
-                              ? "Submitting..."
-                              : "Return Order"}
+                            Download Invoice
                           </button>
                         )}
-
                         {isCancelled && (
                           <span className="cancelledText">
                             This order has been cancelled.
@@ -493,9 +559,17 @@ const MyOrders = () => {
                         )}
 
                         {isDelivered && !isCancelled && !hasReturn && (
-                          <span className="deliveredText">
-                            Delivered successfully. You can request return.
-                          </span>
+                          <>
+                            {!returnExpired ? (
+                              <span className="deliveredText">
+                                Delivered successfully. You can request a return within 7 days.
+                              </span>
+                            ) : (
+                              <span className="returnExpiredText">
+                                Return window expired (7 days after delivery).
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

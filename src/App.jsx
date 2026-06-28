@@ -12,7 +12,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Dashboard";
 import Cart from "./pages/Cart";
-// import Wishlist from "./pages/Wishlist";
 import Wishlist from "./pages/wishlist";
 import ProductDetails from "./pages/ProductDetails";
 import Address from "./pages/Address";

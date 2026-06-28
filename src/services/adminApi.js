@@ -1,21 +1,20 @@
 import axios from "axios";
 import { startLoading, stopLoading } from "../services/loaderService";
 
-const api = axios.create({
-  //baseURL: "http://localhost:5000/api",
+const adminApi = axios.create({
   baseURL: "https://zenvyx-store.onrender.com/api",
 });
 
-api.interceptors.request.use((config) => {
+adminApi.interceptors.request.use((config) => {
   startLoading();
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const adminToken = localStorage.getItem("adminToken");
+  if (adminToken) {
+    config.headers.Authorization = `Bearer ${adminToken}`;
   }
   return config;
 });
 
-api.interceptors.response.use(
+adminApi.interceptors.response.use(
   (response) => {
     stopLoading();
     return response;
@@ -26,11 +25,12 @@ api.interceptors.response.use(
       error.response?.status === 401 &&
       error.response?.data?.message?.toLowerCase().includes("expired")
     ) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminUser");
+      window.location.href = "/~fiadmin/login";
     }
     return Promise.reject(error);
   }
 );
 
-export default api;
+export default adminApi;

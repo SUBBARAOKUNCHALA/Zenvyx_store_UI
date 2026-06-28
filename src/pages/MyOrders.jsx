@@ -7,6 +7,8 @@ import {
 } from "../services/authService";
 import "./MyOrders.css";
 
+
+
 const MyOrders = () => {
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [selectedReturnOrderId, setSelectedReturnOrderId] = useState("");
@@ -30,6 +32,17 @@ const MyOrders = () => {
       year: "numeric",
     });
   };
+
+  const returnReasons = [
+    "Received a damaged product",
+    "Wrong product received",
+    "Size doesn't fit",
+    "Quality not as expected",
+    "Product arrived too late",
+    "Changed my mind",
+    "Received incomplete item",
+    //"Other",
+  ];
 
   const formatDateTime = (date) => {
     if (!date) return "Not updated";
@@ -154,7 +167,7 @@ const MyOrders = () => {
       setActionLoadingId(selectedReturnOrderId);
 
       const res = await returnOrderApi(selectedReturnOrderId, {
-        reason: returnReason.trim(),
+        reason: returnReason,
       });
 
       setMessage(res?.data?.message || "Return requested successfully");
@@ -622,15 +635,33 @@ const MyOrders = () => {
         <div className="cancelModalOverlay">
           <div className="cancelModal">
             <h2>Return Order</h2>
-            <p>Please tell us why you want to return this order.</p>
 
-            <textarea
-              className="cancelReasonInput"
-              placeholder="Enter return reason..."
-              value={returnReason}
-              onChange={(e) => setReturnReason(e.target.value)}
-              rows={5}
-            />
+            <p>Please select a reason for returning this order.</p>
+
+            <div className="returnReasonList">
+              {returnReasons.map((reason) => (
+                <label key={reason} className="returnReasonItem">
+                  <input
+                    type="radio"
+                    name="returnReason"
+                    value={reason}
+                    checked={returnReason === reason}
+                    onChange={(e) => setReturnReason(e.target.value)}
+                  />
+
+                  <span>{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {returnReason === "Other" && (
+              <textarea
+                className="cancelReasonInput"
+                placeholder="Please specify your reason..."
+                rows={4}
+                onChange={(e) => setReturnReason(e.target.value)}
+              />
+            )}
 
             <div className="cancelModalActions">
               <button
@@ -644,7 +675,10 @@ const MyOrders = () => {
               <button
                 className="cancelModalBtn primaryBtn"
                 onClick={handleConfirmReturn}
-                disabled={actionLoadingId === selectedReturnOrderId}
+                disabled={
+                  actionLoadingId === selectedReturnOrderId ||
+                  !returnReason.trim()
+                }
               >
                 {actionLoadingId === selectedReturnOrderId
                   ? "Submitting..."

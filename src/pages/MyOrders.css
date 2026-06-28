@@ -226,6 +226,7 @@
 }
 
 .cancelModal {
+  margin-top: 45px;
   width: 100%;
   max-width: 520px;
   background: #fff;
@@ -745,5 +746,47 @@
 .returnExpiredText {
   color: #dc2626;
   font-weight: 600;
+  font-size: 14px;
+}
+.returnReasonList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 20px 0;
+}
+
+.returnReasonItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.returnReasonItem:hover {
+  background: #f8f8f8;
+}
+
+.returnReasonItem input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.returnReasonItem span {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.cancelReasonInput {
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  resize: none;
   font-size: 14px;
 }

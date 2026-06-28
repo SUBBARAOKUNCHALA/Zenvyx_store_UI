@@ -247,19 +247,19 @@ const Dashboard = () => {
   const [likedProducts, setLikedProducts] = useState({});
 
   const toggleWishlist = async (productId) => {
-  try {
-    const res = await toggleWishlistApi(productId);
+    try {
+      const res = await toggleWishlistApi(productId);
 
-    if (res.data.success) {
-      setLikedProducts((prev) => ({
-        ...prev,
-        [productId]: res.data.liked,
-      }));
+      if (res.data.success) {
+        setLikedProducts((prev) => ({
+          ...prev,
+          [productId]: res.data.liked,
+        }));
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -765,18 +765,21 @@ const Dashboard = () => {
                         {product.subCategory || product.category}
                       </span>
 
-                      {/* ❤️ Wishlist Button */}
-<button
-  className={`wishlistBtn ${
-    likedProducts[product._id] ? "active" : ""
-  }`}
-  onClick={(e) => {
-    e.stopPropagation();
-    toggleWishlist(product._id);
-  }}
->
-  <Heart size={28} />
-</button>
+                      <button
+                        className={`wishlistBtn ${likedProducts[product._id] ? "active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          navigate(`/product/${product._id}`, {
+                            state: {
+                              product,
+                              openWishlist: true,
+                            },
+                          });
+                        }}
+                      >
+                        <Heart size={28} />
+                      </button>
                     </div>
 
                     <div className="productContent">

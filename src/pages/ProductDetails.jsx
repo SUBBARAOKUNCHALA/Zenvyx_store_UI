@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Heart, Share2 } from "lucide-react";
 import {
   addToCartApi,
   getProductById,
   getSimilarProducts,
+  toggleWishlistApi,
 } from "../services/authService";
 import "./ProductDetails.css";
 
@@ -41,6 +43,8 @@ const ProductDetails = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const [wishLoading, setWishLoading] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   const [product, setProduct] = useState(location.state?.product || null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -58,7 +62,7 @@ const ProductDetails = () => {
   const [cartMessage, setCartMessage] = useState("");
   const [cartError, setCartError] = useState("");
   const [quantity, setQuantity] = useState(1);
-
+  const fromWishlist = location.state?.fromWishlist;
 
   const handleImageZoom = (e) => {
     const { left, top, width, height } = e.target.getBoundingClientRect();
@@ -70,6 +74,37 @@ const ProductDetails = () => {
       transformOrigin: `${x}% ${y}%`,
       transform: "scale(2)",
     });
+  };
+
+
+  useEffect(() => {
+    if (location.state?.openWishlist) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }, [location.state]);
+
+  const handleWishlist = async () => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      setWishLoading(true);
+
+      const res = await toggleWishlistApi(product._id);
+
+      if (res?.data?.success) {
+        setLiked((prev) => !prev); // Toggle heart color
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setWishLoading(false);
+    }
   };
 
   const resetZoom = () => {
@@ -286,6 +321,25 @@ const ProductDetails = () => {
     return true;
   };
 
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/product/${product._id}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: product.name,
+          text: `Check out this product: ${product.name}`,
+          url: shareUrl,
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        //alert("Product link copied to clipboard!");
+      }
+    } catch (err) {
+      console.log("Share cancelled or failed:", err);
+    }
+  };
+
   const handleAddToCart = async () => {
     try {
       setCartLoading(true);
@@ -303,6 +357,10 @@ const ProductDetails = () => {
       const res = await addToCartApi(payload);
 
       setCartMessage(res?.data?.message || "Item added to cart successfully");
+      if (location.state?.fromWishlist) {
+        await toggleWishlistApi(product._id); // Remove from wishlist
+        navigate("/cart");
+      }
     } catch (error) {
       console.error("Add to cart error:", error);
       setCartError(
@@ -399,7 +457,34 @@ const ProductDetails = () => {
         </div>
 
         <div className="productDetailsContent">
-          <h1 className="productTitle">{product.name}</h1>
+          {/* <h1 className="productTitle">{product.name}</h1> */}
+          <div className="productTitleRow">
+            <h1 className="productTitle">
+              {product.name}
+            </h1>
+
+            <div className="productActionIcons">
+              <button
+                className={`detailsWishlistBtn ${liked ? "active" : ""}`}
+                onClick={handleWishlist}
+                disabled={wishLoading}
+              >
+                <Heart
+                  size={28}
+                  strokeWidth={2}
+                  fill={liked ? "#ff1744" : "none"}
+                  color={liked ? "#ff1744" : "#444"}
+                />
+              </button>
+
+              <button
+                className="detailsShareBtn"
+                onClick={handleShare}
+              >
+                <Share2 size={22} />
+              </button>
+            </div>
+          </div>
 
           <p className="productCategory">
             {product.category}
@@ -696,42 +781,42 @@ const ProductDetails = () => {
       </div>
 
       {showImagePopup && (
-  <div
-    className="imagePopupOverlay"
-    onClick={() => setShowImagePopup(false)}
-  >
-    <div
-      className="imagePopupContainer"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <button
-        className="popupCloseBtn"
-        onClick={() => setShowImagePopup(false)}
-      >
-        ✕
-      </button>
+        <div
+          className="imagePopupOverlay"
+          onClick={() => setShowImagePopup(false)}
+        >
+          <div
+            className="imagePopupContainer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="popupCloseBtn"
+              onClick={() => setShowImagePopup(false)}
+            >
+              ✕
+            </button>
 
-      <button className="popupNavBtn popupPrev" onClick={handlePrevImage}>
-        ‹
-      </button>
+            <button className="popupNavBtn popupPrev" onClick={handlePrevImage}>
+              ‹
+            </button>
 
-      <div className="popupImageWrapper">
-        <img
-          src={selectedImage}
-          alt=""
-          className="popupImage"
-          style={zoomStyle}
-          onMouseMove={handleImageZoom}
-          onMouseLeave={resetZoom}
-        />
-      </div>
+            <div className="popupImageWrapper">
+              <img
+                src={selectedImage}
+                alt=""
+                className="popupImage"
+                style={zoomStyle}
+                onMouseMove={handleImageZoom}
+                onMouseLeave={resetZoom}
+              />
+            </div>
 
-      <button className="popupNavBtn popupNext" onClick={handleNextImage}>
-        ›
-      </button>
-    </div>
-  </div>
-)}
+            <button className="popupNavBtn popupNext" onClick={handleNextImage}>
+              ›
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

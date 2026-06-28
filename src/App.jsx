@@ -1,33 +1,40 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+import "./App.css";
+
+import Navbar from "./components/Navbar";
+import GlobalLoader from "./components/GlobalLoader";
+import Terms from "./components/Terms";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Dashboard";
-import Navbar from "./components/Navbar";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
 import ProductDetails from "./pages/ProductDetails";
 import Address from "./pages/Address";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
-import AdminReports from "./pages/admin/AdminReports";
+
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminHome from "./pages/admin/AdminHome";
 import AddProducts from "./pages/admin/AddProducts";
-import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminOrders from "./pages/admin/AdminOrders";
 import ReturnedOrders from "./pages/admin/ReturnedOrders";
-import Terms from "./components/Terms";
-import GlobalLoader from "./components/GlobalLoader"
+import AdminReports from "./pages/admin/AdminReports";
+import DeleteProducts from "./pages/admin/DeleteProducts";
+
 import NotFound from "./utils/NotFound";
-import Wishlist from "./pages/wishlist"
-import "./App.css";
-import DeleteProducts from "./pages/admin/DeleteProducts"
 
 function App() {
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith("/~fiadmin");
+
+  const isAdminRoute = useMemo(() => {
+    return location.pathname.startsWith("/~fiadmin");
+  }, [location.pathname]);
 
   const [loading, setLoading] = useState(false);
 
@@ -51,28 +58,35 @@ function App() {
       {!isAdminRoute && <Navbar />}
 
       <Routes>
-        {/* User Routes */}
+
+        {/* ================= USER ROUTES ================= */}
+
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/wishlist" element={<Wishlist/>} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/address" element={<Address />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/my-orders" element={<MyOrders />} />
 
-        {/* Admin Login */}
-        <Route path="/~fiadmin/login" element={<AdminLogin />} />
+        {/* ================= ADMIN LOGIN ================= */}
 
-        {/* Redirect Admin Root */}
+        <Route
+          path="/~fiadmin/login"
+          element={<AdminLogin />}
+        />
+
         <Route
           path="/~fiadmin"
           element={<Navigate to="/~fiadmin/login" replace />}
         />
 
-        {/* Protected Admin Routes */}
+        {/* ================= ADMIN ================= */}
+
         <Route
           path="/~fiadmin/*"
           element={
@@ -86,17 +100,40 @@ function App() {
             element={<Navigate to="dashboard" replace />}
           />
 
-          <Route path="dashboard" element={<AdminHome />} />
-          <Route path="add-products" element={<AddProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="returns" element={<ReturnedOrders />} />
-          <Route path="reports" element={<AdminReports />} />
-          <Route path="deleteproduts" element={<DeleteProducts />} />
+          <Route
+            path="dashboard"
+            element={<AdminHome />}
+          />
+
+          <Route
+            path="add-products"
+            element={<AddProducts />}
+          />
+
+          <Route
+            path="orders"
+            element={<AdminOrders />}
+          />
+
+          <Route
+            path="returns"
+            element={<ReturnedOrders />}
+          />
+
+          <Route
+            path="reports"
+            element={<AdminReports />}
+          />
+
+          <Route
+            path="delete-products"
+            element={<DeleteProducts />}
+          />
 
           <Route
             path="customers"
             element={
-              <div style={{ padding: "20px" }}>
+              <div style={{ padding: 20 }}>
                 Customers Page
               </div>
             }
@@ -105,13 +142,19 @@ function App() {
           <Route
             path="settings"
             element={
-              <div style={{ padding: "20px" }}>
+              <div style={{ padding: 20 }}>
                 Settings Page
               </div>
             }
           />
         </Route>
-        <Route path="*" element={<NotFound />} />
+
+        {/* ================= 404 ================= */}
+
+        <Route
+          path="*"
+          element={<NotFound />}
+        />
       </Routes>
     </>
   );

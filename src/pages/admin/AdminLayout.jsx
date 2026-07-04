@@ -63,7 +63,7 @@ const AdminLayout = () => {
     },
     {
       label: "Delete Products",
-      path: "/~fiadmin/deleteproduts",
+      path: "/~fiadmin/delete-products",
       icon: <Trash2 size={18} />,
     }
   ];

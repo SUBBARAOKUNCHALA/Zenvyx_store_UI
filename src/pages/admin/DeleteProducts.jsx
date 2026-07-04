@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Trash2, Search, RefreshCw, AlertTriangle, X, Package } from "lucide-react";
-import { Allproducts,deleteProductApi } from "../.././services/authService"; // adjust path to your existing "get products" api
+//import { Allproducts,deleteProductApi } from "../.././services/authService"; // adjust path to your existing "get products" api
 import "./DeleteProducts.css"
+import { Allproducts,deleteProductApi } from "../../services/authService";
 const DeleteProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,21 +11,27 @@ const DeleteProducts = () => {
   const [confirmProduct, setConfirmProduct] = useState(null); // product pending delete confirmation
   const [toast, setToast] = useState(null); // { type: "success" | "error", message }
 
+
+  
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   const fetchProducts = async () => {
+    console.log("products loading")
     setLoading(true);
     try {
+      console.log("Calling Allproducts API");
       const res = await Allproducts();
+      console.log("API Response", res);
       setProducts(res?.data?.products || res?.data?.data || []);
     } catch (err) {
+      console.log(err);
       showToast("error", "Failed to load products");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const showToast = (type, message) => {
     setToast({ type, message });

@@ -23,7 +23,9 @@ const Checkout = () => {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [loading, setLoading] = useState(true);
+  //const [actionLoading, setActionLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -91,9 +93,10 @@ const Checkout = () => {
     });
 
     const discountedSubtotal = subtotal - totalDiscount;
-    const delivery = discountedSubtotal > 999 ? 50 : 99;
-    const finalTotal = discountedSubtotal + delivery;
-    //const finalTotal = discountedSubtotal;
+    //const delivery = discountedSubtotal >= 999 ? 50 : 99;
+    const delivery = discountedSubtotal > 999 ? 0 : 0;
+    //const finalTotal = discountedSubtotal + delivery;
+    const finalTotal = discountedSubtotal;
 
     return {
       subtotal,
@@ -106,20 +109,25 @@ const Checkout = () => {
   }, [summary]);
 
   const handlePlaceOrder = async () => {
+    if (actionLoading || isProcessingPayment) return;
+
+    setActionLoading(true);
+    setIsProcessingPayment(true);
+    setMessage("");
+    setError("");
+
     const isUPI = paymentMethod === "UPI";
     const isNetBanking = paymentMethod === "NET_BANKING";
 
-    if (!selectedAddressId) {
-      setError("Please select a delivery address");
-      return;
-    }
-
     try {
-      setActionLoading(true);
-      setMessage("");
-      setError("");
+      if (!selectedAddressId) {
+        setError("Please select a delivery address");
+        return;
+      }
 
-      const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
+      const selectedAddress = addresses.find(
+        (a) => a._id === selectedAddressId
+      );
 
       const payload = {
         addressId: selectedAddressId,
@@ -131,7 +139,8 @@ const Checkout = () => {
         payload.item = buyNowItem;
       }
 
-      // ✅ COD order directly place
+      // ================= COD =================
+
       if (paymentMethod === "COD") {
         const res = await placeOrderApi(payload);
 
@@ -144,24 +153,24 @@ const Checkout = () => {
         return;
       }
 
-      // ✅ Online payment validation
+      // ================= ONLINE =================
+
       if (!isUPI && !isNetBanking) {
         setError("Please select UPI or Net Banking");
         return;
       }
 
-      // ✅ Real amount
-      const paymentAmount = Math.round(Number(calculatedSummary.finalTotal || 0));
+      const paymentAmount = Math.round(
+        Number(calculatedSummary.finalTotal || 0)
+      );
 
-      // ✅ For live ₹1 testing only, use this instead:
-      // const paymentAmount = 1;
-
-      if (!paymentAmount || paymentAmount <= 0) {
+      if (paymentAmount <= 0) {
         setError("Invalid payment amount");
         return;
       }
 
-      // ✅ Create Razorpay order
+      // Create Razorpay Order
+
       const orderRes = await createRazorpayOrderApi({
         amount: paymentAmount,
       });
@@ -175,10 +184,17 @@ const Checkout = () => {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+
         amount: razorpayOrder.amount,
+
         currency: razorpayOrder.currency || "INR",
+
         name: "ZENVYX",
-        description: isUPI ? "UPI Payment" : "Net Banking Payment",
+
+        description: isUPI
+          ? "UPI Payment"
+          : "Net Banking Payment",
+
         order_id: razorpayOrder.id,
 
         method: {
@@ -188,50 +204,6 @@ const Checkout = () => {
           wallet: false,
           paylater: false,
           emi: false,
-        },
-
-        handler: async function (response) {
-          try {
-            console.log("Razorpay success response:", response);
-
-            // ✅ 1. Verify payment
-            const verifyRes = await verifyRazorpayPaymentApi({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            });
-
-            if (!verifyRes?.data?.success) {
-              setError("Payment verification failed");
-              return;
-            }
-
-            // ✅ 2. After successful verification, place order
-            const orderPayload = {
-              ...payload,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-              paymentStatus: "Paid",
-            };
-
-            const placedOrderRes = await placeOrderApi(orderPayload);
-
-            setMessage(
-              placedOrderRes?.data?.message ||
-              "Payment successful. Order placed successfully."
-            );
-
-            setTimeout(() => {
-              navigate("/my-orders");
-            }, 800);
-          } catch (verifyErr) {
-            console.error("Payment verify/order create error:", verifyErr);
-            setError(
-              verifyErr?.response?.data?.message ||
-              "Payment completed but order creation failed"
-            );
-          }
         },
 
         prefill: {
@@ -247,21 +219,75 @@ const Checkout = () => {
         theme: {
           color: "#111827",
         },
+
+        handler: async (response) => {
+          try {
+            const verifyRes = await verifyRazorpayPaymentApi({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (!verifyRes?.data?.success) {
+              throw new Error("Payment verification failed");
+            }
+
+            const orderPayload = {
+              ...payload,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              paymentStatus: "Paid",
+            };
+
+            const placedOrder = await placeOrderApi(orderPayload);
+
+            setMessage(
+              placedOrder?.data?.message ||
+              "Payment successful. Order placed successfully."
+            );
+
+            navigate("/my-orders");
+          } catch (err) {
+            console.error(err);
+
+            setError(
+              err?.response?.data?.message ||
+              err.message ||
+              "Payment completed but order creation failed."
+            );
+          } finally {
+            setActionLoading(false);
+            setIsProcessingPayment(false);
+          }
+        },
       };
 
       const rzp = new window.Razorpay(options);
 
       rzp.on("payment.failed", function (response) {
-        console.error("Payment failed:", response.error);
-        setError(response.error?.description || "Payment failed. Please try again.");
+        console.error(response);
+
+        setError(
+          response.error?.description || "Payment failed."
+        );
+
+        setActionLoading(false);
+        setIsProcessingPayment(false);
       });
 
       rzp.open();
     } catch (err) {
-      console.error("Place order error:", err);
-      setError(err?.response?.data?.message || "Failed to place order");
-    } finally {
+      console.error(err);
+
+      setError(
+        err?.response?.data?.message ||
+        err.message ||
+        "Failed to place order."
+      );
+
       setActionLoading(false);
+      setIsProcessingPayment(false);
     }
   };
 
@@ -536,9 +562,17 @@ const Checkout = () => {
             <button
               className="placeOrderBtn"
               onClick={handlePlaceOrder}
-              disabled={actionLoading || !summary?.items?.length}
+              disabled={
+                actionLoading ||
+                isProcessingPayment ||
+                !summary?.items?.length
+              }
             >
-              {actionLoading ? "Placing Order..." : "Place Order"}
+              {
+                actionLoading || isProcessingPayment
+                  ? "Processing..."
+                  : "Place Order"
+              }
             </button>
 
             <button className="backToCartBtn" onClick={() => navigate("/cart")}>

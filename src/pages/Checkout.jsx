@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   getCheckoutSummaryApi,
@@ -10,9 +10,46 @@ import {
 } from "../services/authService";
 import "./Checkout.css";
 
-const Checkout = () => {
+const PENDING_PAYMENT_KEY = "zenvyx_pending_payment";
 
-  // const navigate = useNavigate();
+// small helper: retry an async fn a few times with backoff
+const retryAsync = async (fn, attempts = 3, delayMs = 1500) => {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) {
+        await new Promise((r) => setTimeout(r, delayMs * (i + 1)));
+      }
+    }
+  }
+  throw lastErr;
+};
+
+const savePendingPayment = (data) => {
+  try {
+    localStorage.setItem(PENDING_PAYMENT_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.error("Failed to persist pending payment", e);
+  }
+};
+
+const clearPendingPayment = () => {
+  localStorage.removeItem(PENDING_PAYMENT_KEY);
+};
+
+const loadPendingPayment = () => {
+  try {
+    const raw = localStorage.getItem(PENDING_PAYMENT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+};
+
+const Checkout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,11 +60,16 @@ const Checkout = () => {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [loading, setLoading] = useState(true);
-  //const [actionLoading, setActionLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  // shown when payment succeeded but order creation is stuck / needs manual retry
+  const [recoveryPayment, setRecoveryPayment] = useState(null);
+  const [recoveryRetrying, setRecoveryRetrying] = useState(false);
+
+  const razorpayInstanceRef = useRef(null);
 
   const fetchCheckoutData = async () => {
     try {
@@ -69,6 +111,12 @@ const Checkout = () => {
 
   useEffect(() => {
     fetchCheckoutData();
+
+    // Recovery check: did we leave this page mid-payment last time?
+    const pending = loadPendingPayment();
+    if (pending) {
+      setRecoveryPayment(pending);
+    }
   }, []);
 
   const calculatedSummary = useMemo(() => {
@@ -79,7 +127,6 @@ const Checkout = () => {
     let totalItems = 0;
 
     items.forEach((item) => {
-      console.log("checkout item ", item)
       const price = Number(item?.price || 0);
       const qty = Number(item?.quantity || 1);
       const discountPercent = Number(item?.discount || 0);
@@ -93,9 +140,7 @@ const Checkout = () => {
     });
 
     const discountedSubtotal = subtotal - totalDiscount;
-    //const delivery = discountedSubtotal >= 999 ? 50 : 99;
     const delivery = discountedSubtotal > 999 ? 0 : 0;
-    //const finalTotal = discountedSubtotal + delivery;
     const finalTotal = discountedSubtotal;
 
     return {
@@ -107,6 +152,53 @@ const Checkout = () => {
       finalTotal,
     };
   }, [summary]);
+
+  // Attempts to finalize an order for a payment that already succeeded on Razorpay's side.
+  // Used both right after the handler fires, and for manual "recovery" retries.
+  const finalizeOrder = async (orderPayload) => {
+    const placedOrder = await retryAsync(
+      () => placeOrderApi(orderPayload),
+      3, // 3 attempts
+      1500
+    );
+
+    // success — we can forget about this pending payment now
+    clearPendingPayment();
+    setRecoveryPayment(null);
+
+    setMessage(
+      placedOrder?.data?.message ||
+      "Payment successful. Order placed successfully."
+    );
+
+    navigate("/my-orders");
+  };
+
+  const handleRecoveryRetry = async () => {
+    if (!recoveryPayment) return;
+
+    setRecoveryRetrying(true);
+    setError("");
+
+    try {
+      await finalizeOrder(recoveryPayment);
+    } catch (err) {
+      console.error("Recovery retry failed:", err);
+      setError(
+        "We still couldn't confirm your order automatically. Your payment is safe — " +
+        "please contact support with the Payment ID below so we can create the order manually."
+      );
+    } finally {
+      setRecoveryRetrying(false);
+    }
+  };
+
+  const handleDismissRecovery = () => {
+    // Only lets the user hide the banner if they've already contacted support
+    // or are certain — doesn't delete localStorage silently on its own.
+    clearPendingPayment();
+    setRecoveryPayment(null);
+  };
 
   const handlePlaceOrder = async () => {
     if (actionLoading || isProcessingPayment) return;
@@ -170,7 +262,6 @@ const Checkout = () => {
       }
 
       // Create Razorpay Order
-
       const orderRes = await createRazorpayOrderApi({
         amount: paymentAmount,
       });
@@ -184,17 +275,10 @@ const Checkout = () => {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-
         amount: razorpayOrder.amount,
-
         currency: razorpayOrder.currency || "INR",
-
         name: "ZENVYX",
-
-        description: isUPI
-          ? "UPI Payment"
-          : "Net Banking Payment",
-
+        description: isUPI ? "UPI Payment" : "Net Banking Payment",
         order_id: razorpayOrder.id,
 
         method: {
@@ -229,7 +313,20 @@ const Checkout = () => {
             });
 
             if (!verifyRes?.data?.success) {
-              throw new Error("Payment verification failed");
+              // Verification failed client-side, but Razorpay already reported
+              // success in its own popup. Persist details so nothing is lost —
+              // the webhook will also confirm this payment server-side independently.
+              savePendingPayment({
+                ...payload,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                paymentStatus: "Paid",
+              });
+              setRecoveryPayment(loadPendingPayment());
+              throw new Error(
+                "Payment verification failed on our end, but your payment may have gone through."
+              );
             }
 
             const orderPayload = {
@@ -240,30 +337,39 @@ const Checkout = () => {
               paymentStatus: "Paid",
             };
 
-            const placedOrder = await placeOrderApi(orderPayload);
+            // Persist BEFORE attempting placeOrder — if this tab dies mid-request,
+            // the next visit to /checkout will pick this up automatically.
+            savePendingPayment(orderPayload);
 
-            setMessage(
-              placedOrder?.data?.message ||
-              "Payment successful. Order placed successfully."
-            );
-
-            navigate("/my-orders");
+            await finalizeOrder(orderPayload);
           } catch (err) {
             console.error(err);
 
             setError(
               err?.response?.data?.message ||
               err.message ||
-              "Payment completed but order creation failed."
+              "Payment completed but order creation failed. We'll retry automatically — " +
+              "please don't close this page."
             );
           } finally {
             setActionLoading(false);
             setIsProcessingPayment(false);
           }
         },
+
+        modal: {
+          // Fires when the user closes the Razorpay popup without paying.
+          // Without this, actionLoading/isProcessingPayment stay stuck true forever.
+          ondismiss: () => {
+            setActionLoading(false);
+            setIsProcessingPayment(false);
+            setError("Payment window closed before completion.");
+          },
+        },
       };
 
       const rzp = new window.Razorpay(options);
+      razorpayInstanceRef.current = rzp;
 
       rzp.on("payment.failed", function (response) {
         console.error(response);
@@ -334,6 +440,38 @@ const Checkout = () => {
               </button>
             </div>
 
+            {/* Recovery banner — payment succeeded earlier but order wasn't confirmed */}
+            {recoveryPayment && (
+              <div
+                className="checkoutError"
+                style={{
+                  border: "1px solid #f0b429",
+                  background: "#fff8e6",
+                  padding: "14px",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                }}
+              >
+                <p style={{ fontWeight: 600, marginBottom: 6 }}>
+                  We found an unfinished payment
+                </p>
+                <p style={{ marginBottom: 6 }}>
+                  A previous payment (Payment ID:{" "}
+                  <code>{recoveryPayment.razorpayPaymentId}</code>) may have succeeded
+                  but the order wasn't confirmed. Click below to try finishing it —
+                  you will not be charged again.
+                </p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button onClick={handleRecoveryRetry} disabled={recoveryRetrying}>
+                    {recoveryRetrying ? "Retrying..." : "Retry Order Creation"}
+                  </button>
+                  <button onClick={handleDismissRecovery} disabled={recoveryRetrying}>
+                    I've contacted support / Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+
             {message && <div className="checkoutSuccess">{message}</div>}
             {error && <div className="checkoutError">{error}</div>}
 
@@ -381,44 +519,6 @@ const Checkout = () => {
 
             <div className="checkoutSection">
               <h2>Payment Method</h2>
-
-              {/* <div className="paymentOptions">
-                <label className="paymentCard">
-                  <input
-                    type="radio"
-                    checked={paymentMethod === "COD"}
-                    onChange={() => setPaymentMethod("COD")}
-                  />
-                  <div>
-                    <h4>Cash on Delivery</h4>
-                    <p>Pay after product delivery.</p>
-                  </div>
-                </label>
-
-                <label className="paymentCard">
-                  <input
-                    type="radio"
-                    checked={paymentMethod === "RAZORPAY"}
-                    onChange={() => setPaymentMethod("RAZORPAY")}
-                  />
-                  <div>
-                    <h4>Razorpay</h4>
-                    <p>Online payment integration ready.</p>
-                  </div>
-                </label>
-
-                <label className="paymentCard">
-                  <input
-                    type="radio"
-                    checked={paymentMethod === "UPI"}
-                    onChange={() => setPaymentMethod("UPI")}
-                  />
-                  <div>
-                    <h4>UPI</h4>
-                    <p>Collect via UPI payment flow later.</p>
-                  </div>
-                </label>
-              </div> */}
 
               <div className="paymentOptions">
                 <label className={`paymentCard ${paymentMethod === "COD" ? "active" : ""}`}>
@@ -499,7 +599,6 @@ const Checkout = () => {
                                     ₹{price.toFixed(2)}
                                   </span>
                                   <strong>₹{Math.round(finalPrice.toFixed(2))}.00</strong>
-
                                 </>
                               ) : (
                                 <>₹{price.toFixed(2)}</>
@@ -507,7 +606,6 @@ const Checkout = () => {
                             </span>
 
                             <strong>₹{Math.round(itemTotal.toFixed(2))}.00</strong>
-
                           </div>
 
                           {discountPercent > 0 && (
@@ -565,14 +663,15 @@ const Checkout = () => {
               disabled={
                 actionLoading ||
                 isProcessingPayment ||
+                !!recoveryPayment ||
                 !summary?.items?.length
               }
             >
-              {
-                actionLoading || isProcessingPayment
-                  ? "Processing..."
-                  : "Place Order"
-              }
+              {actionLoading || isProcessingPayment
+                ? "Processing..."
+                : recoveryPayment
+                ? "Resolve pending payment above first"
+                : "Place Order"}
             </button>
 
             <button className="backToCartBtn" onClick={() => navigate("/cart")}>

@@ -119,39 +119,39 @@ const Checkout = () => {
     }
   }, []);
 
-  const calculatedSummary = useMemo(() => {
-    const items = summary?.items || [];
+const calculatedSummary = useMemo(() => {
+  const items = summary?.items || [];
 
-    let subtotal = 0;
-    let totalDiscount = 0;
-    let totalItems = 0;
+  let subtotal = 0;
+  let totalDiscount = 0;
+  let totalItems = 0;
 
-    items.forEach((item) => {
-      const price = Number(item?.price || 0);
-      const qty = Number(item?.quantity || 1);
-      const discountPercent = Number(item?.discount || 0);
+  items.forEach((item) => {
+    const price = Number(item?.price || 0);
+    const qty = Number(item?.quantity || 1);
+    const discountPercent = Number(item?.discount || 0);
 
-      const itemSubtotal = price * qty;
-      const discountAmount = ((price * discountPercent) / 100) * qty;
+    const itemSubtotal = price * qty;
+    const discountAmount = ((price * discountPercent) / 100) * qty;
 
-      subtotal += itemSubtotal;
-      totalDiscount += discountAmount;
-      totalItems += qty;
-    });
+    subtotal += itemSubtotal;
+    totalDiscount += discountAmount;
+    totalItems += qty;
+  });
 
-    const discountedSubtotal = subtotal - totalDiscount;
-    const delivery = discountedSubtotal > 999 ? 10 : 5;
-    const finalTotal = discountedSubtotal;
+  const discountedSubtotal = subtotal - totalDiscount;
+  const delivery = discountedSubtotal >= 999 ? 10 : 5; // match backend logic exactly
+  const finalTotal = discountedSubtotal + delivery;     // ✅ now includes delivery
 
-    return {
-      subtotal,
-      totalDiscount,
-      discountedSubtotal,
-      totalItems,
-      delivery,
-      finalTotal,
-    };
-  }, [summary]);
+  return {
+    subtotal,
+    totalDiscount,
+    discountedSubtotal,
+    totalItems,
+    delivery,
+    finalTotal,
+  };
+}, [summary]);
 
   // Attempts to finalize an order for a payment that already succeeded on Razorpay's side.
   // Used both right after the handler fires, and for manual "recovery" retries.

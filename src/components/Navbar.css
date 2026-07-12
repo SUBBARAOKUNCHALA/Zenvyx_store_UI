@@ -581,6 +581,17 @@
     transform:scale(1.1);
 }
 
+.mobileNavIconforlove{
+    font-size:30px;
+    cursor:pointer;
+    color: gray;
+    transition:.25s;
+}
+
+.mobileNavIconforlove:hover{
+    transform:scale(1.1);
+}
+
 /* ================= Responsive ================= */
 
 @media (max-width:768px){

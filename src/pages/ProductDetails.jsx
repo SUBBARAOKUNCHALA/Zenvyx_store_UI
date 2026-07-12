@@ -45,7 +45,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const [wishLoading, setWishLoading] = useState(false);
   const [liked, setLiked] = useState(false);
-
+  const [showFullDetails, setShowFullDetails] = useState(false);
   const [product, setProduct] = useState(location.state?.product || null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -213,6 +213,7 @@ const ProductDetails = () => {
         setQuantity(1);
         setCartMessage("");
         setCartError("");
+        setShowFullDetails(false);
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -713,9 +714,25 @@ const ProductDetails = () => {
                 {product.discount > 0 ? `${product.discount}%` : "No discount"}
               </div>
 
-              <div className="infoItem productDetailsItem">
+              {/* <div className="infoItem productDetailsItem">
                 <strong>Product Details</strong>
                 <p>{product.ProductDetails || "No extra details available"}</p>
+              </div> */}
+              <div className="infoItem productDetailsItem">
+                <strong>Product Details</strong>
+                <p className={`productDetailsText ${showFullDetails ? "expanded" : "clamped"}`}>
+                  {product.ProductDetails || "No extra details available"}
+                </p>
+
+                {product.ProductDetails && (
+                  <button
+                    type="button"
+                    className="readMoreBtn titletext"
+                    onClick={() => setShowFullDetails((prev) => !prev)}
+                  >
+                    {showFullDetails ? "Read less" : "Read more"}
+                  </button>
+                )}
               </div>
             </div>
           </div>

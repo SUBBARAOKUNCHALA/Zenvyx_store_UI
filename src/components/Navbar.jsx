@@ -192,10 +192,10 @@ const Navbar = () => {
         <div className="mobileRightActions">
 
           <div
-            className="mobileNavIcon"
+            className="mobileNavIconforlove"
             onClick={() => navigate("/wishlist")}
           >
-            ❤️
+            ♡
           </div>
 
           <div

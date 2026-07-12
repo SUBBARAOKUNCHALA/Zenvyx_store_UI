@@ -140,7 +140,7 @@ const Checkout = () => {
     });
 
     const discountedSubtotal = subtotal - totalDiscount;
-    const delivery = discountedSubtotal > 999 ? 0 : 0;
+    const delivery = discountedSubtotal > 999 ? 10 : 5;
     const finalTotal = discountedSubtotal;
 
     return {

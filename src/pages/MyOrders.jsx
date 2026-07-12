@@ -219,10 +219,11 @@ const MyOrders = () => {
       setActionLoadingId(selectedOrderId);
       setError("");
       setMessage("");
-
+       console.log("Reason1",cancelReason)
       const res = await cancelMyOrderApi(selectedOrderId, {
         reason: cancelReason.trim(),
       });
+      console.log("Reason2",res)
 
       setMessage(res?.data?.message || "Order cancelled successfully");
 

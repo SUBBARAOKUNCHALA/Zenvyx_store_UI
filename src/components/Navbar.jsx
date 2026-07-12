@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import ProfilePanel from "../pages/ProfilePanel";
-
+import { Heart } from "lucide-react";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -195,7 +195,7 @@ const Navbar = () => {
             className="mobileNavIconforlove"
             onClick={() => navigate("/wishlist")}
           >
-            ♡
+           <Heart size={22} />
           </div>
 
           <div

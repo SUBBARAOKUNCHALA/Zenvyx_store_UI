@@ -1,10 +1,23 @@
+/* .productDetailsPage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fff 0%, #fff8fb 60%, #fff 100%);
+  padding: 110px 24px 40px;
+} */
+
 .productDetailsPage {
   min-height: 100vh;
   background: linear-gradient(180deg, #fff 0%, #fff8fb 60%, #fff 100%);
   padding: 110px 24px 40px;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.productDetailsContainer {
+.productDetailsPage * {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+/* .productDetailsContainer {
   max-width: 1280px;
   margin: 0 auto;
   display: grid;
@@ -15,8 +28,21 @@
   border-radius: 24px;
   padding: 24px;
   box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
+} */
+.productDetailsContainer {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 32px;
+  background: #fff;
+  border: 1px solid #f0e4f5;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
+  min-width: 0;
 }
-
 .productDetailsLeft {
   display: flex;
   flex-direction: column;
@@ -24,12 +50,25 @@
   min-width: 0;
 }
 
-.productDetailsImage {
+/* .productDetailsImage {
   position: relative;
   background: #faf7fc;
   border-radius: 20px;
   overflow: hidden;
   height: 540px;
+  border: 1px solid #f2e8f6;
+  aspect-ratio: 1/1;
+  height: auto;
+  min-height: 280px;
+  max-height: 540px;
+} */
+
+
+.productDetailsImage {
+  position: relative;
+  background: #faf7fc;
+  border-radius: 20px;
+  overflow: hidden;
   border: 1px solid #f2e8f6;
   aspect-ratio: 1/1;
   height: auto;
@@ -44,6 +83,15 @@
   display: block;
 }
 
+/* .thumbnailRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+} */
+
 .thumbnailRow {
   display: flex;
   gap: 12px;
@@ -51,6 +99,8 @@
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: none;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .thumbnailRow::-webkit-scrollbar {
@@ -744,8 +794,9 @@
   overflow-x: auto;
   border: 1px solid #ececec;
   border-radius: 16px;
+  width: 100%;
+  max-width: 100%;
 }
-
 .imagePopupOverlay {
   position: fixed;
   inset: 0;

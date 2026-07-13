@@ -6,10 +6,11 @@ import {
   downloadInvoiceApi
 } from "../services/authService";
 import "./MyOrders.css";
-
+import { useNavigate } from "react-router-dom";
 
 
 const MyOrders = () => {
+  const navigate = useNavigate();
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [selectedReturnOrderId, setSelectedReturnOrderId] = useState("");
   const [returnReason, setReturnReason] = useState("");
@@ -129,6 +130,16 @@ const MyOrders = () => {
       setOrders(res?.data?.data || []);
     } catch (err) {
       console.error("Fetch orders error:", err);
+
+      const status = err?.response?.status;
+      if (status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setError("Session expired. Please login again");
+        navigate("/login");
+        return;
+      }
+
       setError(err?.response?.data?.message || "Failed to load orders");
     } finally {
       setLoading(false);
@@ -219,11 +230,11 @@ const MyOrders = () => {
       setActionLoadingId(selectedOrderId);
       setError("");
       setMessage("");
-       console.log("Reason1",cancelReason)
+      console.log("Reason1", cancelReason)
       const res = await cancelMyOrderApi(selectedOrderId, {
         reason: cancelReason.trim(),
       });
-      console.log("Reason2",res)
+      console.log("Reason2", res)
 
       setMessage(res?.data?.message || "Order cancelled successfully");
 

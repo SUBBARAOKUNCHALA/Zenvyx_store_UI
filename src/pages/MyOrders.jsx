@@ -24,6 +24,7 @@ const MyOrders = () => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState("");
   const [cancelReason, setCancelReason] = useState("");
+  const [otherCancelReason, setOtherCancelReason] = useState("");
 
   const formatDate = (date) => {
     if (!date) return "Not updated";
@@ -218,23 +219,36 @@ const MyOrders = () => {
     setShowCancelModal(false);
     setSelectedOrderId("");
     setCancelReason("");
+    setOtherCancelReason("");
   };
+
+  const cancelReasons = [
+    "Ordered by mistake",
+    "Found a better price elsewhere",
+    "Delivery time is too long",
+    "Item no longer needed",
+    "Want to change size/color",
+    "Want to change delivery address",
+    "Other",
+  ];
 
   const handleConfirmCancel = async () => {
     try {
-      if (!cancelReason.trim()) {
-        setError("Please enter cancellation reason");
+      const finalReason =
+        cancelReason === "Other" ? otherCancelReason.trim() : cancelReason.trim();
+
+      if (!finalReason) {
+        setError("Please select or enter a cancellation reason");
         return;
       }
 
       setActionLoadingId(selectedOrderId);
       setError("");
       setMessage("");
-      console.log("Reason1", cancelReason)
+
       const res = await cancelMyOrderApi(selectedOrderId, {
-        reason: cancelReason.trim(),
+        reason: finalReason,
       });
-      console.log("Reason2", res)
 
       setMessage(res?.data?.message || "Order cancelled successfully");
 
@@ -244,7 +258,7 @@ const MyOrders = () => {
             ? {
               ...order,
               orderStatus: "Cancelled",
-              cancelReason: cancelReason.trim(),
+              cancelReason: finalReason,
               cancelledAt: new Date().toISOString(),
             }
             : order
@@ -331,6 +345,9 @@ const MyOrders = () => {
                         <h3>{firstItem?.name || "Product"}</h3>
                         <p>Size: {firstItem?.size || "N/A"}</p>
                         <p>Qty: {firstItem?.quantity || 1}</p>
+                        <strong>
+                          ₹{Number(firstItem.subtotal || 0).toFixed(2)}
+                        </strong>
 
                         {order.items?.length > 1 && (
                           <small>+{order.items.length - 1} more item(s)</small>
@@ -471,7 +488,7 @@ const MyOrders = () => {
                         )}
                       </div>
 
-                      <div className="orderItemsWrap">
+                      {/* <div className="orderItemsWrap">
                         {order.items?.map((item, index) => (
                           <div className="orderItemRow" key={index}>
                             <img src={item.image} alt={item.name} />
@@ -487,7 +504,7 @@ const MyOrders = () => {
                             </strong>
                           </div>
                         ))}
-                      </div>
+                      </div> */}
 
                       {displayHistory.length > 0 && (
                         <div className="orderHistoryBox">
@@ -610,15 +627,32 @@ const MyOrders = () => {
         <div className="cancelModalOverlay">
           <div className="cancelModal">
             <h2>Cancel Order</h2>
-            <p>Please tell us why you want to cancel this order.</p>
+            <p>Please select a reason for cancelling this order.</p>
 
-            <textarea
-              className="cancelReasonInput"
-              placeholder="Enter cancellation reason..."
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              rows={5}
-            />
+            <div className="returnReasonList">
+              {cancelReasons.map((reason) => (
+                <label key={reason} className="returnReasonItem">
+                  <input
+                    type="radio"
+                    name="cancelReason"
+                    value={reason}
+                    checked={cancelReason === reason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                  />
+                  <span>{reason}</span>
+                </label>
+              ))}
+            </div>
+
+            {cancelReason === "Other" && (
+              <textarea
+                className="cancelReasonInput"
+                placeholder="Please specify your reason..."
+                value={otherCancelReason}
+                onChange={(e) => setOtherCancelReason(e.target.value)}
+                rows={4}
+              />
+            )}
 
             <div className="cancelModalActions">
               <button
@@ -632,7 +666,11 @@ const MyOrders = () => {
               <button
                 className="cancelModalBtn primaryBtn"
                 onClick={handleConfirmCancel}
-                disabled={actionLoadingId === selectedOrderId}
+                disabled={
+                  actionLoadingId === selectedOrderId ||
+                  !cancelReason.trim() ||
+                  (cancelReason === "Other" && !otherCancelReason.trim())
+                }
               >
                 {actionLoadingId === selectedOrderId
                   ? "Submitting..."

@@ -1176,3 +1176,17 @@
   opacity: 0.75;
   color: black;
 }
+
+
+  @media (max-width: 768px) {
+  .productActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .addCartBtn,
+  .buyNowBtn {
+    min-width: 0;
+    width: 100%;
+  }
+}

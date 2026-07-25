@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Heart, Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   addToCartApi,
   getProductById,
@@ -410,333 +411,341 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="productDetailsPage">
-      <div className="productDetailsContainer">
-        <div className="productDetailsLeft">
-          <div className="productDetailsImage">
-            {/* <img src={selectedImage || product.image} alt={product.name} /> */}
-            <img
-              src={selectedImage || product.image}
-              alt={product.name}
-              onClick={() => setShowImagePopup(true)}
-              style={{ cursor: "zoom-in" }}
-            />
-            {productImages.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  className="imageNavBtn prevImageBtn"
-                  onClick={handlePrevImage}
-                >
-                  ‹
-                </button>
-
-                <button
-                  type="button"
-                  className="imageNavBtn nextImageBtn"
-                  onClick={handleNextImage}
-                >
-                  ›
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="thumbnailRow">
-            {productImages.map((img, index) => (
-              <div
-                key={index}
-                className={`thumbBox ${selectedImage === img ? "activeThumb" : ""
-                  }`}
-                onClick={() => handleThumbnailSelect(img, index)}
-                onMouseEnter={() => handleThumbnailSelect(img, index)}
-              >
-                <img src={img} alt={`product-${index}`} />
-              </div>
-            ))}
-          </div>
+    <>
+      <div className="productDetailsPage">
+        <div className="breadcrumb">
+          <Link to="/">Home</Link>
+          <span>/</span>
+          <span className="activeBreadcrumb">Product Details</span>
         </div>
-
-        <div className="productDetailsContent">
-          {/* <h1 className="productTitle">{product.name}</h1> */}
-          <div className="productTitleRow">
-            <h1 className="productTitle">
-              {product.name}
-            </h1>
-
-            <div className="productActionIcons">
-              <button
-                className={`detailsWishlistBtn ${liked ? "active" : ""}`}
-                onClick={handleWishlist}
-                disabled={wishLoading}
-              >
-                <Heart
-                  size={28}
-                  strokeWidth={2}
-                  fill={liked ? "#ff1744" : "none"}
-                  color={liked ? "#ff1744" : "#444"}
-                />
-              </button>
-
-              <button
-                className="detailsShareBtn"
-                onClick={handleShare}
-              >
-                <Share2 size={22} />
-              </button>
-            </div>
-          </div>
-
-          <p className="productCategory">
-            {product.category}
-            {product.subCategory ? ` / ${product.subCategory}` : ""}
-          </p>
-
-          <div className="productPriceWrap">
-            {product.discount > 0 ? (
-              <>
-                <p className="finalPrice">₹{finalPrice}.00</p>
-                <p className="originalPrice">₹{product.price}.00</p>
-                <span className="productDiscountBadge">
-                  {product.discount}% OFF
-                </span>
-              </>
-            ) : (
-              <p className="finalPrice">₹{product.price}.00</p>
-            )}
-          </div>
-
-          <p className="productDesc">{product.description}</p>
-
-          <div className="sizeSection">
-            <div className="sizeHeader">
-              <h3 className="sizeTitle">Available Sizes</h3>
-
-              {/* <label className="inchCheckBox">
-                <input
-                  type="checkbox"
-                  checked={showInches}
-                  onChange={(e) => handleSizeTypeChange(e.target.checked)}
-                />
-                <span>In Inches</span>
-              </label> */}
-            </div>
-
-            <div className="sizeOptions">
-              {/* <label className="inchCheckBox">
-                <input
-                  type="checkbox"
-                  checked={showInches}
-                  onChange={(e) => handleSizeTypeChange(e.target.checked)}
-                />
-                <span>In Inches</span>
-              </label> */}
-              {visibleSizes.map((size) => {
-                const stock = sizeStockMap[String(size).toUpperCase()] || 0;
-                const available = stock > 0;
-
-                return (
+        <div className="productDetailsContainer">
+          <div className="productDetailsLeft">
+            <div className="productDetailsImage">
+              {/* <img src={selectedImage || product.image} alt={product.name} /> */}
+              <img
+                src={selectedImage || product.image}
+                alt={product.name}
+                onClick={() => setShowImagePopup(true)}
+                style={{ cursor: "zoom-in" }}
+              />
+              {productImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="imageNavBtn prevImageBtn"
+                    onClick={handlePrevImage}
+                  >
+                    ‹
+                  </button>
 
                   <button
-                    key={size}
                     type="button"
-                    disabled={!available}
-                    className={`sizeBtn ${String(selectedSize) === String(size) ? "active" : ""
-                      } ${!available ? "disabledSize" : ""}`}
-                    onClick={() => handleSizeSelect(size)}
-                    title={available ? `${stock} available` : "This size is not available"}
+                    className="imageNavBtn nextImageBtn"
+                    onClick={handleNextImage}
                   >
-                    {size}
+                    ›
                   </button>
-                );
-              })}
+                </>
+              )}
             </div>
-            <div className="sizeChartSection">
 
-              <button
-                type="button"
-                className="sizeChartToggle"
-                onClick={() => setShowSizeChart(!showSizeChart)}
-              >
-                {showSizeChart ? "Hide Size Chart ▲" : "View Size Chart ▼"}
-              </button>
+            <div className="thumbnailRow">
+              {productImages.map((img, index) => (
+                <div
+                  key={index}
+                  className={`thumbBox ${selectedImage === img ? "activeThumb" : ""
+                    }`}
+                  onClick={() => handleThumbnailSelect(img, index)}
+                  onMouseEnter={() => handleThumbnailSelect(img, index)}
+                >
+                  <img src={img} alt={`product-${index}`} />
+                </div>
+              ))}
+            </div>
+          </div>
 
-              {showSizeChart && (
-                <div className="sizeChartTableWrapper">
-                  <table className="sizeChartTable">
-                    <thead>
-                      <tr>
-                        {product.category === "Pant" ? (
-                          <>
-                            <th>Size</th>
-                            <th>Waist</th>
-                            <th>Length</th>
-                          </>
-                        ) : product.category === "Shirt" ? (
-                          <>
-                            <th>Size</th>
-                            <th>Chest</th>
-                            <th>Shoulder</th>
-                            <th>Length</th>
-                          </>
-                        ) : (
-                          <>
-                            <th>Size</th>
-                            <th>Chest</th>
-                            <th>Length</th>
-                          </>
-                        )}
-                      </tr>
-                    </thead>
 
-                    <tbody>
-                      {SIZE_CHARTS[product.category]?.map((row) => (
-                        <tr
-                          key={row.size}
-                          className={
-                            selectedSize === row.size
-                              ? "activeSizeRow"
-                              : ""
-                          }
-                        >
+
+          <div className="productDetailsContent">
+            {/* <h1 className="productTitle">{product.name}</h1> */}
+            <div className="productTitleRow">
+              <h1 className="productTitle">
+                {product.name}
+              </h1>
+
+              <div className="productActionIcons">
+                <button
+                  className={`detailsWishlistBtn ${liked ? "active" : ""}`}
+                  onClick={handleWishlist}
+                  disabled={wishLoading}
+                >
+                  <Heart
+                    size={28}
+                    strokeWidth={2}
+                    fill={liked ? "#ff1744" : "none"}
+                    color={liked ? "#ff1744" : "#444"}
+                  />
+                </button>
+
+                <button
+                  className="detailsShareBtn"
+                  onClick={handleShare}
+                >
+                  <Share2 size={22} />
+                </button>
+              </div>
+            </div>
+
+            <p className="productCategory">
+              {product.category}
+              {product.subCategory ? ` / ${product.subCategory}` : ""}
+            </p>
+
+            <div className="productPriceWrap">
+              {product.discount > 0 ? (
+                <>
+                  <p className="finalPrice">₹{finalPrice}.00</p>
+                  <p className="originalPrice">₹{product.price}.00</p>
+                  <span className="productDiscountBadge">
+                    {product.discount}% OFF
+                  </span>
+                </>
+              ) : (
+                <p className="finalPrice">₹{product.price}.00</p>
+              )}
+            </div>
+
+            <p className="productDesc">{product.description}</p>
+
+            <div className="sizeSection">
+              <div className="sizeHeader">
+                <h3 className="sizeTitle">Available Sizes</h3>
+
+                {/* <label className="inchCheckBox">
+                <input
+                  type="checkbox"
+                  checked={showInches}
+                  onChange={(e) => handleSizeTypeChange(e.target.checked)}
+                />
+                <span>In Inches</span>
+              </label> */}
+              </div>
+
+              <div className="sizeOptions">
+                {/* <label className="inchCheckBox">
+                <input
+                  type="checkbox"
+                  checked={showInches}
+                  onChange={(e) => handleSizeTypeChange(e.target.checked)}
+                />
+                <span>In Inches</span>
+              </label> */}
+                {visibleSizes.map((size) => {
+                  const stock = sizeStockMap[String(size).toUpperCase()] || 0;
+                  const available = stock > 0;
+
+                  return (
+
+                    <button
+                      key={size}
+                      type="button"
+                      disabled={!available}
+                      className={`sizeBtn ${String(selectedSize) === String(size) ? "active" : ""
+                        } ${!available ? "disabledSize" : ""}`}
+                      onClick={() => handleSizeSelect(size)}
+                      title={available ? `${stock} available` : "This size is not available"}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="sizeChartSection">
+
+                <button
+                  type="button"
+                  className="sizeChartToggle"
+                  onClick={() => setShowSizeChart(!showSizeChart)}
+                >
+                  {showSizeChart ? "Hide Size Chart ▲" : "View Size Chart ▼"}
+                </button>
+
+                {showSizeChart && (
+                  <div className="sizeChartTableWrapper">
+                    <table className="sizeChartTable">
+                      <thead>
+                        <tr>
                           {product.category === "Pant" ? (
                             <>
-                              <td>{row.size}</td>
-                              <td>{row.waist}</td>
-                              <td>{row.length}</td>
+                              <th>Size</th>
+                              <th>Waist</th>
+                              <th>Length</th>
                             </>
                           ) : product.category === "Shirt" ? (
                             <>
-                              <td>{row.size}</td>
-                              <td>{row.chest}</td>
-                              <td>{row.shoulder}</td>
-                              <td>{row.length}</td>
+                              <th>Size</th>
+                              <th>Chest</th>
+                              <th>Shoulder</th>
+                              <th>Length</th>
                             </>
                           ) : (
                             <>
-                              <td>{row.size}</td>
-                              <td>{row.chest}</td>
-                              <td>{row.length}</td>
+                              <th>Size</th>
+                              <th>Chest</th>
+                              <th>Length</th>
                             </>
                           )}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+                      </thead>
 
-          <div className="quantitySection">
-
-            <h3 className="quantityTitle">
-              Quantity{" "}
-              {selectedSize && (
-                <span className="selectedStockText">
-                  {selectedSizeStock} available for {selectedSize}
-                </span>
-              )}
-            </h3>
-
-            <div className="quantitySelector">
-              <button
-                type="button"
-                className="qtyBtn"
-                onClick={handleDecreaseQty}
-                disabled={quantity <= 1}
-              >
-                -
-              </button>
-
-              <span className="qtyValue">{quantity}</span>
-
-              <button
-                type="button"
-                className="qtyBtn"
-                onClick={handleIncreaseQty}
-                disabled={!selectedSize || quantity >= selectedSizeStock}
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {cartMessage && <div className="cartSuccessMessage">{cartMessage}</div>}
-          {cartError && <div className="cartErrorMessage">{cartError}</div>}
-
-          <div className="productActions">
-            <button
-              className="addCartBtn"
-              onClick={handleAddToCart}
-              disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
-            >
-              {cartLoading ? "Adding..." : "Add to Cart"}
-            </button>
-
-            <button
-              className="buyNowBtn"
-              onClick={handleBuyNow}
-              disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
-            >
-              Buy Now
-            </button>
-          </div>
-
-          <div className="productInfoBox">
-            <h4>Product Information</h4>
-
-            <div className="infoGrid">
-              <div className="infoItem">
-                <strong>Category</strong>
-                {product.category}
-              </div>
-
-              <div className="infoItem">
-                <strong>Total Stock</strong>
-                {product.stock > 0
-                  ? `${product.stock} available`
-                  : "Out of stock"}
-              </div>
-
-              <div className="infoItem">
-                <strong>Selected Size</strong>
-                {selectedSize || "Not selected"}
-              </div>
-
-              <div className="infoItem">
-                <strong>Selected Size Stock</strong>
-                {selectedSize ? selectedSizeStock : "Select size"}
-              </div>
-
-              <div className="infoItem">
-                <strong>Discount</strong>
-                {product.discount > 0 ? `${product.discount}%` : "No discount"}
-              </div>
-
-              {/* <div className="infoItem productDetailsItem">
-                <strong>Product Details</strong>
-                <p>{product.ProductDetails || "No extra details available"}</p>
-              </div> */}
-              <div className="infoItem productDetailsItem">
-                <strong>Product Details</strong>
-                <p className={`productDetailsText ${showFullDetails ? "expanded" : "clamped"}`}>
-                  {product.ProductDetails || "No extra details available"}
-                </p>
-
-                {product.ProductDetails && (
-                  <button
-                    type="button"
-                    className="readMoreBtn titletext"
-                    onClick={() => setShowFullDetails((prev) => !prev)}
-                  >
-                    {showFullDetails ? "Read less" : "Read more"}
-                  </button>
+                      <tbody>
+                        {SIZE_CHARTS[product.category]?.map((row) => (
+                          <tr
+                            key={row.size}
+                            className={
+                              selectedSize === row.size
+                                ? "activeSizeRow"
+                                : ""
+                            }
+                          >
+                            {product.category === "Pant" ? (
+                              <>
+                                <td>{row.size}</td>
+                                <td>{row.waist}</td>
+                                <td>{row.length}</td>
+                              </>
+                            ) : product.category === "Shirt" ? (
+                              <>
+                                <td>{row.size}</td>
+                                <td>{row.chest}</td>
+                                <td>{row.shoulder}</td>
+                                <td>{row.length}</td>
+                              </>
+                            ) : (
+                              <>
+                                <td>{row.size}</td>
+                                <td>{row.chest}</td>
+                                <td>{row.length}</td>
+                              </>
+                            )}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             </div>
-          </div>
 
+            <div className="quantitySection">
+
+              <h3 className="quantityTitle">
+                Quantity{" "}
+                {selectedSize && (
+                  <span className="selectedStockText">
+                    {selectedSizeStock} available for {selectedSize}
+                  </span>
+                )}
+              </h3>
+
+              <div className="quantitySelector">
+                <button
+                  type="button"
+                  className="qtyBtn"
+                  onClick={handleDecreaseQty}
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+
+                <span className="qtyValue">{quantity}</span>
+
+                <button
+                  type="button"
+                  className="qtyBtn"
+                  onClick={handleIncreaseQty}
+                  disabled={!selectedSize || quantity >= selectedSizeStock}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {cartMessage && <div className="cartSuccessMessage">{cartMessage}</div>}
+            {cartError && <div className="cartErrorMessage">{cartError}</div>}
+
+            <div className="productActions">
+              <button
+                className="addCartBtn"
+                onClick={handleAddToCart}
+                disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
+              >
+                {cartLoading ? "Adding..." : "Add to Cart"}
+              </button>
+
+              <button
+                className="buyNowBtn"
+                onClick={handleBuyNow}
+                disabled={cartLoading || selectedSizeStock <= 0 || !selectedSize}
+              >
+                Buy Now
+              </button>
+            </div>
+
+            <div className="productInfoBox">
+              <h4>Product Information</h4>
+
+              <div className="infoGrid">
+                <div className="infoItem">
+                  <strong>Category</strong>
+                  {product.category}
+                </div>
+
+                <div className="infoItem">
+                  <strong>Total Stock</strong>
+                  {product.stock > 0
+                    ? `${product.stock} available`
+                    : "Out of stock"}
+                </div>
+
+                <div className="infoItem">
+                  <strong>Selected Size</strong>
+                  {selectedSize || "Not selected"}
+                </div>
+
+                <div className="infoItem">
+                  <strong>Selected Size Stock</strong>
+                  {selectedSize ? selectedSizeStock : "Select size"}
+                </div>
+
+                <div className="infoItem">
+                  <strong>Discount</strong>
+                  {product.discount > 0 ? `${product.discount}%` : "No discount"}
+                </div>
+
+                {/* <div className="infoItem productDetailsItem">
+                <strong>Product Details</strong>
+                <p>{product.ProductDetails || "No extra details available"}</p>
+              </div> */}
+                <div className="infoItem productDetailsItem">
+                  <strong>Product Details</strong>
+                  <p className={`productDetailsText ${showFullDetails ? "expanded" : "clamped"}`}>
+                    {product.ProductDetails || "No extra details available"}
+                  </p>
+
+                  {product.ProductDetails && (
+                    <button
+                      type="button"
+                      className="readMoreBtn titletext"
+                      onClick={() => setShowFullDetails((prev) => !prev)}
+                    >
+                      {showFullDetails ? "Read less" : "Read more"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
           {similarProducts.length > 0 && (
             <div className="similarSection">
               <h3>People also viewed</h3>
@@ -795,47 +804,49 @@ const ProductDetails = () => {
             </div>
           )}
         </div>
-      </div>
 
-      {showImagePopup && (
-        <div
-          className="imagePopupOverlay"
-          onClick={() => setShowImagePopup(false)}
-        >
+
+        {showImagePopup && (
           <div
-            className="imagePopupContainer"
-            onClick={(e) => e.stopPropagation()}
+            className="imagePopupOverlay"
+            onClick={() => setShowImagePopup(false)}
           >
-            <button
-              className="popupCloseBtn"
-              onClick={() => setShowImagePopup(false)}
+            <div
+              className="imagePopupContainer"
+              onClick={(e) => e.stopPropagation()}
             >
-              ✕
-            </button>
+              <button
+                className="popupCloseBtn"
+                onClick={() => setShowImagePopup(false)}
+              >
+                ✕
+              </button>
 
-            <button className="popupNavBtn popupPrev" onClick={handlePrevImage}>
-              ‹
-            </button>
+              <button className="popupNavBtn popupPrev" onClick={handlePrevImage}>
+                ‹
+              </button>
 
-            <div className="popupImageWrapper">
-              <img
-                src={selectedImage}
-                alt=""
-                className="popupImage"
-                style={zoomStyle}
-                onMouseMove={handleImageZoom}
-                onMouseLeave={resetZoom}
-              />
+              <div className="popupImageWrapper">
+                <img
+                  src={selectedImage}
+                  alt=""
+                  className="popupImage"
+                  style={zoomStyle}
+                  onMouseMove={handleImageZoom}
+                  onMouseLeave={resetZoom}
+                />
+              </div>
+
+              <button className="popupNavBtn popupNext" onClick={handleNextImage}>
+                ›
+              </button>
             </div>
-
-            <button className="popupNavBtn popupNext" onClick={handleNextImage}>
-              ›
-            </button>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
+
 };
 
 export default ProductDetails;

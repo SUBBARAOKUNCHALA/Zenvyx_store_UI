@@ -14,6 +14,7 @@ export const verifyRazorpayPaymentApi = (data) => API.post("/payment/verify", da
 
 export const Allproducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
+export const getnewcollections=()=> API.get("/products/new-collections");
 export const getSimilarProducts = (id) => API.get(`/products/${id}/similar`);
 
 export const addToCartApi = (data) => API.post("/cart/add", data);

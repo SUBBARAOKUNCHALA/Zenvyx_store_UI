@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   clearMyCartApi,
   getMyCartApi,
@@ -221,9 +221,14 @@ const Cart = () => {
 
   return (
     <div className="cartPage">
+      <div className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span className="activeBreadcrumb">My Cart</span>
+      </div>
       <div className="cartHeader">
         <div>
-          <h1>My Cart</h1>
+          {/* <h1>My Cart</h1> */}
           <p>{cartSummary.totalItems} items in your shopping bag</p>
         </div>
 

@@ -5,8 +5,8 @@
 }
 
 .ordersContainer {
-  max-width: 1100px;
-  margin: 0 auto;
+  flex: 1;
+  min-width: 0;
 }
 
 .ordersHeader {
@@ -51,8 +51,8 @@
 
 .orderCard {
   background: #fff;
-  border: 1px solid #f0e4f5;
-  border-radius: 24px;
+  border: 1px solid #c5c2c7;
+  border-radius: 8px;
   padding: 22px;
   box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
 }
@@ -510,6 +510,8 @@
   color: #b91c1c;
 }
 .orderCompactRow {
+  background: #f1f1f1;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -979,4 +981,242 @@
 
 .returnModal .primaryBtn:hover:not(:disabled) {
   background: #4b2fe0;
+}
+
+
+.orderHistoryBox {
+  margin-top: 20px;
+  padding: 24px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+.orderHistoryBox > strong {
+  display: block;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #111827;
+}
+
+/* Top Center Message */
+
+.trackingMessage {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.trackingMessage h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.trackingMessage p {
+  margin-top: 8px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* Timeline */
+
+.horizontalTimeline {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.timelineStep {
+  min-width: 150px;
+  text-align: center;
+  position: relative;
+}
+
+.timelineDate {
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.timelineTop {
+  display: flex;
+  align-items: center;
+}
+
+.timelineCircle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6d28d9;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.timelineConnector {
+  flex: 1;
+  height: 4px;
+  background: #6d28d9;
+}
+
+.timelineDetails {
+  margin-top: 12px;
+}
+
+.timelineDetails h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.ordersSidebar {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 110px;
+}
+ 
+.collectionCard {
+  background: #fff;
+  border: 1px solid #c9c0cd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
+}
+ 
+.collectionCard h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #2f1a45;
+}
+ 
+.collectionProduct {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #f4ecf9;
+}
+ 
+.collectionProduct:last-of-type {
+  border-bottom: none;
+}
+ 
+.collectionProduct img {
+  width: 60px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #f3f4f6;
+}
+ 
+.collectionProduct h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: #111827;
+}
+ 
+.collectionProduct p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 700;
+}
+ 
+.viewCollectionBtn {
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  background: #111827;
+  color: #fff;
+  padding: 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+ 
+/* Hide sidebar on mobile */
+@media (max-width: 900px) {
+  .ordersSidebar {
+    display: none;
+  }
+}
+ 
+@media (max-width: 768px) {
+  .orderMetaGrid {
+    grid-template-columns: 1fr;
+  }
+ 
+  .orderItemRow {
+    grid-template-columns: 1fr;
+  }
+ 
+  .orderItemRow img {
+    width: 90px;
+    height: 90px;
+  }
+ 
+  .orderBottomRow {
+    justify-content: stretch;
+  }
+ 
+  .cancelOrderBtn {
+    width: 100%;
+  }
+}
+.ordersLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.ordersContainer {
+  flex: 1;
+  min-width: 0;
+}
+
+.ordersSidebar {
+  width: 280px;
+  flex: 0 0 280px;
+  position: sticky;
+  top: 110px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  /* margin-left: 12px; */ 
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.breadcrumb a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.breadcrumb a:hover {
+  color: #111827;
+}
+
+.breadcrumb span {
+  color: #9ca3af;
+}
+
+.activeBreadcrumb {
+  color: #111827 !important;
+  font-weight: 700;
 }

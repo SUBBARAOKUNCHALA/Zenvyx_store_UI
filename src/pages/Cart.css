@@ -7,7 +7,7 @@
 
 .cartHeader {
   max-width: 1380px;
-  margin: 0 auto 22px;
+  margin: 0 auto 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -89,8 +89,8 @@
 
 .cartCard {
   background: #fff;
-  border: 1px solid #f1e8f4;
-  border-radius: 24px;
+  border: 1px solid #cbc3cd;
+  border-radius: 8px;
   padding: 18px;
   display: grid;
   grid-template-columns: 200px 1fr;
@@ -271,8 +271,8 @@
   position: sticky;
   top: 120px;
   background: #fff;
-  border: 1px solid #f1e8f4;
-  border-radius: 24px;
+  border: 1px solid #cbc3cd;
+  border-radius: 8px;
   padding: 24px;
   box-shadow: 0 12px 28px rgba(90, 54, 110, 0.06);
 }
@@ -526,4 +526,34 @@
   align-items: center;
   gap: 10px;
   margin-top: 10px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* margin-bottom: 12px;
+  margin-left: 12px; */
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.breadcrumb a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.breadcrumb a:hover {
+  color: #111827;
+}
+
+.breadcrumb span {
+  color: #9ca3af;
+}
+
+.activeBreadcrumb {
+  color: #111827 !important;
+  font-weight: 700;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   getWishlistApi,
   toggleWishlistApi,
@@ -55,6 +55,11 @@ const Wishlist = () => {
 
   return (
     <div className="wishlistPage">
+      <div className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span className="activeBreadcrumb">Wishlist</span>
+      </div>
       {loading ? (
         <div className="wishlistEmpty">
           Loading...

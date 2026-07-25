@@ -6,7 +6,7 @@
 
 .addressContainer {
   max-width: 1250px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   display: grid;
   grid-template-columns: 420px 1fr;
   gap: 24px;
@@ -15,8 +15,8 @@
 .addressFormCard,
 .savedAddressCard {
   background: #fff;
-  border: 1px solid #f0e4f5;
-  border-radius: 24px;
+  border: 1px solid #d5d1d7;
+  border-radius: 8px;
   padding: 24px;
   box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
 }
@@ -207,4 +207,34 @@
   .addressContainer {
     grid-template-columns: 1fr;
   }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* margin-bottom: 12px; */
+  /* margin-left: 0px ; */
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.breadcrumb a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.breadcrumb a:hover {
+  color: #111827;
+}
+
+.breadcrumb span {
+  color: #9ca3af;
+}
+
+.activeBreadcrumb {
+  color: #111827 !important;
+  font-weight: 700;
 }

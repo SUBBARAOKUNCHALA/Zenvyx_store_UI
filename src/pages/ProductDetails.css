@@ -30,7 +30,7 @@
   box-shadow: 0 12px 30px rgba(80, 40, 120, 0.06);
 } */
 .productDetailsContainer {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   width: 100%;
   margin: 0 auto;
   display: grid;

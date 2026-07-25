@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   addAddressApi,
   deleteAddressApi,
@@ -195,6 +195,11 @@ const Address = () => {
 
   return (
     <div className="addressPage">
+      <div className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span className="activeBreadcrumb">My Addresses</span>
+      </div>
       <div className="addressContainer">
         <div className="addressFormCard">
           <h1>{editingId ? "Update Address" : "Add New Address"}</h1>

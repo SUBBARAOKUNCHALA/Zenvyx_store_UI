@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import ProfilePanel from "../pages/ProfilePanel";
-import { Heart } from "lucide-react";
+
+import {
+  Heart,
+  ShoppingCart,
+  Package,
+} from "lucide-react";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -144,29 +149,30 @@ const Navbar = () => {
         </div>
 
         <div className="actionsDesktop">
-          <span
-            className={`navMenuItem ${location.pathname === "/wishlist" ? "activeNavMenu" : ""
-              }`}
+
+          <div
+            className={`navItem ${location.pathname === "/wishlist" ? "activeNavMenu" : ""}`}
             onClick={() => navigate("/wishlist")}
           >
-            My Wishlist
-          </span>
+            <Heart size={22} strokeWidth={2} />
+            <span>Wishlist</span>
+          </div>
 
-          <span
-            className={`navMenuItem ${location.pathname === "/cart" ? "activeNavMenu" : ""
-              }`}
+          <div
+            className={`navItem ${location.pathname === "/cart" ? "activeNavMenu" : ""}`}
             onClick={() => navigate("/cart")}
           >
-            Cart
-          </span>
+            <ShoppingCart size={22} strokeWidth={2} />
+            <span>Cart</span>
+          </div>
 
-          <span
-            className={`navMenuItem ${location.pathname === "/my-orders" ? "activeNavMenu" : ""
-              }`}
+          <div
+            className={`navItem ${location.pathname === "/my-orders" ? "activeNavMenu" : ""}`}
             onClick={() => navigate("/my-orders")}
           >
-            Orders
-          </span>
+            <Package size={22} strokeWidth={2} />
+            <span>Orders</span>
+          </div>
 
           {!token || !user ? (
             <button className="navBtn" onClick={() => navigate(route)}>
@@ -187,6 +193,7 @@ const Navbar = () => {
               </div>
             </div>
           )}
+
         </div>
 
         <div className="mobileRightActions">
@@ -195,7 +202,7 @@ const Navbar = () => {
             className="mobileNavIconforlove"
             onClick={() => navigate("/wishlist")}
           >
-           <Heart size={22} />
+            <Heart size={22} />
           </div>
 
           <div

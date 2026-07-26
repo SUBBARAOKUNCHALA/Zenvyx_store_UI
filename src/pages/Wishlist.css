@@ -25,7 +25,7 @@
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 18px;
-  margin-top: 25px;
+  /* margin-top: 25px; */
 }
 
 .wishlistCard {
@@ -215,7 +215,7 @@
 
 @media (max-width: 1400px) {
   .wishlistGrid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 

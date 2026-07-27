@@ -54,12 +54,12 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="wishlistPage">
-      <div className="breadcrumb">
+    <>    <div className="breadcrumb">
         <Link to="/">Home</Link>
         <span>/</span>
         <span className="activeBreadcrumb">Wishlist</span>
       </div>
+    <div className="wishlistPage">
       {loading ? (
         <div className="wishlistEmpty">
           Loading...
@@ -149,6 +149,7 @@ const Wishlist = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

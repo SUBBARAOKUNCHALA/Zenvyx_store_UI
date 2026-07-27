@@ -1,12 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Terms.css";
+import { Link } from "react-router-dom";
 
 const Terms = () => {
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "auto",
+    });
+  }, []);
+
   return (
     <div className="termsPage">
+      <div className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span className="activeBreadcrumb">Terms & Conditions</span>
+      </div>
+
       <div className="termsContainer">
         <h1>Terms & Conditions</h1>
-        <p className="lastUpdated">Last updated: {new Date().toDateString()}</p>
+        <p className="lastUpdated">
+          Last updated: {new Date().toDateString()}
+        </p>
 
         <section>
           <h2>1. Introduction</h2>
@@ -72,16 +90,14 @@ const Terms = () => {
         <section>
           <h2>8. Changes to Terms</h2>
           <p>
-            We reserve the right to update these Terms at any time. Continued use
-            of the platform means you accept the changes.
+            We reserve the right to update these Terms at any time. Continued
+            use of the platform means you accept the changes.
           </p>
         </section>
 
         <section>
           <h2>9. Contact Us</h2>
-          <p>
-            For any queries, contact us at: support@zenvyx.com
-          </p>
+          <p>For any queries, contact us at: support@zenvyx.com</p>
         </section>
       </div>
     </div>

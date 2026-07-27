@@ -571,7 +571,7 @@
 .actionsDesktop{
     display:flex;
     align-items:center;
-    gap:28px;
+    gap:8px;
 }
 
 .navMenuItem{

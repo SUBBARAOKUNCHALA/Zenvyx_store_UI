@@ -888,6 +888,9 @@ const Dashboard = () => {
                     if (link === "Terms & Conditions") {
                       navigate("/terms");
                       return;
+                    }else if(link === "Contact Us"){
+                      navigate("/ContactUs");
+                      return;
                     }
                     else if (link === "Track Order") {
                       navigate("/my-orders");

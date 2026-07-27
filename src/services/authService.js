@@ -35,6 +35,9 @@ export const toggleWishlistApi = (productId) => API.post(`/wishlist/toggle/${pro
 export const getWishlistApi = () => API.get("/wishlist");
 export const removeWishlistApi = (productId) => API.delete(`/wishlist/${productId}`);
 
+// contact us system apis
+export const createContactApi=(data)=> API.post("/contact/createRequest",data);
+
 export const getCheckoutSummaryApi = () => API.get("/orders/checkout-summary");
 export const placeOrderApi = (data) => API.post("/orders/place", data);
 export const getMyOrdersApi = () => API.get("/orders/my-orders");

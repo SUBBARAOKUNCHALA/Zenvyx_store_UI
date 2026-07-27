@@ -1,6 +1,6 @@
 .termsPage {
-  padding: 60px 6%;
-  background: #f9fafb;
+  padding: 90px;
+  /* background: #f9fafb; */
   min-height: 100vh;
 }
 
@@ -38,4 +38,34 @@
   font-size: 14px;
   color: #374151;
   line-height: 1.7;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* margin-bottom: 12px; */
+  /* margin-left: 0px ; */
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.breadcrumb a {
+  color: #6b7280;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.breadcrumb a:hover {
+  color: #111827;
+}
+
+.breadcrumb span {
+  color: #9ca3af;
+}
+
+.activeBreadcrumb {
+  color: #111827 !important;
+  font-weight: 700;
 }

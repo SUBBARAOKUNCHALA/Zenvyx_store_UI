@@ -394,7 +394,7 @@ const MyOrders = () => {
                           className="viewDetailsBtn"
                           onClick={() => toggleOrderDetails(order._id)}
                         >
-                          {isExpanded ? "Hide Details" : "View Details"}
+                          {isExpanded ? "Hide Order Details" : "View Order Details"}
                           <span className={isExpanded ? "arrowUp" : "arrowDown"}>
 
                           </span>

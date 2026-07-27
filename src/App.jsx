@@ -6,6 +6,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import GlobalLoader from "./components/GlobalLoader";
 import Terms from "./components/Terms";
+import ContactUs from "./components/ContactUs"
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 import Login from "./pages/Login";
@@ -63,6 +64,7 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/ContactUs" element={<ContactUs/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

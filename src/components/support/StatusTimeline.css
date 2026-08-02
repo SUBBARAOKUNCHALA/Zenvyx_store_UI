@@ -1,0 +1,275 @@
+/* =====================================
+Order Timeline
+===================================== */
+
+.status-timeline-card{
+
+    margin-top:25px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:25px;
+    border: 1px solid rgb(169, 169, 172);
+    box-shadow:0 8px 24px rgba(0,0,0,.05);
+
+}
+
+.status-timeline-card h2{
+
+    margin-bottom:30px;
+
+    color:#111827;
+
+}
+
+/* Horizontal */
+
+.horizontal-timeline{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:20px;
+
+    overflow-x:auto;
+
+    padding-bottom:10px;
+
+}
+
+/* Step */
+
+.timeline-step{
+
+    min-width:110px;
+
+    flex:1;
+
+    text-align:center;
+
+    position:relative;
+
+}
+
+/* Circle */
+
+.timeline-circle{
+
+    width:52px;
+
+    height:52px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:2;
+
+    position:relative;
+
+}
+
+/* Line */
+
+.timeline-line{
+
+    position:absolute;
+
+    top:26px;
+
+    left:55%;
+
+    width:100%;
+
+    height:3px;
+
+    background:#d1d5db;
+
+    z-index:1;
+
+}
+
+.timeline-step:last-child .timeline-line{
+
+    display:none;
+
+}
+
+.timeline-step h4{
+
+    margin:16px 0 8px;
+
+    color:#111827;
+
+    font-size:15px;
+
+}
+
+.timeline-step p{
+
+    margin:0;
+
+    color:#6b7280;
+
+    font-size:13px;
+
+    line-height:1.5;
+
+}
+
+.timeline-step span{
+
+    display:block;
+
+    margin-top:8px;
+
+    color:#9ca3af;
+
+    font-size:12px;
+
+}
+
+.timeline-empty{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    padding:30px;
+
+}
+
+@media(max-width:768px){
+
+.horizontal-timeline{
+
+    justify-content:flex-start;
+
+}
+
+.timeline-step{
+
+    min-width:170px;
+
+}
+
+}
+
+/* =====================================
+Timeline Header
+===================================== */
+
+.timeline-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
+}
+
+.timeline-header h2{
+
+    margin:0;
+
+}
+
+/* Toggle Button */
+
+.timeline-toggle-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:none;
+
+    border:none;
+
+    color:#2563eb;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    padding:4px 0;
+
+}
+
+.timeline-toggle-btn:hover{
+
+    color:#1d4ed8;
+
+}
+
+.timeline-toggle-btn svg{
+
+    transition:.25s;
+
+}
+
+/* Smooth Expand */
+
+.horizontal-timeline{
+
+    animation:timelineFade .3s ease;
+
+}
+
+@keyframes timelineFade{
+
+    from{
+
+        opacity:0;
+        transform:translateY(-8px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0);
+
+    }
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.timeline-header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+}
+
+}

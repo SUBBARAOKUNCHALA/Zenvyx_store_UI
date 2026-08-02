@@ -1,0 +1,293 @@
+/* ==========================================
+   Attachment Gallery
+========================================== */
+
+.attachment-gallery-card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:24px;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+}
+
+.attachment-gallery-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:22px;
+
+}
+
+.attachment-gallery-header h3{
+
+    margin:0;
+
+    font-size:20px;
+
+    color:#111827;
+
+    font-weight:700;
+
+}
+
+.attachment-gallery-header span{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+/* ==========================================
+   Grid
+========================================== */
+
+.attachment-gallery-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+
+    gap:20px;
+
+}
+
+/* ==========================================
+   Card
+========================================== */
+
+.attachment-gallery-item{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    transition:.3s;
+
+}
+
+.attachment-gallery-item:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 14px 35px rgba(0,0,0,.08);
+
+}
+
+/* ==========================================
+   Image
+========================================== */
+
+.attachment-image-wrapper{
+
+    position:relative;
+
+    height:180px;
+
+    overflow:hidden;
+
+}
+
+.attachment-preview-image{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+
+}
+
+.attachment-gallery-item:hover .attachment-preview-image{
+
+    transform:scale(1.08);
+
+}
+
+.attachment-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    opacity:0;
+
+    transition:.3s;
+
+}
+
+.attachment-gallery-item:hover .attachment-overlay{
+
+    opacity:1;
+
+}
+
+.attachment-overlay a{
+
+    width:46px;
+
+    height:46px;
+
+    background:#fff;
+
+    color:#111827;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+/* ==========================================
+   PDF
+========================================== */
+
+.attachment-document{
+
+    height:180px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#f9fafb;
+
+    color:#dc2626;
+
+}
+
+/* ==========================================
+   Footer
+========================================== */
+
+.attachment-gallery-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px;
+
+}
+
+.attachment-file-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    flex:1;
+
+}
+
+.attachment-file-info svg{
+
+    color:#2563eb;
+
+}
+
+.attachment-file-info span{
+
+    font-size:14px;
+
+    color:#374151;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+.attachment-download-btn{
+
+    width:40px;
+
+    height:40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:50%;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    transition:.3s;
+
+}
+
+.attachment-download-btn:hover{
+
+    background:#2563eb;
+
+    color:#fff;
+
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media(max-width:768px){
+
+.attachment-gallery-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.attachment-image-wrapper{
+
+height:220px;
+
+}
+
+}

@@ -18,6 +18,10 @@ import ProductDetails from "./pages/ProductDetails";
 import Address from "./pages/Address";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
+import HelpCenter from "./pages/HelpCenter.jsx";
+import RaiseTicket from "./pages/support/RaiseTicket";
+import MyTickets from "./pages/support/MyTickets";
+import TicketDetails from "./components/support/TicketDetails.jsx";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -64,7 +68,11 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/ContactUs" element={<ContactUs/>}/>
+        <Route path="/ContactUs" element={<ContactUs />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/help/create" element={<RaiseTicket />} />
+        <Route path="/help/my-tickets" element={<MyTickets />} />
+        <Route path="/help/ticket/:id" element={<TicketDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

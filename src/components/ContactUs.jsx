@@ -39,7 +39,7 @@ const ContactUs = () => {
         try {
             const res = await createContactApi(form);
 
-            alert(res.data.message);
+            //alert(res.data.message);
 
             setForm({
                 name: "",
@@ -49,7 +49,7 @@ const ContactUs = () => {
                 message: "",
             });
         } catch (err) {
-            alert(err.response?.data?.message || "Something went wrong");
+            //alert(err.response?.data?.message || "Something went wrong");
         }
     };
     return (

@@ -187,7 +187,7 @@ const MyOrders = () => {
   const handleConfirmReturn = async () => {
     try {
       if (!returnReason.trim()) {
-        alert("Please enter return reason");
+        //alert("Please enter return reason");
         return;
       }
 
@@ -202,7 +202,7 @@ const MyOrders = () => {
       fetchOrders();
     } catch (err) {
       console.error("Return error:", err);
-      alert(err?.response?.data?.message || "Return failed");
+      //alert(err?.response?.data?.message || "Return failed");
     } finally {
       setActionLoadingId("");
     }

@@ -1,0 +1,221 @@
+/* ====================================
+   Right Sidebar
+==================================== */
+
+.issue-tips{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:22px;
+
+}
+
+/* ====================================
+   Card
+==================================== */
+
+.tips-card{
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:24px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.07);
+
+    border: 1px solid #6b7280;
+
+    transition:.3s;
+
+}
+
+.tips-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+
+}
+
+/* ====================================
+   Heading
+==================================== */
+
+.tips-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:18px;
+
+}
+
+.tips-title h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#111827;
+
+}
+
+.tips-icon{
+
+    color:#2563eb;
+
+}
+
+/* ====================================
+   List
+==================================== */
+
+.tips-card ul{
+
+    margin:0;
+
+    padding:0;
+
+    list-style:none;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:14px;
+
+}
+
+.tips-card li{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+    color:#4b5563;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+}
+
+.tips-card li svg{
+
+    color:#22c55e;
+
+    flex-shrink:0;
+
+    margin-top:3px;
+
+}
+
+/* ====================================
+   Paragraph
+==================================== */
+
+.tips-card p{
+
+    margin:0;
+
+    color:#6b7280;
+
+    line-height:1.8;
+
+    font-size:15px;
+
+}
+
+.tips-card strong{
+
+    color:#111827;
+
+}
+
+/* ====================================
+   Warning Card
+==================================== */
+
+.warning-card{
+
+    background:#fff7ed;
+
+    border:1px solid #fdba74;
+
+}
+
+.warning-card .tips-title svg{
+
+    color:#ea580c;
+
+}
+
+.warning-card h3{
+
+    color:#9a3412;
+
+}
+
+.warning-card p{
+
+    color:#9a3412;
+
+    font-weight:500;
+
+}
+
+/* ====================================
+   Responsive
+==================================== */
+
+@media(max-width:992px){
+
+.issue-tips{
+
+margin-top:20px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.tips-card{
+
+padding:20px;
+
+}
+
+.tips-title h3{
+
+font-size:17px;
+
+}
+
+.tips-card li{
+
+font-size:14px;
+
+}
+
+.tips-card p{
+
+font-size:14px;
+
+}
+
+}
+.help-btn:hover{
+    color: black !important;
+    background-color: #ffffff !important;
+}

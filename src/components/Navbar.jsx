@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import "./Navbar.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import ProfilePanel from "../pages/ProfilePanel";
-
+import { Link } from "react-router-dom";
+import { LifeBuoy } from "lucide-react";
 import {
   Heart,
   ShoppingCart,
+  Headphones,
   Package,
 } from "lucide-react";
 const Navbar = () => {
@@ -118,6 +120,15 @@ const Navbar = () => {
     setShowProfilePanel((prev) => !prev);
   };
 
+  const navigateWithLoginCheck = (path) => {
+    if (!token || !user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(path);
+  };
+
   return (
     <>
       <motion.div
@@ -172,6 +183,15 @@ const Navbar = () => {
           >
             <Package size={22} strokeWidth={2} />
             <span>Orders</span>
+          </div>
+
+
+          <div
+            className={`navItem ${location.pathname.startsWith("/help") ? "activeNavMenu" : ""}`}
+            onClick={() => navigateWithLoginCheck("/help")}
+          >
+            <Headphones size={22} strokeWidth={2} />
+            <span>Help Center</span>
           </div>
 
           {!token || !user ? (

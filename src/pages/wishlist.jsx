@@ -54,101 +54,103 @@ const Wishlist = () => {
   };
 
   return (
-    <>    <div className="breadcrumb">
-        <Link to="/">Home</Link>
-        <span>/</span>
-        <span className="activeBreadcrumb">Wishlist</span>
-      </div>
-    <div className="wishlistPage">
-      {loading ? (
-        <div className="wishlistEmpty">
-          Loading...
+    <>
+      <div className="wishlistPage">
+        <div className="breadcrumb">
+          <Link to="/">Home</Link>
+          <span>/</span>
+          <span className="activeBreadcrumb">Wishlist</span>
         </div>
-      ) : wishlist.length === 0 ? (
-        <div className="wishlistEmpty">
-          ❤️
 
-          <h3>Your wishlist is empty</h3>
+        {loading ? (
+          <div className="wishlistEmpty">
+            Loading...
+          </div>
+        ) : wishlist.length === 0 ? (
+          <div className="wishlistEmpty">
+            ❤️
 
-          <p>Save your favourite products here.</p>
+            <h3>Your wishlist is empty</h3>
 
-          <button onClick={() => navigate("/")}>
-            Continue Shopping
-          </button>
-        </div>
-      ) : (
-        <div className="wishlistGrid">
-          {wishlist.map((item) => {
-            const product = item.productId;
+            <p>Save your favourite products here.</p>
 
-            const price = Number(product.price || 0);
-            const discount = Number(product.discount || 0);
+            <button onClick={() => navigate("/")}>
+              Continue Shopping
+            </button>
+          </div>
+        ) : (
+          <div className="wishlistGrid">
+            {wishlist.map((item) => {
+              const product = item.productId;
 
-            const finalPrice =
-              discount > 0
-                ? price - (price * discount) / 100
-                : price;
+              const price = Number(product.price || 0);
+              const discount = Number(product.discount || 0);
 
-            return (
-              <div
-                className="wishlistCard"
-                key={item._id}
-              >
-                <button
-                  className="removeWishlist"
-                  onClick={() => removeWishlist(product._id)}
+              const finalPrice =
+                discount > 0
+                  ? price - (price * discount) / 100
+                  : price;
+
+              return (
+                <div
+                  className="wishlistCard"
+                  key={item._id}
                 >
-                  ✕
-                </button>
-
-                <img
-                  src={product.image || product.images?.[0]}
-                  alt={product.name}
-                  onClick={() =>
-                    navigate(`/product/${product._id}`, {
-                      state: {
-                        product,
-                      },
-                    })
-                  }
-                />
-
-                <div className="wishlistContent">
-                  <h3>{product.name}</h3>
-
-                  <p>{product.description}</p>
-
-                  <div className="wishlistPrice">
-                    <span className="newPrice">
-                      ₹{Math.round(finalPrice)}
-                    </span>
-
-                    {discount > 0 && (
-                      <>
-                        <span className="oldPrice">
-                          ₹{price}
-                        </span>
-
-                        <span className="discount">
-                          {discount}% OFF
-                        </span>
-                      </>
-                    )}
-                  </div>
-
                   <button
-                    className="buyNowBtn"
-                    onClick={() => moveToCart(item)}
+                    className="removeWishlist"
+                    onClick={() => removeWishlist(product._id)}
                   >
-                    Move To Cart
+                    ✕
                   </button>
+
+                  <img
+                    src={product.image || product.images?.[0]}
+                    alt={product.name}
+                    onClick={() =>
+                      navigate(`/product/${product._id}`, {
+                        state: {
+                          product,
+                        },
+                      })
+                    }
+                  />
+
+                  <div className="wishlistContent">
+                    <h3>{product.name}</h3>
+
+                    <p>{product.description}</p>
+
+                    <div className="wishlistPrice">
+                      <span className="newPrice">
+                        ₹{Math.round(finalPrice)}
+                      </span>
+
+                      {discount > 0 && (
+                        <>
+                          <span className="oldPrice">
+                            ₹{price}
+                          </span>
+
+                          <span className="discount">
+                            {discount}% OFF
+                          </span>
+                        </>
+                      )}
+                    </div>
+
+                    <button
+                      className="buyNowBtn"
+                      onClick={() => moveToCart(item)}
+                    >
+                      Move To Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </>
   );
 };

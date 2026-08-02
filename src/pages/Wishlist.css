@@ -1,7 +1,7 @@
 .wishlistPage{
     max-width:1400px;
     margin:40px auto;
-    padding: 60px 20px;
+    padding: 50px 20px;
 }
 
 .wishlistHeader{
@@ -281,20 +281,22 @@
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(124, 58, 237, 0.25);
 }
+
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* margin-bottom: 12px; */
-  /* margin-left: 0px ; */
+  /* margin-top: 90px; */
   font-size: 14px;
   font-weight: 500;
   color: #6b7280;
+  margin-right: 30px !important;
 }
 
 .breadcrumb a {
   color: #6b7280;
   text-decoration: none;
+  /* margin-left: 10px; */
   transition: color 0.25s ease;
 }
 

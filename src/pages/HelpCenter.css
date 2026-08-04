@@ -5,7 +5,7 @@
 .help-center {
     width: 100%;
     min-height: 100vh;
-    background: #f8fafc;
+    background: linear-gradient(135deg, rrgb(245, 234, 239)0%, rgb(247, 238, 233) 100%) !important;
     padding: 100px 20px 60px;
     box-sizing: border-box;
 }
@@ -84,7 +84,7 @@
 
 .help-shopping-btn{
 
-    background:#2563eb;
+    background:#000000;
 
     color:#ffffff;
 
@@ -92,7 +92,7 @@
 
 .help-shopping-btn:hover{
 
-    background:#1d4ed8;
+    background:#000000;
 
 }
 

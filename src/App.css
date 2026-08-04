@@ -2,4 +2,5 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background: linear-gradient(135deg, rgb(253, 233, 242) 0%, rgb(253, 240, 232) 100%) !important;
 }

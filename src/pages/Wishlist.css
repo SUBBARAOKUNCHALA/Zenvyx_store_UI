@@ -2,6 +2,7 @@
     max-width:1400px;
     margin:40px auto;
     padding: 50px 20px;
+    background: linear-gradient(135deg, rrgb(245, 234, 239)0%, rgb(247, 238, 233) 100%) !important;
 }
 
 .wishlistHeader{

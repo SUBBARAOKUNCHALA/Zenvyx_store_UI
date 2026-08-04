@@ -68,8 +68,8 @@
 }
 
 .searchInput:focus {
-  border-color: #c59be7;
-  box-shadow: 0 0 0 2px rgba(155, 89, 182, 0.15);
+  border-color: #ecdfee;
+  box-shadow: 0 0 0 2px rgb(236, 207, 247);
 }
 
 /* DESKTOP ACTIONS */

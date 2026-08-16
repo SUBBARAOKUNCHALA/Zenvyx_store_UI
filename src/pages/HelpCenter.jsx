@@ -53,7 +53,7 @@ const HelpCenter = () => {
 
                 <CategoryGrid />
 
-                <QuickActions />
+                {/* <QuickActions /> */}
 
                 <FAQPreview />
 

@@ -7,7 +7,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  startLoading();
+  if (!config.skipGlobalLoader) {
+    startLoading();
+  }
+
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -17,11 +20,16 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    stopLoading();
+    if (!response.config?.skipGlobalLoader) {
+      stopLoading();
+    }
     return response;
   },
   (error) => {
-    stopLoading();
+    if (!error.config?.skipGlobalLoader) {
+      stopLoading();
+    }
+
     if (
       error.response?.status === 401 &&
       error.response?.data?.message?.toLowerCase().includes("expired")

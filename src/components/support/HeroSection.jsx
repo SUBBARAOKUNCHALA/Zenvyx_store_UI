@@ -1,6 +1,37 @@
 import { Link } from "react-router-dom";
-import { Headset, Ticket, ClipboardList } from "lucide-react";
+import {
+    Headset,
+    Ticket,
+    ClipboardList,
+    TicketPlus,
+    PackageSearch,
+    MessageCircleMore
+} from "lucide-react";
 import "./IssueTips.css"
+
+const heroQuickLinks = [
+    {
+        title: "Raise a Ticket",
+        icon: TicketPlus,
+        link: "/help/create"
+    },
+    {
+        title: "My Tickets",
+        icon: ClipboardList,
+        link: "/help/my-tickets"
+    },
+    {
+        title: "Track My Orders",
+        icon: PackageSearch,
+        link: "/my-orders"
+    },
+    {
+        title: "Live Chat",
+        icon: MessageCircleMore,
+        link: "#",
+        disabled: true
+    }
+];
 
 const HeroSection = () => {
     return (
@@ -49,18 +80,60 @@ const HeroSection = () => {
 
                 <div className="help-hero-right">
 
-                    <div className="support-card">
+                    <div className="hero-quick-links">
 
-                        <div className="support-icon">
-                            <Headset size={45} />
+                        <h3>Quick Links</h3>
+
+                        <div className="hero-quick-list">
+
+                            {heroQuickLinks.map((item, index) => {
+
+                                const Icon = item.icon;
+
+                                return item.disabled ? (
+
+                                    <div
+                                        key={index}
+                                        className="hero-quick-item hero-quick-disabled"
+                                    >
+                                        <span className="hero-quick-icon">
+                                            <Icon size={20} />
+                                        </span>
+
+                                        <span className="hero-quick-title">
+                                            {item.title}
+                                        </span>
+
+                                        <span className="hero-quick-badge">
+                                            Soon
+                                        </span>
+                                    </div>
+
+                                ) : (
+
+                                    <Link
+                                        key={index}
+                                        to={item.link}
+                                        className="hero-quick-item"
+                                    >
+                                        <span className="hero-quick-icon">
+                                            <Icon size={20} />
+                                        </span>
+
+                                        <span className="hero-quick-title">
+                                            {item.title}
+                                        </span>
+
+                                        <span className="hero-quick-arrow">
+                                            →
+                                        </span>
+                                    </Link>
+
+                                );
+
+                            })}
+
                         </div>
-
-                        <h3>Customer Support</h3>
-
-                        <p>
-                            Fast responses from our support team for all
-                            your shopping needs.
-                        </p>
 
                     </div>
 

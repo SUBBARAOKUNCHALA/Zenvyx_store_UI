@@ -12,7 +12,8 @@ export const resetPasswordWithOtp = (data) => API.post("/auth/reset-password", d
 export const createRazorpayOrderApi = (data) => API.post("/payment/create-order", data);
 export const verifyRazorpayPaymentApi = (data) => API.post("/payment/verify", data);
 
-export const Allproducts = () => API.get("/products");
+export const Allproducts = (page = 1, limit = 12) =>
+  API.get(`/products?page=${page}&limit=${limit}`, { skipGlobalLoader: true });
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const getnewcollections=()=> API.get("/products/new-collections");
 export const getSimilarProducts = (id) => API.get(`/products/${id}/similar`);

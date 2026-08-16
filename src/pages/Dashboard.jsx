@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Allproducts, toggleWishlistApi, removeWishlistApi } from "../services/authService";
@@ -246,6 +246,12 @@ const Dashboard = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [likedProducts, setLikedProducts] = useState({});
 
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = useRef(null);
+  const LIMIT = 12;
+
   const toggleWishlist = async (productId) => {
     try {
       const res = await toggleWishlistApi(productId);
@@ -261,27 +267,50 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await Allproducts();
-        const rawProducts = res?.data?.data || [];
+  const fetchProducts = useCallback(async (pageNum) => {
+    try {
+      pageNum === 1 ? setLoading(true) : setLoadingMore(true);
 
-        const enrichedProducts = rawProducts.map((item) => ({
-          ...item,
-          _searchBlob: buildSearchBlob(item),
-        }));
+      const res = await Allproducts(pageNum, LIMIT);
+      const rawProducts = res?.data?.data || [];
+      const enriched = rawProducts.map((item) => ({
+        ...item,
+        _searchBlob: buildSearchBlob(item),
+      }));
 
-        setProducts(enrichedProducts);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+      setProducts((prev) => (pageNum === 1 ? enriched : [...prev, ...enriched]));
+      setHasMore(res?.data?.hasMore ?? rawProducts.length === LIMIT);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, [fetchProducts]);
+  useEffect(() => {
+    if (page > 1) fetchProducts(page);
+  }, [page, fetchProducts]);
+
+
+
+  useEffect(() => {
+    if (!hasMore || loading || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) setPage((p) => p + 1);
+      },
+      { rootMargin: "300px" }
+    );
+
+    const el = sentinelRef.current;
+    if (el) observer.observe(el);
+    return () => el && observer.unobserve(el);
+  }, [hasMore, loading, loadingMore, products.length]); // 👈 add products.length
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -860,6 +889,12 @@ const Dashboard = () => {
                 ))}
               </div>
             )}
+
+            {hasMore && (
+              <div ref={sentinelRef} style={{ height: 40 }}>
+                {loadingMore && <p className="emptyState">Loading more products...</p>}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -886,10 +921,17 @@ const Dashboard = () => {
                   onClick={() => {
                     // ✅ Terms navigation
                     if (link === "Terms & Conditions") {
-                      navigate("/terms");
+                      window.open("/terms_and_conditions.html", "_blank", "noopener,noreferrer");
                       return;
-                    }else if(link === "Contact Us"){
+                    } else if (link === "Contact Us") {
                       navigate("/ContactUs");
+                      return;
+                    } else if (link === "About ZENVYX") {
+                      window.open("/about_us.html", "_blank", "noopener,noreferrer");
+                      return;
+                    }
+                    else if (link === "Privacy Policy") {
+                      window.open("/privacy_policy.html", "_blank", "noopener,noreferrer");
                       return;
                     }
                     else if (link === "Track Order") {

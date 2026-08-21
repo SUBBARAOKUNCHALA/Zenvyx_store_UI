@@ -87,26 +87,26 @@ const Register = () => {
     };
 
     const handleGoogleSuccess = async (credentialResponse) => {
-    try {
-        const googleToken = credentialResponse.credential;
+        try {
+            const googleToken = credentialResponse.credential;
 
-        const res = await googleAuthUser({ token: googleToken });
-        //console.log("Google data",res.data.data)
+            const res = await googleAuthUser({ token: googleToken });
+            //console.log("Google data",res.data.data)
 
-        const { token, _id, name, email } = res.data.data;
+            const { token, _id, name, email } = res.data.data;
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify({ _id, name, email }));
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify({ _id, name, email }));
 
-        // toast.success("Google signup successful");
-        navigate("/");
-    } catch (err) {
-        const msg =
-            err?.response?.data?.message || "Google signup failed";
-        setApiError(msg);
-        toast.error(msg);
-    }
-};
+            // toast.success("Google signup successful");
+            navigate("/");
+        } catch (err) {
+            const msg =
+                err?.response?.data?.message || "Google signup failed";
+            setApiError(msg);
+            toast.error(msg);
+        }
+    };
 
     const handleGoogleError = () => {
         toast.error("Google sign-in failed");
@@ -191,7 +191,7 @@ const Register = () => {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <h2 className="rightTitle">Welcome 👋</h2>
+                        <h2 className="rightTitle">Welcome</h2>
                         <p className="rightText">
                             Already have an account? Login and continue your experience.
                         </p>
@@ -202,6 +202,15 @@ const Register = () => {
                             onClick={() => navigate("/login")}
                         >
                             Login
+                        </motion.button>
+
+                        <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.05 }}
+                            className="continueShoppingBtn"
+                            onClick={() => navigate("/")}
+                        >
+                            Continue Shopping
                         </motion.button>
                     </motion.div>
                 </div>

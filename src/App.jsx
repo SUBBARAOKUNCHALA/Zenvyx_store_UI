@@ -5,6 +5,7 @@ import "./App.css";
 
 import Navbar from "./components/Navbar";
 import GlobalLoader from "./components/GlobalLoader";
+import ServerDown from "./components/ServerDown.jsx";
 import Terms from "./components/Terms";
 import ContactUs from "./components/ContactUs"
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
@@ -31,6 +32,9 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import ReturnedOrders from "./pages/admin/ReturnedOrders";
 import AdminReports from "./pages/admin/AdminReports";
 import DeleteProducts from "./pages/admin/DeleteProducts";
+import SupportDashboard from "./pages/admin/Admin Support/SupportDashboard.jsx";
+import SupportTickets from "./pages/admin/Admin Support/SupportTickets.jsx";
+import AdminTicketDetails from "./pages/admin/Admin Support/AdminTicketDetails.jsx";
 
 import NotFound from "./utils/NotFound";
 
@@ -42,19 +46,33 @@ function App() {
   }, [location.pathname]);
 
   const [loading, setLoading] = useState(false);
+  const [isServerDown, setIsServerDown] = useState(false);
 
   useEffect(() => {
     const showLoader = () => setLoading(true);
     const hideLoader = () => setLoading(false);
+    const showServerDown = () => setIsServerDown(true);
 
     document.addEventListener("show-loader", showLoader);
     document.addEventListener("hide-loader", hideLoader);
+    document.addEventListener("server-down", showServerDown);
 
     return () => {
       document.removeEventListener("show-loader", showLoader);
       document.removeEventListener("hide-loader", hideLoader);
+      document.removeEventListener("server-down", showServerDown);
     };
   }, []);
+
+  // Server-down takes over the whole screen — no point rendering
+  // Navbar/routes underneath a page that can't reach the backend anyway.
+  if (isServerDown) {
+    return (
+      <ServerDown
+        onRetry={() => setIsServerDown(false)}
+      />
+    );
+  }
 
   return (
     <>
@@ -139,7 +157,20 @@ function App() {
             path="delete-products"
             element={<DeleteProducts />}
           />
+          <Route
+            path="support"
+            element={<SupportDashboard />}
+          />
 
+          <Route
+            path="support/tickets"
+            element={<SupportTickets />}
+          />
+
+          <Route
+            path="support/:id"
+            element={<AdminTicketDetails />}
+          />
           <Route
             path="customers"
             element={

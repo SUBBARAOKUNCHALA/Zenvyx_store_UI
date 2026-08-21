@@ -438,7 +438,7 @@ const Login = () => {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <h2 className="rightTitle">Hello 👋</h2>
+                        <h2 className="rightTitle">Hello</h2>
                         <p className="rightText">
                             New here? Create an account and explore more.
                         </p>
@@ -449,6 +449,14 @@ const Login = () => {
                             onClick={() => navigate("/register")}
                         >
                             Register
+                        </motion.button>
+                        <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.05 }}
+                            className="continueShoppingBtn"
+                            onClick={() => navigate("/")}
+                        >
+                            Continue Shopping
                         </motion.button>
                     </motion.div>
                 </div>

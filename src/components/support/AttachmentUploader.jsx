@@ -78,7 +78,7 @@ const AttachmentUploader = ({ attachments, setAttachments }) => {
 
                 <span>
 
-                    PNG • JPG • JPEG • WEBP • PDF
+                    PNG • JPG • JPEG • WEBP
 
                 </span>
 
@@ -101,11 +101,8 @@ const AttachmentUploader = ({ attachments, setAttachments }) => {
             {
 
                 attachments.length > 0 && (
-
                     <div className="attachment-list">
-
                         {
-
                             attachments.map((file, index) => (
 
                                 <div

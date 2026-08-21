@@ -30,6 +30,13 @@ api.interceptors.response.use(
       stopLoading();
     }
 
+    // Server unreachable — no response at all (server down, network
+    // error, CORS blocked, timeout). Show the server-down page.
+    if (!error.response) {
+      document.dispatchEvent(new CustomEvent("server-down"));
+      return Promise.reject(error);
+    }
+
     if (
       error.response?.status === 401 &&
       error.response?.data?.message?.toLowerCase().includes("expired")

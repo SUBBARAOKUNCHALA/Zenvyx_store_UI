@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   getCheckoutSummaryApi,
   getMyAddressesApi,
@@ -427,6 +428,11 @@ const calculatedSummary = useMemo(() => {
 
   return (
     <div className="checkoutPage">
+       <div className="breadcrumb">
+        <Link to="/">Home</Link>
+        <span>/</span>
+        <span className="activeBreadcrumb">Check Out</span>
+      </div>
       <div className="checkoutContainer">
         <div className="checkoutLeft">
           <div className="checkoutCard">

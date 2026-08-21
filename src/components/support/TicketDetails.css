@@ -360,6 +360,10 @@ font-size:20px;
 
 }
 
+.supportmsg{
+    color: #000000 !important;
+}
+
 .attachment-gallery{
 
     display:flex;

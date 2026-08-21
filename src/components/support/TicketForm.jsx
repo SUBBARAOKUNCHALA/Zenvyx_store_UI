@@ -4,7 +4,7 @@ import { Send } from "lucide-react";
 
 import OrderSelector from "./OrderSelector";
 import AttachmentUploader from "./AttachmentUploader";
-import {createSupportTicketApi } from "../../services/supportService"
+import { createSupportTicketApi } from "../../services/supportService"
 import { useNavigate } from "react-router-dom";
 import "./TicketForm.css";
 
@@ -42,6 +42,10 @@ const TicketForm = () => {
 
     const [attachments, setAttachments] = useState([]);
 
+    // holds success/error text shown under the submit button
+    const [statusMsg, setStatusMsg] = useState({ type: "", text: "" });
+    const [submitting, setSubmitting] = useState(false);
+
     useEffect(() => {
 
         const category = searchParams.get("category");
@@ -66,41 +70,57 @@ const TicketForm = () => {
 
     };
 
-const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    try {
+        setStatusMsg({ type: "", text: "" });
+        setSubmitting(true);
 
-        const formData = new FormData();
+        try {
 
-        formData.append("category", form.category);
-        formData.append("issueType", form.issueType);
-        formData.append("orderId", form.order);
-        formData.append("subject", form.subject);
-        formData.append("description", form.description);
-        formData.append("priority", form.priority);
+            const formData = new FormData();
 
-        attachments.forEach((file) => {
-            formData.append("attachments", file);
-        });
+            formData.append("category", form.category);
+            formData.append("issueType", form.issueType);
+            formData.append("orderId", form.order);
+            formData.append("subject", form.subject);
+            formData.append("description", form.description);
+            formData.append("priority", form.priority);
 
-        const res = await createSupportTicketApi(formData);
+            attachments.forEach((file) => {
+                formData.append("attachments", file);
+            });
 
-        //alert(res.data.message);
+            const res = await createSupportTicketApi(formData);
 
-        navigate("/help/my-tickets");
+            setStatusMsg({
+                type: "success",
+                text: res?.data?.message || "Ticket created successfully."
+            });
 
-    } catch (err) {
+            // brief pause so the user sees the success message before navigating
+            setTimeout(() => {
+                navigate("/help/my-tickets");
+            }, 800);
 
-        // alert(
-        //     err.response?.data?.message ||
-        //     "Unable to create support ticket."
-        // );
+        } catch (err) {
 
-    }
+            setStatusMsg({
+                type: "error",
+                text:
+                    err.response?.data?.message ||
+                    "Unable to create support ticket."
+            });
 
-};
+        } finally {
+
+            setSubmitting(false);
+
+        }
+
+    };
+
     return (
 
         <div className="ticket-form-card">
@@ -275,14 +295,25 @@ const handleSubmit = async (e) => {
 
                 />
 
+                {statusMsg.text && (
+
+                    <p className={`ticket-form-status ${statusMsg.type}`}>
+
+                        {statusMsg.text}
+
+                    </p>
+
+                )}
+
                 <button
                     className="submit-ticket-btn"
                     type="submit"
+                    disabled={submitting}
                 >
 
                     <Send size={18} />
 
-                    Submit Ticket
+                    {submitting ? "Submitting..." : "Submit Ticket"}
 
                 </button>
 

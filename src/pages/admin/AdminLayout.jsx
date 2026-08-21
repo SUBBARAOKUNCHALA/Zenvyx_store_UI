@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { FileText,Trash2  } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  Headphones
+} from "lucide-react";
 // import {
 //   LayoutDashboard,
 //   PackagePlus,
@@ -65,6 +68,11 @@ const AdminLayout = () => {
       label: "Delete Products",
       path: "/~fiadmin/delete-products",
       icon: <Trash2 size={18} />,
+    },
+    {
+      label: "Support Tickets",
+      path: "/~fiadmin/support",
+      icon: <Headphones size={18} />,
     }
   ];
 
@@ -97,9 +105,9 @@ const AdminLayout = () => {
         <div className="adminSidebarInner">
           <div>
             <div className="adminSidebarBrand">
-              <div className="adminBrandLogo">FI</div>
+              {/* <div className="adminBrandLogo">FI</div> */}
               <div>
-                <h2>FI Admin</h2>
+                {/* <h2>FI Admin</h2> */}
                 <p>Store Control Panel</p>
               </div>
             </div>

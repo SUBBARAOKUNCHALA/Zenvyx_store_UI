@@ -13,7 +13,7 @@
 
 .checkoutContainer {
   max-width: 1250px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   display: grid;
   grid-template-columns: 1fr 360px;
   gap: 24px;

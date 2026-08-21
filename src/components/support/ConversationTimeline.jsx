@@ -73,7 +73,7 @@ const ConversationTimeline = ({ messages = [] }) => {
                                                 {
                                                     isCustomer
                                                         ? "You"
-                                                        : item.sender?.name || "Support Executive"
+                                                        : "Support Executive"
                                                 }
 
                                             </h4>
@@ -97,7 +97,7 @@ const ConversationTimeline = ({ messages = [] }) => {
 
                                         </div>
 
-                                        <p>
+                                        <p className="supportmsg">
 
                                             {item.message}
 

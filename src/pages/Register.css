@@ -259,3 +259,22 @@ body {
     font-size: 13px;
   }
 }
+.continueShoppingBtn {
+  display: inline-block;
+  margin-top: 14px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: 0.85;
+  cursor: pointer;
+  padding: 0;
+  margin: 10px;
+}
+
+.continueShoppingBtn:hover {
+  opacity: 1;
+}

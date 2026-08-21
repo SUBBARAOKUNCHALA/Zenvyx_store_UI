@@ -654,7 +654,7 @@ const MyOrders = () => {
 
         <aside className="ordersSidebar">
           <div className="collectionCard">
-            <h3>✨ New Collections</h3>
+            <h3>New Collections</h3>
 
             {newCollectionProducts.slice(0, 2).map((product) => (
               <div

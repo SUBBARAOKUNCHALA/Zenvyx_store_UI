@@ -582,7 +582,7 @@ const Dashboard = () => {
         <div className="productsTopBar">
           <div>
             <h2>Products For You</h2>
-            {/* <p>{filteredProducts.length} products found</p> */}
+            <p>{filteredProducts.length} products found</p>
           </div>
 
           <select

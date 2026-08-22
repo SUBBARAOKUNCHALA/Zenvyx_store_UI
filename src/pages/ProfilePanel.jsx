@@ -63,6 +63,7 @@ const ProfilePanel = ({ user, firstLetter, onClose }) => {
           <button onClick={() => handleNavigate("/my-orders")}>My Orders</button>
           <button onClick={() => handleNavigate("/address")}>My Addresses</button>
           <button onClick={() => handleNavigate("/cart")}>My Cart</button>
+         
           <button className="logoutProfileBtn" onClick={handleLogout}>
             Logout
           </button>
@@ -105,6 +106,7 @@ const ProfilePanel = ({ user, firstLetter, onClose }) => {
           <button onClick={() => handleNavigate("/my-orders")}>My Orders</button>
           <button onClick={() => handleNavigate("/address")}>My Addresses</button>
           <button onClick={() => handleNavigate("/cart")}>My Cart</button>
+           <button onClick={() => handleNavigate("/help")}>Help Center</button>
           <button className="logoutProfileBtn" onClick={handleLogout}>
             Logout
           </button>

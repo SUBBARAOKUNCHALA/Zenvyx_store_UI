@@ -1319,3 +1319,11 @@
   margin: 6px 0 0;
   font-size: 10px;
 }
+@media (max-width: 768px) {
+  .similarGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* remove: .similarProductImage { height: 130px; } — aspect-ratio handles this now */
+}

@@ -658,3 +658,31 @@
     }
 
 }
+.logoMobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .logoDesktop {
+    display: none;
+  }
+
+  .logoMobile {
+    display: block;
+    height: 50px;
+    width: auto;
+    max-width: 90px;
+    object-fit: contain;
+    margin-right: 0;
+  }
+
+  .logoContainer {
+    flex: 0 0 auto;
+  }
+
+  .searchContainer {
+    flex: 1 1 auto;
+    margin: 0 8px;
+    max-width: none;
+  }
+}

@@ -145,9 +145,15 @@ const Navbar = () => {
           <img
             src="/Logo_Canva.png"
             alt="ZENVYX"
-            className="logoImage"
+            className="logoImage logoDesktop"
+          />
+          <img
+            src="/Logo_Mobile.jpg"
+            alt="ZENVYX"
+            className="logoImage logoMobile"
           />
         </div>
+
 
         <div className="searchContainer">
           <input
